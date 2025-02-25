@@ -1,7 +1,7 @@
 //const functions = require("@google-cloud/functions-framework");
 const express = require("express");
 const app = express();
-//require('dotenv').config();
+require('dotenv').config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
