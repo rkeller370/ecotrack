@@ -1,4 +1,4 @@
-const functions = require("@google-cloud/functions-framework");
+//const functions = require("@google-cloud/functions-framework");
 const express = require("express");
 const app = express();
 //require('dotenv').config();
@@ -1379,4 +1379,9 @@ app.post("/api/v1/essay-review", authenticateJWT, limiter, async (req, res) => {
   }
 });
 
-functions.http("helloHttp", app);
+// run on port
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
+//functions.http("helloHttp", app);
