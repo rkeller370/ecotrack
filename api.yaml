@@ -1,0 +1,111 @@
+swagger: "2.0"
+info:
+  title: CollegeEdge API
+  description: API for the CollegeEdge platform
+  version: "1.0.0"
+  contact:
+    name: CollegeEdge Support
+    email: support@collegeedge.com
+host: localhost:3000
+basePath: /
+schemes:
+  - https
+paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      description: Register a new user with email and password
+      operationId: register
+      parameters:
+        - in: body
+          name: user
+          description: User registration details
+          required: true
+          schema:
+            type: object
+            required:
+              - email
+              - password
+              - authType
+            properties:
+              email:
+                type: string
+                example: user@example.com
+              password:
+                type: string
+                example: password123
+              authType:
+                type: string
+                example: pass
+      responses:
+        201:
+          description: User created successfully
+        400:
+          description: Invalid input
+        500:
+          description: Internal server error
+  /api/auth/login:
+    post:
+      summary: Login a user
+      description: Authenticate a user with email and password
+      parameters:
+        - in: body
+          name: credentials
+          description: User login credentials
+          required: true
+          operationId: login
+          schema:
+            type: object
+            required:
+              - email
+              - password
+              - authType
+            properties:
+              email:
+                type: string
+                example: user@example.com
+              password:
+                type: string
+                example: password123
+              authType:
+                type: string
+                example: pass
+      responses:
+        200:
+          description: Login successful, access and refresh tokens returned
+        401:
+          description: Invalid credentials
+        429:
+          description: Too many requests, try again later
+  /api/auth/logout:
+    post:
+      summary: Logout a user
+      description: Logout a user by clearing cookies
+      operationId: logout
+      responses:
+        200:
+          description: User successfully logged out
+        500:
+          description: Internal server error
+definitions:
+  User:
+    type: object
+    properties:
+      email:
+        type: string
+        description: User's email address
+      password:
+        type: string
+        description: User's password
+      userId:
+        type: string
+        description: Unique identifier for the user
+  LoginResponse:
+    type: object
+    properties:
+      accessToken:
+        type: string
+        description: Access token returned after successful login
+      refreshToken:
+        type: string
+        description: Refresh token returned after successful login
