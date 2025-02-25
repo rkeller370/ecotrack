@@ -115,9 +115,7 @@ const transporter = nodemailer.createTransport({
 
 // Environment Variables
 const SECRET_KEY = process.env.JWT_SECRET;
-const CLIENT_ID =
-  process.env.GOOGLE_CLIENT_ID ||
-  "735210409126-jc9k9j0b2mkc53ajfnng2335tr0tdo2h.apps.googleusercontent.com";
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const MONGO_URI = process.env.MONGO_URI;
 
 const mongoClient = new MongoClient(MONGO_URI, {
