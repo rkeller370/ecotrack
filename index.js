@@ -66,19 +66,65 @@ app.use(limiter)
 app.use(enforce());
 app.use(
   helmet({
+    // Content Security Policy (CSP)
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'"],
-        imgSrc: ["'self'", "data:"],
-        connectSrc: ["'self'", ...whitelist], // Allow external APIs
+        defaultSrc: ["'self'", ...whitelist], // Allow resources from self and whitelist
+        scriptSrc: ["'self'", ...whitelist], // Allow scripts from self and whitelist
+        styleSrc: ["'self'", ...whitelist, "'unsafe-inline'"], // Allow styles from self, whitelist, and inline
+        imgSrc: ["'self'", "data:", ...whitelist], // Allow images from self, data URIs, and whitelist
+        fontSrc: ["'self'", ...whitelist], // Allow fonts from self and whitelist
+        connectSrc: ["'self'", ...whitelist], // Allow API calls to self and whitelist
+        frameSrc: ["'none'"], // Disallow embedding in frames
+        objectSrc: ["'none'"], // Disallow plugins like Flash
+        baseUri: ["'self'"], // Restrict base URLs to the same origin
+        formAction: ["'self'", ...whitelist], // Allow form submissions to self and whitelist
+        frameAncestors: ["'none'"], // Disallow embedding in iframes
+        upgradeInsecureRequests: [], // Upgrade HTTP requests to HTTPS
       },
     },
-    crossOriginEmbedderPolicy: false, // Fixes potential issues with cross-origin requests
+    // HTTP Strict Transport Security (HSTS)
+    hsts: {
+      maxAge: 31536000, // Enforce HTTPS for 1 year
+      includeSubDomains: true, // Apply to all subdomains
+      preload: true, // Allow preloading in browsers
+    },
+    // Cross-Origin Embedder Policy (COEP)
+    crossOriginEmbedderPolicy: { policy: "require-corp" }, // Require cross-origin isolation
+    // Cross-Origin Resource Policy (CORP)
+    crossOriginResourcePolicy: { policy: "same-site" }, // Restrict cross-origin resource loading
+    // Cross-Origin Opener Policy (COOP)
+    crossOriginOpenerPolicy: { policy: "same-origin" }, // Prevent cross-origin window access
+    // Referrer Policy
+    referrerPolicy: { policy: "no-referrer" }, // Prevent referrer leakage
+    // X-Content-Type-Options
+    xContentTypeOptions: true, // Prevent MIME type sniffing
+    // X-Frame-Options
+    xFrameOptions: { action: "deny" }, // Prevent embedding in iframes
+    // X-XSS-Protection
+    xXssProtection: true, // Enable XSS protection in older browsers
+    // Expect-CT
+    expectCt: {
+      enforce: true, // Enforce Certificate Transparency
+      maxAge: 86400, // Cache for 1 day
+    },
+    // Permissions Policy
+    permissionsPolicy: {
+      features: {
+        camera: ["'none'"], // Disallow camera access
+        microphone: ["'none'"], // Disallow microphone access
+        geolocation: ["'none'"], // Disallow geolocation access
+        fullscreen: ["'self'"], // Allow fullscreen only for the same origin
+      },
+    },
+    // Strict-Transport-Security (HSTS)
+    strictTransportSecurity: {
+      maxAge: 31536000, // Enforce HTTPS for 1 year
+      includeSubDomains: true, // Apply to all subdomains
+      preload: true, // Allow preloading in browsers
+    },
   })
 );
-app.use(helmet())
 app.use(mongoSanitize());
 app.use(cookieParser());
 const corsOptions = {
@@ -240,13 +286,110 @@ const validatePassword = (password, email, previousPasswords = []) => {
 
   // Check for common weak passwords
   const commonPasswords = [
-    "password",
     "123456",
+    "password",
+    "12345678",
     "qwerty",
-    "admin",
-    "welcome",
+    "123456789",
+    "12345",
+    "1234",
+    "111111",
+    "1234567",
+    "dragon",
+    "123123",
+    "baseball",
+    "abc123",
+    "football",
+    "monkey",
     "letmein",
-  ];
+    "shadow",
+    "master",
+    "666666",
+    "qwertyuiop",
+    "123321",
+    "mustang",
+    "1234567890",
+    "michael",
+    "654321",
+    "superman",
+    "1qaz2wsx",
+    "7777777",
+    "qazwsx",
+    "password1",
+    "qwerty123",
+    "welcome",
+    "iloveyou",
+    "adobe123",
+    "admin",
+    "login",
+    "passw0rd",
+    "starwars",
+    "zaq1zaq1",
+    "zaq12wsx",
+    "123qwe",
+    "access",
+    "flower",
+    "cheese",
+    "computer",
+    "freedom",
+    "whatever",
+    "princess",
+    "q1w2e3r4",
+    "secret",
+    "charlie",
+    "hottie",
+    "loveme",
+    "sunshine",
+    "ashley",
+    "bailey",
+    "jordan",
+    "mercedes",
+    "austin",
+    "harley",
+    "maggie",
+    "buster",
+    "jennifer",
+    "nicole",
+    "justin",
+    "tigger",
+    "soccer",
+    "ginger",
+    "cookie",
+    "pepper",
+    "cameron",
+    "scooter",
+    "joshua",
+    "lovely",
+    "matthew",
+    "killer",
+    "jasmine",
+    "samantha",
+    "donald",
+    "iloveu",
+    "snoopy",
+    "sweet",
+    "eagle",
+    "samsung",
+    "qwert",
+    "11111111",
+    "12345678910",
+    "000000",
+    "987654321",
+    "888888",
+    "999999",
+    "101010",
+    "121212",
+    "131313",
+    "159753",
+    "159357",
+    "123654",
+    "777777",
+    "147258",
+    "852963",
+    "456456",
+    "00000000",
+    "999999999"
+  ];  
   if (commonPasswords.includes(password.toLowerCase())) {
     return {
       valid: false,
@@ -1379,7 +1522,6 @@ app.post("/api/v1/essay-review", authenticateJWT, limiter, async (req, res) => {
   }
 });
 
-// run on port
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
