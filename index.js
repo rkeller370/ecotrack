@@ -83,7 +83,7 @@ app.use(
         upgradeInsecureRequests: [], // Upgrade HTTP requests to HTTPS
       },
     },
-    // HTTP Strict Transport Security (HSTS)
+    // HTTP Strict Transport Security (HSTS) - Keep one instance
     hsts: {
       maxAge: 31536000, // Enforce HTTPS for 1 year
       includeSubDomains: true, // Apply to all subdomains
@@ -117,14 +117,9 @@ app.use(
         fullscreen: ["'self'"], // Allow fullscreen only for the same origin
       },
     },
-    // Strict-Transport-Security (HSTS)
-    strictTransportSecurity: {
-      maxAge: 31536000, // Enforce HTTPS for 1 year
-      includeSubDomains: true, // Apply to all subdomains
-      preload: true, // Allow preloading in browsers
-    },
   })
 );
+
 app.use(mongoSanitize());
 app.use(cookieParser());
 const corsOptions = {
