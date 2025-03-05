@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const enforce = require("express-enforces-ssl");
@@ -15,7 +14,6 @@ const whitelist = [url, "http://127.0.0.1:5500"];
 // Middleware
 app.set("trust proxy", 1);
 app.use(bodyParser.json());
-app.use(limiter)
 app.use(enforce());
 app.use(
   helmet({
