@@ -1,4 +1,4 @@
-const { db } = require("../../config/db");
+const { db, initializeMongo } = require("../../config/db");
 const { OpenAI } = require("openai");
 
 const openai = new OpenAI({
@@ -23,7 +23,7 @@ exports.getUniversities = async (req, res) => {
       {
         params: {
           api_key: govApiKey,
-          'school.name': college,
+          "school.name": college,
           per_page: 10,
         },
       }
@@ -50,6 +50,9 @@ exports.getUniversities = async (req, res) => {
 
 // Evaluate student profile
 exports.evaluateStudent = async (req, res) => {
+  if (!db) {
+    await initializeMongo();
+  }
   try {
     const studentData = req.body;
     const user = await db.collection("users").findOne({ userId: req.user });
@@ -75,7 +78,7 @@ exports.evaluateStudent = async (req, res) => {
       });
     }
 
-    await db.collection("users").updateOne({userId: req.user}, studentData)
+    await db.collection("users").updateOne({ userId: req.user }, studentData);
 
     const prompt = `You are an elite AI-powered college admissions consultant, specializing in meticulously analyzing high school student applications. Your mission is to deliver an extraordinarily detailed evaluation, packed with precise, high-value recommendations that dramatically increase the student’s admission chances at their target colleges.
 
@@ -223,45 +226,64 @@ exports.evaluateStudent = async (req, res) => {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "You are an expert college admissions advisor." },
+        {
+          role: "system",
+          content: "You are an expert college admissions advisor.",
+        },
         { role: "user", content: prompt },
       ],
       temperature: 0.7,
     });
 
     if (!response.choices || response.choices.length === 0) {
-      return res.status(500).json({ error: "OpenAI API returned no response." });
+      return res
+        .status(500)
+        .json({ error: "OpenAI API returned no response." });
     }
 
-    await db.collection('users').updateOne(
-      { userId: req.user },
-      { $set: { recommended: response.choices[0].message.content } }
-    );
+    await db
+      .collection("users")
+      .updateOne(
+        { userId: req.user },
+        { $set: { recommended: response.choices[0].message.content } }
+      );
 
     const aiResponse = response.choices[0].message.content;
     return res.json({ evaluation: aiResponse });
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).json({ error: "An error occurred while processing the request." });
+    return res
+      .status(500)
+      .json({ error: "An error occurred while processing the request." });
   }
 };
 
 // Get analysis
 exports.getAnalysis = async (req, res) => {
+  if (!db) {
+    await initializeMongo();
+  }
   try {
     const user = await db.collection("users").findOne({ userId: req.user });
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
     return res.json({ recommended: user.recommended });
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).json({ error: "An error occurred while processing the request." });
+    return res
+      .status(500)
+      .json({ error: "An error occurred while processing the request." });
   }
 };
 
 // Review essay
 exports.reviewEssay = async (req, res) => {
+  if (!db) {
+    await initializeMongo();
+  }
   try {
     const { essay } = req.body;
     const userId = req.user;
@@ -375,7 +397,10 @@ exports.reviewEssay = async (req, res) => {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "You are a college admissions essay expert." },
+        {
+          role: "system",
+          content: "You are a college admissions essay expert.",
+        },
         { role: "user", content: defaultPrompt },
       ],
       temperature: 0.4,
@@ -384,10 +409,12 @@ exports.reviewEssay = async (req, res) => {
 
     const feedback = response.choices[0].message.content;
 
-    await db.collection("users").updateOne(
-      { userId },
-      { $push: { essayReviews: new Date().toISOString() } }
-    );
+    await db
+      .collection("users")
+      .updateOne(
+        { userId },
+        { $push: { essayReviews: new Date().toISOString() } }
+      );
 
     res.status(200).json({
       success: true,

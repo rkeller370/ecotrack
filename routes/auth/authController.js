@@ -1,48 +1,73 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
-const { db } = require("../../config/db");
+const { db, initializeMongo } = require("../../config/db");
 const { sendVerifEmail, sendLockoutEmail } = require("../../utils/emailUtils");
-const { validateEmail, validatePassword } = require("../../utils/validationUtils");
-const { generateAccessToken, generateRefreshToken } = require("../../utils/jwtUtils");
+const {
+  validateEmail,
+  validatePassword,
+} = require("../../utils/validationUtils");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../../utils/jwtUtils");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Register a new user
 exports.register = async (req, res) => {
+  if (!db) {
+    await initializeMongo();
+  }
   const { email, name, password, authType, token } = req.body;
 
   if (!email || !validateEmail(email)) {
-    return res.status(400).json({ success: false, message: "Please enter a valid email" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Please enter a valid email" });
   }
 
   if (!name || !String(name) || !authType || !String(authType)) {
-    return res.status(400).json({ success: false, message: "Please enter a valid name and authType" });
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Please enter a valid name and authType",
+      });
   }
 
   if (!password || !validatePassword(password, email).valid) {
-    return res.status(400).json({ success: false, message: "Please enter a valid password" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Please enter a valid password" });
   }
 
-  console.log(db)
+  console.log(db);
   let user = await db.collection("users").findOne({ email: email });
   if (user) {
-    return res.status(400).json({ success: false, message: "Account already exists" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Account already exists" });
   }
 
   if (authType === "pass") {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let userId = "";
     let length = 10;
     for (let i = 0; i < length; i++) {
       userId += chars[Math.floor(Math.random() * chars.length)];
     }
 
-    const emailVerificationToken = jwt.sign({ userId: userId }, process.env.JWT_SECRET, {
-      expiresIn: "15m",
-      algorithm: "HS256",
-    });
+    const emailVerificationToken = jwt.sign(
+      { userId: userId },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "15m",
+        algorithm: "HS256",
+      }
+    );
 
     sendVerifEmail(
       email,
@@ -153,7 +178,9 @@ exports.register = async (req, res) => {
     res.status(201).json({ success: true, message: "User created" });
   } else if (authType === "google") {
     if (!token) {
-      return res.status(400).json({ success: false, message: "No token provided" });
+      return res
+        .status(400)
+        .json({ success: false, message: "No token provided" });
     }
     const ticket = await client.verifyIdToken({
       idToken: token,
@@ -170,10 +197,13 @@ exports.register = async (req, res) => {
 
     let user = await db.collection("users").findOne({ email: email });
     if (user) {
-      return res.status(400).json({ success: false, message: "Account already exists" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Account already exists" });
     }
 
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let userId = "";
     let length = 10;
     for (let i = 0; i < length; i++) {
@@ -211,28 +241,40 @@ exports.register = async (req, res) => {
 
     res.status(201).json({ success: true, message: "User created" });
   } else {
-    res.status(400).json({ success: false, message: "Invalid authentication type" });
+    res
+      .status(400)
+      .json({ success: false, message: "Invalid authentication type" });
   }
 };
 
 // Login a user
 exports.login = async (req, res) => {
   try {
+    if (!db) {
+      await initializeMongo();
+    }
     const { email, password, authType, token } = req.body;
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
     if (authType !== "pass" && authType !== "google") {
-      return res.status(400).json({ success: false, message: "Invalid authentication type" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid authentication type" });
     }
 
     if (authType === "pass") {
       const user = await db.collection("users").findOne({ email: email });
 
       if (!user || !user.password) {
-        return res.status(401).json({ success: false, message: "Invalid email or password" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Invalid email or password" });
       }
 
-      if (user?.accountLockedUntil && new Date(user.accountLockedUntil) > new Date()) {
+      if (
+        user?.accountLockedUntil &&
+        new Date(user.accountLockedUntil) > new Date()
+      ) {
         return res.status(403).json({
           success: false,
           message: `Account locked until ${user.accountLockedUntil.toLocaleString()}`,
@@ -240,17 +282,26 @@ exports.login = async (req, res) => {
       }
 
       if (user.verified === false) {
-        return res.status(404).json({ success: false, message: "Email not verified" });
+        return res
+          .status(404)
+          .json({ success: false, message: "Email not verified" });
       }
 
       if (user.auth === "google") {
-        return res.status(404).json({ success: false, message: "Auth type not supported for this account" });
+        return res
+          .status(404)
+          .json({
+            success: false,
+            message: "Auth type not supported for this account",
+          });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         await handleFailedLogin(email, ip);
-        return res.status(401).json({ success: false, message: "Invalid email or password" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Invalid email or password" });
       }
 
       const accessToken = generateAccessToken(user.userId);
@@ -272,15 +323,19 @@ exports.login = async (req, res) => {
         partitioned: true,
       });
 
-      await db.collection("users").updateOne(
-        { email },
-        { $set: { failedLoginAttempts: 0, accountLockedUntil: null } }
-      );
+      await db
+        .collection("users")
+        .updateOne(
+          { email },
+          { $set: { failedLoginAttempts: 0, accountLockedUntil: null } }
+        );
 
       res.status(200).json({ success: true, message: "Login successful" });
     } else if (authType === "google") {
       if (!token) {
-        return res.status(400).json({ success: false, message: "No token provided" });
+        return res
+          .status(400)
+          .json({ success: false, message: "No token provided" });
       }
       const ticket = await client.verifyIdToken({
         idToken: token,
@@ -288,7 +343,9 @@ exports.login = async (req, res) => {
       });
 
       if (!ticket || !ticket.getPayload()) {
-        return res.status(400).json({ success: false, message: "Invalid token" });
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid token" });
       }
 
       const payload = ticket.getPayload();
@@ -296,10 +353,15 @@ exports.login = async (req, res) => {
       const user = await db.collection("users").findOne({ email: email });
 
       if (!user) {
-        return res.status(401).json({ success: false, message: "Invalid email or password" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Invalid email or password" });
       }
 
-      if (user?.accountLockedUntil && new Date(user.accountLockedUntil) > new Date()) {
+      if (
+        user?.accountLockedUntil &&
+        new Date(user.accountLockedUntil) > new Date()
+      ) {
         return res.status(403).json({
           success: false,
           message: `Account locked until ${user.accountLockedUntil.toLocaleString()}`,
@@ -307,7 +369,12 @@ exports.login = async (req, res) => {
       }
 
       if (user.auth === "pass") {
-        return res.status(404).json({ success: false, message: "Auth type not supported for this account" });
+        return res
+          .status(404)
+          .json({
+            success: false,
+            message: "Auth type not supported for this account",
+          });
       }
 
       const accessToken = generateAccessToken(user.userId);
@@ -329,10 +396,12 @@ exports.login = async (req, res) => {
         partitioned: true,
       });
 
-      await db.collection("users").updateOne(
-        { email },
-        { $set: { failedLoginAttempts: 0, accountLockedUntil: null } }
-      );
+      await db
+        .collection("users")
+        .updateOne(
+          { email },
+          { $set: { failedLoginAttempts: 0, accountLockedUntil: null } }
+        );
 
       res.status(200).json({ success: true, message: "Login successful" });
     } else {
@@ -353,18 +422,27 @@ exports.logout = async (req, res) => {
 
 // Refresh access token
 exports.refreshToken = async (req, res) => {
+  if (!db) {
+    await initializeMongo();
+  }
   const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
-    return res.status(401).json({ success: false, message: "No refresh token provided" });
+    return res
+      .status(401)
+      .json({ success: false, message: "No refresh token provided" });
   }
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
-    const user = await db.collection("users").findOne({ userId: decoded.userId });
+    const user = await db
+      .collection("users")
+      .findOne({ userId: decoded.userId });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     const accessToken = generateAccessToken(user.userId);
@@ -379,20 +457,38 @@ exports.refreshToken = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Token refreshed" });
   } catch (err) {
-    res.status(403).json({ success: false, message: "Invalid or expired refresh token" });
+    res
+      .status(403)
+      .json({ success: false, message: "Invalid or expired refresh token" });
   }
 };
 
 // Verify user token
 exports.verify = async (req, res) => {
+  if (!db) {
+    await initializeMongo();
+  }
   try {
     const user = await db.collection("users").findOne({ userId: req.user });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    const { password, auth, _id, email, verificationCode, failedLoginAttempts, accountLockedUntil, securityAlerts, lastFailedLogin, ...safeUser } = user;
+    const {
+      password,
+      auth,
+      _id,
+      email,
+      verificationCode,
+      failedLoginAttempts,
+      accountLockedUntil,
+      securityAlerts,
+      lastFailedLogin,
+      ...safeUser
+    } = user;
 
     res.status(200).json({ success: true, user: safeUser });
   } catch (error) {
@@ -403,56 +499,75 @@ exports.verify = async (req, res) => {
 
 // Verify email
 exports.verifyEmail = async (req, res) => {
+  if (!db) {
+    await initializeMongo();
+  }
   try {
     const token = req.query.token;
     if (!token) {
-      return res.status(400).json({ success: false, message: "No token provided" });
+      return res
+        .status(400)
+        .json({ success: false, message: "No token provided" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await db.collection("users").findOneAndUpdate(
-      { verificationCode: token },
-      { $set: { verified: true }, $unset: { verificationCode: 1 } },
-      { returnDocument: 'after' }
-    );
+    const user = await db
+      .collection("users")
+      .findOneAndUpdate(
+        { verificationCode: token },
+        { $set: { verified: true }, $unset: { verificationCode: 1 } },
+        { returnDocument: "after" }
+      );
 
     if (!user.value) {
-      return res.status(404).json({ success: false, message: "Invalid verification token" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Invalid verification token" });
     }
 
-    res.status(200).json({ success: true, message: "Email verified successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Email verified successfully" });
   } catch (err) {
-    res.status(400).json({ success: false, message: "Invalid or expired verification link" });
+    res
+      .status(400)
+      .json({
+        success: false,
+        message: "Invalid or expired verification link",
+      });
   }
 };
 
 // Handle failed login attempts
 const handleFailedLogin = async (email, ip) => {
-  const user = await db.collection('users').findOne({ email });
+  if (!db) {
+    await initializeMongo();
+  }
+  const user = await db.collection("users").findOne({ email });
 
-  await db.collection('users').updateOne(
+  await db.collection("users").updateOne(
     { email },
-    { 
+    {
       $inc: { failedLoginAttempts: 1 },
-      $set: { lastFailedLogin: new Date() }
+      $set: { lastFailedLogin: new Date() },
     }
   );
 
   if (user.failedLoginAttempts + 1 >= 3) {
     const lockDuration = 15 * 60 * 1000; // 15 minutes
-    await db.collection('users').updateOne(
+    await db.collection("users").updateOne(
       { email },
       {
         $set: {
           accountLockedUntil: new Date(Date.now() + lockDuration),
-          failedLoginAttempts: 0
+          failedLoginAttempts: 0,
         },
         $push: {
           securityAlerts: {
             message: `Account locked due to 3 failed login attempts`,
-            date: new Date()
-          }
-        }
+            date: new Date(),
+          },
+        },
       }
     );
 
