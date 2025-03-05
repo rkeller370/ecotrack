@@ -27,6 +27,4 @@ const initializeMongo = async (retries = 5, delay = 5000) => {
   }
 };
 
-initializeMongo();
-
-module.exports = { db };
+module.exports = { db, initializeMongo };
