@@ -24,6 +24,7 @@ exports.register = async (req, res) => {
     return res.status(400).json({ success: false, message: "Please enter a valid password" });
   }
 
+  console.log(db)
   let user = await db.collection("users").findOne({ email: email });
   if (user) {
     return res.status(400).json({ success: false, message: "Account already exists" });
