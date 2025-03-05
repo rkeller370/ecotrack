@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
-const { db, initializeMongo } = require("../../config/db");
+let { db, initializeMongo } = require("../../config/db");
 const { sendVerifEmail, sendLockoutEmail } = require("../../utils/emailUtils");
 const {
   validateEmail,
@@ -18,6 +18,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 exports.register = async (req, res) => {
   if (!db) {
     await initializeMongo();
+    db = require("../../config/db").db
   }
   const { email, name, password, authType, token } = req.body;
 
