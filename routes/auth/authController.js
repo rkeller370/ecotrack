@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
 let { getDb, initializeMongo } = require("../../config/db");
 const { sendVerifEmail, sendLockoutEmail } = require("../../utils/emailUtils");
+const { getClientIp } = require("../../utils/getIP");
 const {
   validateEmail,
   validatePassword,
@@ -260,7 +261,7 @@ exports.login = async (req, res) => {
       db = getDb();
     }
     const { email, password, authType, token } = req.body;
-    const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    const ip = getClientIp(req)
 
     if (authType !== "pass" && authType !== "google") {
       return res

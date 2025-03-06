@@ -1,18 +1,18 @@
 const nodemailer = require("nodemailer");
 
-const url = "https://creative-horse-1afc49.netlify.app"
+const url = "https://creative-horse-1afc49.netlify.app";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: 'donotreply.mshstutoring@gmail.com',
+    user: "donotreply.mshstutoring@gmail.com",
     pass: process.env.GMAIL_PASS,
   },
 });
 
 const sendVerifEmail = async (email, subject, html, token) => {
   const mailOptions = {
-    from: 'donotreply.mshstutoring@gmail.com',
+    from: "donotreply.mshstutoring@gmail.com",
     to: email,
     subject,
     html,
@@ -26,22 +26,22 @@ const sendVerifEmail = async (email, subject, html, token) => {
 };
 
 const sendLockoutEmail = async (email, ip, lockDuration) => {
-  let location = '';
+  let location = "";
   if (ip) {
     try {
-    const response = await fetch(`https://ipapi.co/${ip}/json/`);
-    const data = await response.json();
-    location = `${data.city}, ${data.region}, ${data.country_name}`;
+      const response = await fetch(`https://ipapi.co/${ip}/json/`);
+      const data = await response.json();
+      location = `${data.city}, ${data.region}, ${data.country_name}`;
     } catch (err) {
       console.error("Error fetching location:", err);
-      location = 'Unknown';
+      location = "Unknown";
     }
   }
 
   const mailOptions = {
-    from: 'donotreply.mshstutoring@gmail.com',
+    from: "donotreply.mshstutoring@gmail.com",
     to: email,
-    subject: 'Account Locked - Security Alert',
+    subject: "Account Locked - Security Alert",
     html: `<!DOCTYPE html>
     <html>
       <head>
@@ -49,6 +49,9 @@ const sendLockoutEmail = async (email, ip, lockDuration) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
         <style>
+        * {
+        font-family: 'Inter', sans-serif;
+        }
           body {
             font-family: 'Inter', sans-serif;
             background-color: #f5f5f5;
@@ -138,7 +141,9 @@ const sendLockoutEmail = async (email, ip, lockDuration) => {
             <ul>
               <li>Time: ${new Date().toLocaleString()}</li>
               <li>IP Address: ${ip} (${location})</li>
-              <li>Lock Duration: ${Math.round(lockDuration / 60000)} minutes</li>
+              <li>Lock Duration: ${Math.round(
+                lockDuration / 60000
+              )} minutes</li>
             </ul>
             <p>If this was you, please wait until the lock expires to try again.</p>
             <p>If this wasn't you, please contact our security team immediately.</p>
