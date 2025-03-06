@@ -27,9 +27,9 @@ const initializeMongo = async (retries = 5, delay = 5000) => {
   }
 };
 
-const getDb = () => {
+const async getDb = () => {
   if (!db)
-    throw new Error("Database not initialized. Call initializeMongo() first.");
+    await initializeMongo();
   return db;
 };
 
