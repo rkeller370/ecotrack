@@ -1062,7 +1062,7 @@ app.get("/api/v1/universities", authenticateJWT, limiter, async (req, res) => {
       });
     }
 
-    const govApiKey = "HkaS0vxWVaeQ5Soc9KHWmy32HiN8VkKeid5dqDop"; // Replace with your actual API key
+    const govApiKey = process.env.GOV_API_KEY; // Replace with your actual API key
     const response = await axios.get(
       `https://api.data.gov/ed/collegescorecard/v1/schools.json`, {
         params: {
