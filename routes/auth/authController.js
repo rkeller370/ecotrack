@@ -21,6 +21,8 @@ const initializeDatabase = async () => {
 // Call initializeDatabase when the module is first loaded
 initializeDatabase();
 
+const url = "https://creative-horse-1afc49.netlify.app"
+
 // Register a new user
 exports.register = async (req, res) => {
   if (!db) {

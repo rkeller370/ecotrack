@@ -9,6 +9,8 @@ const initializeDatabase = async () => {
   db = await getDb(); // Ensure db is fetched after initialization
 };
 
+const url = "https://creative-horse-1afc49.netlify.app"
+
 // Call initializeDatabase when the module is first loaded
 initializeDatabase();
 
