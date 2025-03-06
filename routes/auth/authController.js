@@ -21,6 +21,7 @@ exports.register = async (req, res) => {
   if (!db) {
     db = getDb();
   }
+  console.log(db)
   const { email, name, password, authType, token } = req.body;
 
   if (!email || !validateEmail(email)) {
