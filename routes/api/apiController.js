@@ -458,3 +458,29 @@ exports.reviewEssay = async (req, res) => {
     });
   }
 };
+
+exports.getSettings = async (req, res) => {
+  if (!db) {
+    db = getDb();
+  }
+  try {
+    let defaultSettings = {
+      apptwo: false,
+      emailtwo: false,
+      emailNot: true,
+    }
+    const user = await db.collection("users").findOne({ userId: req.user });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    return res.json({ success: true, settings: user.settings ? user.settings : defaultSettings, email: user.email, name: user.name, auth: user.auth });
+  } catch (error) {
+    console.error("Error:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while processing the request." });
+  }
+};
