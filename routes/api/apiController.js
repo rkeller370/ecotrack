@@ -1,11 +1,16 @@
 const { getDb, initializeMongo } = require("../../config/db");
 const { OpenAI } = require("openai");
 
-let db = getDb();
-
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+const initializeDatabase = async () => {
+  db = await getDb(); // Ensure db is fetched after initialization
+};
+
+// Call initializeDatabase when the module is first loaded
+initializeDatabase();
 
 // Get universities
 exports.getUniversities = async (req, res) => {

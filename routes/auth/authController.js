@@ -14,14 +14,19 @@ const {
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-let db = getDb();
+const initializeDatabase = async () => {
+  db = await getDb(); // Ensure db is fetched after initialization
+};
+
+// Call initializeDatabase when the module is first loaded
+initializeDatabase();
 
 // Register a new user
 exports.register = async (req, res) => {
   if (!db) {
     db = getDb();
   }
-  console.log(db)
+  console.log(db);
   const { email, name, password, authType, token } = req.body;
 
   if (!email || !validateEmail(email)) {
