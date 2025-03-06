@@ -3,14 +3,14 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.GMAIL_USER,
+    user: 'donotreply.mshstutoring@gmail.com',
     pass: process.env.GMAIL_PASS,
   },
 });
 
 const sendVerifEmail = async (email, subject, html, token) => {
   const mailOptions = {
-    from: process.env.GMAIL_USER,
+    from: 'donotreply.mshstutoring@gmail.com',
     to: email,
     subject,
     html,
