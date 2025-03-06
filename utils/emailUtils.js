@@ -130,7 +130,7 @@ const sendLockoutEmail = async (email, ip, lockDuration) => {
           }
         </style>
       </head>
-      <body>
+      <body style="font-family: 'Inter', sans-serif;">
         <div class="email-container">
           <div class="email-header">
             Security Alert

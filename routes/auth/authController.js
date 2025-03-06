@@ -460,6 +460,7 @@ exports.refreshToken = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Token refreshed" });
   } catch (err) {
+    console.error("Error refreshing token:", err);
     res
       .status(403)
       .json({ success: false, message: "Invalid or expired refresh token" });
