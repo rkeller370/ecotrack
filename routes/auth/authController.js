@@ -159,12 +159,12 @@ exports.register = async (req, res) => {
             <div class="email-body">
               <h1>Hello, ${name}!</h1>
               <p>Thank you for signing up. Please click the button below to verify your email address and activate your account.</p>
-              <a href="${process.env.FRONTEND_URL}/verifyemail.html?token=${emailVerificationToken}" class="verify-button">Verify Email</a>
+              <a href="${url}/verifyemail.html?token=${emailVerificationToken}" class="verify-button">Verify Email</a>
               <p>If you did not sign up, please ignore this email and contact our support team.</p>
             </div>
             <div class="email-footer">
               © AdmitVault 2024. All rights reserved. <br />
-              <a href="${process.env.FRONTEND_URL}">Visit our website</a> | <a href="${process.env.FRONTEND_URL}/privacy">Privacy Policy</a> | <a href="${process.env.FRONTEND_URL}/terms">Terms of Service</a>
+              <a href="${url}">Visit our website</a> | <a href="${url}/privacy">Privacy Policy</a> | <a href="${url}/terms">Terms of Service</a>
             </div>
           </div>
         </body>
