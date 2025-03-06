@@ -26,9 +26,14 @@ const sendVerifEmail = async (email, subject, html, token) => {
 const sendLockoutEmail = async (email, ip, lockDuration) => {
   let location = '';
   if (ip) {
+    try {
     const response = await fetch(`https://ipapi.co/${ip}/json/`);
     const data = await response.json();
     location = `${data.city}, ${data.region}, ${data.country_name}`;
+    } catch (err) {
+      console.error("Error fetching location:", err);
+      location = 'Unknown';
+    }
   }
 
   const mailOptions = {
