@@ -1,5 +1,7 @@
-const { db, initializeMongo } = require("../../config/db");
+const { getDb, initializeMongo } = require("../../config/db");
 const { OpenAI } = require("openai");
+
+let db = getDb();
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -51,7 +53,7 @@ exports.getUniversities = async (req, res) => {
 // Evaluate student profile
 exports.evaluateStudent = async (req, res) => {
   if (!db) {
-    await initializeMongo();
+    db = getDb();
   }
   try {
     const studentData = req.body;
@@ -261,7 +263,7 @@ exports.evaluateStudent = async (req, res) => {
 // Get analysis
 exports.getAnalysis = async (req, res) => {
   if (!db) {
-    await initializeMongo();
+    db = getDb();
   }
   try {
     const user = await db.collection("users").findOne({ userId: req.user });
@@ -282,7 +284,7 @@ exports.getAnalysis = async (req, res) => {
 // Review essay
 exports.reviewEssay = async (req, res) => {
   if (!db) {
-    await initializeMongo();
+    db = getDb();
   }
   try {
     const { essay } = req.body;

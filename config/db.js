@@ -22,9 +22,15 @@ const initializeMongo = async (retries = 5, delay = 5000) => {
     } catch (err) {
       console.error(`Failed to connect to MongoDB (attempt ${i + 1}):`, err);
       if (i === retries - 1) throw err;
-      await new Promise(res => setTimeout(res, delay));
+      await new Promise((res) => setTimeout(res, delay));
     }
   }
 };
 
-module.exports = { db, initializeMongo };
+const getDb = () => {
+  if (!db)
+    throw new Error("Database not initialized. Call initializeMongo() first.");
+  return db;
+};
+
+module.exports = { getDb, initializeMongo };

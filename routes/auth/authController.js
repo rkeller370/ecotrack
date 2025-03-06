@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
-let { db, initializeMongo } = require("../../config/db");
+let { getDb, initializeMongo } = require("../../config/db");
 const { sendVerifEmail, sendLockoutEmail } = require("../../utils/emailUtils");
 const {
   validateEmail,
@@ -14,11 +14,12 @@ const {
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+let db = getDb();
+
 // Register a new user
 exports.register = async (req, res) => {
   if (!db) {
-    await initializeMongo();
-    db = require("../../config/db").db
+    db = getDb();
   }
   const { email, name, password, authType, token } = req.body;
 
@@ -29,12 +30,10 @@ exports.register = async (req, res) => {
   }
 
   if (!name || !String(name) || !authType || !String(authType)) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Please enter a valid name and authType",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Please enter a valid name and authType",
+    });
   }
 
   if (!password || !validatePassword(password, email).valid) {
@@ -43,7 +42,6 @@ exports.register = async (req, res) => {
       .json({ success: false, message: "Please enter a valid password" });
   }
 
-  console.log(db);
   let user = await db.collection("users").findOne({ email: email });
   if (user) {
     return res
@@ -252,7 +250,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     if (!db) {
-      await initializeMongo();
+      db = getDb();
     }
     const { email, password, authType, token } = req.body;
     const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
@@ -289,12 +287,10 @@ exports.login = async (req, res) => {
       }
 
       if (user.auth === "google") {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: "Auth type not supported for this account",
-          });
+        return res.status(404).json({
+          success: false,
+          message: "Auth type not supported for this account",
+        });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
@@ -370,12 +366,10 @@ exports.login = async (req, res) => {
       }
 
       if (user.auth === "pass") {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: "Auth type not supported for this account",
-          });
+        return res.status(404).json({
+          success: false,
+          message: "Auth type not supported for this account",
+        });
       }
 
       const accessToken = generateAccessToken(user.userId);
@@ -424,7 +418,7 @@ exports.logout = async (req, res) => {
 // Refresh access token
 exports.refreshToken = async (req, res) => {
   if (!db) {
-    await initializeMongo();
+    db = getDb();
   }
   const refreshToken = req.cookies.refreshToken;
 
@@ -467,7 +461,7 @@ exports.refreshToken = async (req, res) => {
 // Verify user token
 exports.verify = async (req, res) => {
   if (!db) {
-    await initializeMongo();
+    db = getDb();
   }
   try {
     const user = await db.collection("users").findOne({ userId: req.user });
@@ -501,7 +495,7 @@ exports.verify = async (req, res) => {
 // Verify email
 exports.verifyEmail = async (req, res) => {
   if (!db) {
-    await initializeMongo();
+    db = getDb();
   }
   try {
     const token = req.query.token;
@@ -530,19 +524,17 @@ exports.verifyEmail = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Email verified successfully" });
   } catch (err) {
-    res
-      .status(400)
-      .json({
-        success: false,
-        message: "Invalid or expired verification link",
-      });
+    res.status(400).json({
+      success: false,
+      message: "Invalid or expired verification link",
+    });
   }
 };
 
 // Handle failed login attempts
 const handleFailedLogin = async (email, ip) => {
   if (!db) {
-    await initializeMongo();
+    db = getDb();
   }
   const user = await db.collection("users").findOne({ email });
 
