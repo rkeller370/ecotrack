@@ -1,5 +1,7 @@
 const nodemailer = require("nodemailer");
 
+const url = "https://creative-horse-1afc49.netlify.app"
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
