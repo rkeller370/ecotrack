@@ -36,7 +36,6 @@ const getDb = async () => {
     console.log("Initializing MongoDB...");
     await initializeMongo(); // Make sure MongoDB is initialized first
   }
-  console.log("Returning DB object:", db); // Logging the db object to verify
   return db;
 };
 
