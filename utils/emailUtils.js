@@ -39,7 +39,7 @@ const sendLockoutEmail = async (email, ip, lockDuration) => {
   }
 
   const mailOptions = {
-    from: process.env.GMAIL_USER,
+    from: 'donotreply.mshstutoring@gmail.com',
     to: email,
     subject: 'Account Locked - Security Alert',
     html: `<!DOCTYPE html>
