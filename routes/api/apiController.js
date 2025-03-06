@@ -1,4 +1,5 @@
 const { getDb, initializeMongo } = require("../../config/db");
+const { sanitizeInput } = require("../../utils/sanitize");
 const { OpenAI } = require("openai");
 const axios = require("axios");
 
@@ -88,7 +89,25 @@ exports.evaluateStudent = async (req, res) => {
       });
     }
 
-    await db.collection("users").updateOne({ userId: req.user }, studentData);
+    const allowedFields = [
+      "gpa", "major", "gradeLevel", "classRank", "currentCourses",
+      "studyHours", "studyMethods", "strengths", "weaknesses",
+      "extracurriculars", "targetSchool", "testsTaken", "testScores",
+      "skills", "awards"
+    ];
+
+    const validatedData = {};
+    
+    for (const field of allowedFields) {
+      if (studentData[field] !== undefined) {
+        validatedData[field] = sanitizeInput(studentData[field],field == "extracurriculars" ? 700 : 200);
+      }
+    }
+
+    await db.collection("users").updateOne(
+      { userId: req.user },
+      { $set: validatedData }
+    );
 
     const prompt = `You are an elite AI-powered college admissions consultant, specializing in meticulously analyzing high school student applications. Your mission is to deliver an extraordinarily detailed evaluation, packed with precise, high-value recommendations that dramatically increase the student’s admission chances at their target colleges.
 
@@ -102,7 +121,7 @@ exports.evaluateStudent = async (req, res) => {
       
       ### **Structured Input:**
       \`\`\`json
-      ${JSON.stringify(studentData, null, 2)}
+      ${JSON.stringify(validatedData, null, 2)}
       \`\`\`
       
       ---
