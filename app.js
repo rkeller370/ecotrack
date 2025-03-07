@@ -85,7 +85,7 @@ app.use(cors(corsOptions));
 
 const csrfProtection = csrf({
   cookie: {
-    httpOnly: true, // Cookie cannot be accessed by JavaScript
+    httpOnly: false, // Cookie cannot be accessed by JavaScript
     secure: true,   // Cookie will only be sent over HTTPS
     sameSite: "None", // Allow the cookie to be sent with cross-origin requests
     maxAge: 3600000,  // Set cookie expiry (1 hour)
