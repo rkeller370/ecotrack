@@ -85,14 +85,14 @@ app.use(cors(corsOptions));
 
 const csrfProtection = csrf({ cookie: true });
 
-app.use(csrfProtection)
-/*
+//app.use(csrfProtection)
+
 app.use((req, res, next) => {
-  if (req.method === "GET" || req.path.startsWith("/api/")) {
+  if (req.method === "GET" || req.path.startsWith("/api/auth")) {
     return next();
   }
   csrfProtection(req, res, next);
-});*/
+});
 
 app.use((req, res, next) => {
   res.cookie("XSRF-TOKEN", req.csrfToken(), { 
@@ -102,6 +102,16 @@ app.use((req, res, next) => {
     partitioned: true 
   });
   next();
+});
+
+app.get('/api/csrf-token', (req, res) => {
+  res.cookie("XSRF-TOKEN", req.csrfToken(), { 
+    secure: true,
+    sameSite: "None",
+    httpOnly: false,
+    partitioned: true,
+  });
+  res.status(204).end();
 });
 
 app.use((req, res, next) => {
