@@ -89,7 +89,7 @@ const csrfProtection = csrf({ cookie: true });
 
 // Apply CSRF protection only to non-GET and non-auth routes
 app.use((req, res, next) => {
-  if (req.method === "GET" || req.path.startsWith("/api/auth")) {
+  if (req.method === "GET" && !req.path.startsWith("/api/csrf-token") || req.path.startsWith("/api/auth")) {
     return next();
   }
   csrfProtection(req, res, next);
