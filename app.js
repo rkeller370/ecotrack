@@ -79,7 +79,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Request-Timestamp", "X-Signature"]
+  allowedHeaders: ["Content-Type", "Authorization", "X-Request-Timestamp", "X-Signature","x-pingother","x-forwarded-proto","x-forwaded-for"]
 };
 app.use(cors(corsOptions));
 
