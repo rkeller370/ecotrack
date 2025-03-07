@@ -92,12 +92,14 @@ const csrfProtection = csrf({
     maxAge: 86400
   }
 });
+app.use(csrfProtection)
+/*
 app.use((req, res, next) => {
   if (req.method === "GET" || req.path.startsWith("/api/")) {
     return next();
   }
   csrfProtection(req, res, next);
-});
+});*/
 
 app.use((req, res, next) => {
   res.cookie("XSRF-TOKEN", req.csrfToken(), { 
