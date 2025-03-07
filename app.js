@@ -87,6 +87,7 @@ const csrfProtection = csrf({ cookie: true });
 
 //app.use(csrfProtection)
 
+// Apply CSRF protection only to non-GET and non-auth routes
 app.use((req, res, next) => {
   if (req.method === "GET" || req.path.startsWith("/api/auth")) {
     return next();
@@ -94,16 +95,7 @@ app.use((req, res, next) => {
   csrfProtection(req, res, next);
 });
 
-app.use((req, res, next) => {
-  res.cookie("XSRF-TOKEN", req.csrfToken(), { 
-    secure: true,
-    sameSite: "None",
-    httpOnly: false,
-    partitioned: true 
-  });
-  next();
-});
-
+// Endpoint to initialize CSRF token
 app.get('/api/csrf-token', (req, res) => {
   res.cookie("XSRF-TOKEN", req.csrfToken(), { 
     secure: true,
@@ -111,7 +103,7 @@ app.get('/api/csrf-token', (req, res) => {
     httpOnly: false,
     partitioned: true,
   });
-  res.status(204).end();
+  res.status(204).end(); // No content response
 });
 
 app.use((req, res, next) => {
