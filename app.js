@@ -86,7 +86,7 @@ app.use(cors(corsOptions));
 const csrfProtection = csrf({
   cookie: {
     httpOnly: true,
-    secure: ENVIRONMENT === "production",
+    secure: true,
     sameSite: "None",
     partitioned: true,
     maxAge: 86400
