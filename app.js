@@ -79,13 +79,13 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Request-Timestamp", "X-Signature","x-pingother","x-forwarded-proto","x-forwaded-for"]
+  allowedHeaders: ["Content-Type", "Authorization", "X-Request-Timestamp", "X-Signature","x-pingother","x-forwarded-proto","x-forwaded-for", "X-CSRF-Token"]
 };
 app.use(cors(corsOptions));
 
 const csrfProtection = csrf({
   cookie: {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     sameSite: "None",
     partitioned: true,
@@ -105,7 +105,7 @@ app.use((req, res, next) => {
   res.cookie("XSRF-TOKEN", req.csrfToken(), { 
     secure: true,
     sameSite: "None",
-    httpOnly: true,
+    httpOnly: false,
     partitioned: true 
   });
   next();
