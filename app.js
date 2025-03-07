@@ -83,15 +83,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-const csrfProtection = csrf({
-  cookie: {
-    httpOnly: false,
-    secure: true,
-    sameSite: "None",
-    partitioned: true,
-    maxAge: 86400
-  }
-});
+const csrfProtection = csrf({ cookie: true });
+
 app.use(csrfProtection)
 /*
 app.use((req, res, next) => {
