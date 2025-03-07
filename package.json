@@ -17,7 +17,9 @@
     "nodemailer": "^6.10.0",
     "openai": "^4.85.4",
     "axios": "^1.7.9",
-    "csurf": "^1.11.0"
+    "csurf": "^1.11.0",
+    "hpp": "^0.2.3",
+    "sanitize-html": "^2.14.0"
   },
   "scripts": {
     "start": "node server.js"

@@ -1,5 +1,5 @@
 const { getDb, initializeMongo } = require("../../config/db");
-const { sanitizeInput } = require("../../utils/sanitize");
+const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
 const { OpenAI } = require("openai");
 const axios = require("axios");
 
@@ -421,7 +421,7 @@ exports.reviewEssay = async (req, res) => {
 
     ** RETURN ONLY A JSON FILE, DO NOT PROVIDE TEXT RESPONSES, DO NOT WRAP IT IN A CODE BLOCK. JSON MUST BE FULLY FUNCTIONAL AND CONTAIN NO ERRORS **
     
-    Essay: ${essay.substring(0, 7500)}`;
+    Essay: ${sanitizeEssayInput(essay)}`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -484,3 +484,47 @@ exports.getSettings = async (req, res) => {
       .json({ error: "An error occurred while processing the request." });
   }
 };
+
+exports.submitCollegePreferences = async (req, res) => {
+  if (!db) {
+    db = getDb();
+  }
+  try {
+    const studentData = req.body;
+
+    if(!studentData) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing student data"
+      })
+    }
+    const user = await db.collection("users").findOne({ userId: req.user });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const allowedFields = [
+      "location","type","goodMajor","tuition","athletics","rigor","diversity","jobOpp","abroad","housing","climate","socialLife","size"
+    ];
+
+    const validatedData = {};
+    
+    for (const field of allowedFields) {
+      if (studentData[field] !== undefined) {
+        validatedData[field] = sanitizeInput(studentData[field]);
+      }
+    }
+
+    await db
+      .collection("users")
+      .updateOne({ userId: req.user }, { $set: { collegePref: validatedData } });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("Error:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while processing the request." });
+  }
+}
