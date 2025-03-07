@@ -89,17 +89,19 @@ const csrfProtection = csrf({
     secure: true,
     sameSite: "None",
     maxAge: 3600000,
+    partitioned: true
   }
 });
 
-//app.use(csrfProtection)
+app.use(csrfProtection)
 
+/*
 app.use((req, res, next) => {
   if (req.method === "GET" && !req.path.startsWith("/api/csrf-token") || req.path.startsWith("/api/auth")) {
     return next();
   }
   csrfProtection(req, res, next);
-});
+});*/
 
 app.get('/api/csrf-token', (req, res) => {
   res.cookie("XSRF-TOKEN", req.csrfToken(), { 
