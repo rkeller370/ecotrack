@@ -93,7 +93,7 @@ const csrfProtection = csrf({
   }
 });
 
-app.use(csrfProtection)
+//app.use(csrfProtection)
 
 /*
 app.use((req, res, next) => {
@@ -102,7 +102,7 @@ app.use((req, res, next) => {
   }
   csrfProtection(req, res, next);
 });*/
-
+/*
 app.get('/api/csrf-token', (req, res) => {
   res.cookie("XSRF-TOKEN", req.csrfToken(), { 
     secure: true,
@@ -111,7 +111,7 @@ app.get('/api/csrf-token', (req, res) => {
     partitioned: true,
   });
   res.status(204).end();
-});
+});*/
 
 /* will implement later
 app.use((req, res, next) => {
