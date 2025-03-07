@@ -106,6 +106,7 @@ app.get('/api/csrf-token', (req, res) => {
   res.status(204).end(); // No content response
 });
 
+/* will implement later
 app.use((req, res, next) => {
   const timestamp = req.headers["x-request-timestamp"];
   const signature = req.headers["x-signature"];
@@ -136,7 +137,7 @@ app.use((req, res, next) => {
 
   next();
 });
-
+*/
 app.use("/api/auth", require("./routes/auth/authRoutes"));
 app.use("/api/v1", require("./routes/api/apiRoutes"));
 
