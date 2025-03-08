@@ -15,24 +15,27 @@ const initializeDatabase = async () => {
   db = await getDb();
 };
 
-async function setUp() {
-  await initalize()
+let index = null;
+
+async function setUpFAISS() {
+  await initalize();
+  const universities = JSON.parse(
+    fs.readFileSync("./info/colleges.json", "utf-8")
+  );
+
+  const universityVectors = universities.map((uni) => uni.normalizedVector);
+  const universityNames = universities.map((uni) => uni.name);
+
+  const dimension = universityVectors[0].length;
+  index = new faiss.IndexFlatIP(dimension);
+  index.add(universityVectors);
 }
 
-setUp()
+setUpFAISS();
 
 const url = "https://creative-horse-1afc49.netlify.app";
 
 initializeDatabase();
-
-const universities = JSON.parse(fs.readFileSync("./info/colleges.json", "utf-8"));
-
-const universityVectors = universities.map((uni) => uni.normalizedVector);
-const universityNames = universities.map((uni) => uni.name);
-
-const dimension = universityVectors[0].length;
-const index = new faiss.IndexFlatIP(dimension);
-index.add(universityVectors);
 
 exports.getUniversities = async (req, res) => {
   try {
@@ -594,7 +597,7 @@ exports.getCollegePreferences = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    if(!user.collegePrefVector) {
+    if (!user.collegePrefVector) {
       return res
         .status(404)
         .json({ success: false, message: "No college preferences found" });
@@ -622,8 +625,8 @@ exports.getCollegePreferences = async (req, res) => {
           climate: university.climate,
           socialLife: university.socialLife,
           campusSize: university.campusSize,
-          gpa: university.gpa
-        }
+          gpa: university.gpa,
+        },
       };
     });
 

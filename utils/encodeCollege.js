@@ -78,6 +78,8 @@ function initalize() {
     universities,
     JSON.stringify(universitiesWithVectors, null, 2)
   );
+
+  return universitiesWithVectors;
 }
 
 module.exports = { initalize };
