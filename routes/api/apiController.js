@@ -18,6 +18,7 @@ const initializeDatabase = async () => {
 let index = null;
 
 async function initializeFAISS() {
+  await initialize();
   try {
     // 1. Load and validate university data
     const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
@@ -72,7 +73,7 @@ async function initializeFAISS() {
       index,
       metadata: validUniversities.map(uni => ({
         name: uni.name,
-        id: uni.id // Add unique identifier if available
+        id: 1 // Add unique identifier if available
       }))
     };
 
