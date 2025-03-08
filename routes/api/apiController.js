@@ -23,6 +23,8 @@ async function setUpFAISS() {
     fs.readFileSync("./info/colleges.json", "utf-8")
   );
 
+  console.log(universities)
+
   const universityVectors = universities.map((uni) => uni.normalizedVector);
   const universityNames = universities.map((uni) => uni.name);
 
