@@ -78,8 +78,6 @@ function initalize() {
     normalizedVector: encodeUniversityAttributes(uni),
   }));
 
-  console.log(universitiesWithVectors); // Log universities with vectors
-
   fs.writeFileSync(
     "./info/colleges.json",
     JSON.stringify(universitiesWithVectors, null, 2)

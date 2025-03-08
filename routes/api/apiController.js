@@ -23,13 +23,21 @@ async function setUpFAISS() {
     fs.readFileSync("./info/colleges.json", "utf-8")
   );
 
-  console.log(universities)
+  console.log(universities);
 
-  const universityVectors = universities.map((uni) => uni.normalizedVector);
+  const dimensions = universities.map((uni) => uni.normalizedVector.length);
+  console.log(dimensions);
+  if (new Set(dimensions).size !== 1) {
+    console.error('Vectors have different lengths!');
+    return;
+  }
+
+  const universityVectors = universities.map((uni) => new Float32Array(uni.normalizedVector));
   const universityNames = universities.map((uni) => uni.name);
 
   const dimension = universityVectors[0].length;
-  index = new faiss.IndexFlatIP(dimension);
+  const index = new faiss.IndexFlatIP(dimension);
+
   index.add(universityVectors);
 }
 
