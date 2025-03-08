@@ -16,15 +16,13 @@ const {
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const initializeDatabase = async () => {
-  db = await getDb(); // Ensure db is fetched after initialization
+  db = await getDb();
 };
 
-// Call initializeDatabase when the module is first loaded
 initializeDatabase();
 
 const url = "https://creative-horse-1afc49.netlify.app"
 
-// Register a new user
 exports.register = async (req, res) => {
   if (!db) {
     db = getDb();

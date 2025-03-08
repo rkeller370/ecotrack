@@ -1,22 +1,32 @@
 const { getDb, initializeMongo } = require("../../config/db");
 const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
+const { encodeUserPreferences } = require("../../utils/encodePref");
 const { OpenAI } = require("openai");
 const axios = require("axios");
+const fs = require("fs");
+const faiss = require("faiss-node");
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 const initializeDatabase = async () => {
-  db = await getDb(); // Ensure db is fetched after initialization
+  db = await getDb();
 };
 
-const url = "https://creative-horse-1afc49.netlify.app"
+const url = "https://creative-horse-1afc49.netlify.app";
 
-// Call initializeDatabase when the module is first loaded
 initializeDatabase();
 
-// Get universities
+const universities = JSON.parse(fs.readFileSync("universities.json", "utf-8"));
+
+const universityVectors = universities.map((uni) => uni.normalizedVector);
+const universityNames = universities.map((uni) => uni.name);
+
+const dimension = universityVectors[0].length;
+const index = new faiss.IndexFlatIP(dimension);
+index.add(universityVectors);
+
 exports.getUniversities = async (req, res) => {
   try {
     const { college } = req.query;
@@ -90,24 +100,37 @@ exports.evaluateStudent = async (req, res) => {
     }
 
     const allowedFields = [
-      "gpa", "major", "gradeLevel", "classRank", "currentCourses",
-      "studyHours", "studyMethods", "strengths", "weaknesses",
-      "extracurriculars", "targetSchool", "testsTaken", "testScores",
-      "skills", "awards"
+      "gpa",
+      "major",
+      "gradeLevel",
+      "classRank",
+      "currentCourses",
+      "studyHours",
+      "studyMethods",
+      "strengths",
+      "weaknesses",
+      "extracurriculars",
+      "targetSchool",
+      "testsTaken",
+      "testScores",
+      "skills",
+      "awards",
     ];
 
     const validatedData = {};
-    
+
     for (const field of allowedFields) {
       if (studentData[field] !== undefined) {
-        validatedData[field] = sanitizeInput(studentData[field],field == "extracurriculars" ? 700 : 200);
+        validatedData[field] = sanitizeInput(
+          studentData[field],
+          field == "extracurriculars" ? 700 : 200
+        );
       }
     }
 
-    await db.collection("users").updateOne(
-      { userId: req.user },
-      { $set: validatedData }
-    );
+    await db
+      .collection("users")
+      .updateOne({ userId: req.user }, { $set: validatedData });
 
     const prompt = `You are an elite AI-powered college admissions consultant, specializing in meticulously analyzing high school student applications. Your mission is to deliver an extraordinarily detailed evaluation, packed with precise, high-value recommendations that dramatically increase the student’s admission chances at their target colleges.
 
@@ -468,7 +491,7 @@ exports.getSettings = async (req, res) => {
       apptwo: false,
       emailtwo: false,
       emailNot: true,
-    }
+    };
     const user = await db.collection("users").findOne({ userId: req.user });
     if (!user) {
       return res
@@ -476,7 +499,13 @@ exports.getSettings = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    return res.json({ success: true, settings: user.settings ? user.settings : defaultSettings, email: user.email, name: user.name, auth: user.auth });
+    return res.json({
+      success: true,
+      settings: user.settings ? user.settings : defaultSettings,
+      email: user.email,
+      name: user.name,
+      auth: user.auth,
+    });
   } catch (error) {
     console.error("Error:", error);
     return res
@@ -492,11 +521,11 @@ exports.submitCollegePreferences = async (req, res) => {
   try {
     const studentData = req.body;
 
-    if(!studentData) {
+    if (!studentData) {
       return res.status(400).json({
         success: false,
-        message: "Missing student data"
-      })
+        message: "Missing student data",
+      });
     }
     const user = await db.collection("users").findOne({ userId: req.user });
     if (!user) {
@@ -506,20 +535,37 @@ exports.submitCollegePreferences = async (req, res) => {
     }
 
     const allowedFields = [
-      "location","type","goodMajor","tuition","athletics","rigor","diversity","jobOpp","abroad","housing","climate","socialLife","size"
+      "location",
+      "type",
+      "goodMajor",
+      "tuition",
+      "athletics",
+      "rigor",
+      "diversity",
+      "jobOpp",
+      "abroad",
+      "housing",
+      "climate",
+      "socialLife",
+      "size",
     ];
 
     const validatedData = {};
-    
+
     for (const field of allowedFields) {
       if (studentData[field] !== undefined) {
         validatedData[field] = sanitizeInput(studentData[field]);
       }
     }
 
+    const userVector = encodeUserPreferences(validatedData);
+
     await db
       .collection("users")
-      .updateOne({ userId: req.user }, { $set: { collegePref: validatedData } });
+      .updateOne(
+        { userId: req.user },
+        { $set: { collegePref: validatedData, collegePrefVector: userVector } }
+      );
     return res.json({ success: true });
   } catch (error) {
     console.error("Error:", error);
@@ -527,4 +573,58 @@ exports.submitCollegePreferences = async (req, res) => {
       .status(500)
       .json({ error: "An error occurred while processing the request." });
   }
-}
+};
+
+exports.getCollegePreferences = async (req, res) => {
+  if (!db) {
+    db = getDb();
+  }
+  try {
+    const user = await db.collection("users").findOne({ userId: req.user });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if(!user.collegePrefVector) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No college preferences found" });
+    }
+
+    const k = 20;
+    const { distances, labels } = index.search([user.collegePrefVector], k);
+
+    const results = labels[0].map((label, i) => {
+      const university = universities[label];
+      const matchPercentage = ((distances[0][i] + 1) * 50).toFixed(2);
+      return {
+        name: university.name,
+        match_percentage: parseFloat(matchPercentage),
+        details: {
+          location: university.location,
+          type: university.type,
+          tuition: university.tuition,
+          athletics: university.athletics,
+          academicRigor: university.academicRigor,
+          diversity: university.diversity,
+          internships: university.internships,
+          studyAbroad: university.studyAbroad,
+          housing: university.housing,
+          climate: university.climate,
+          socialLife: university.socialLife,
+          campusSize: university.campusSize,
+          gpa: university.gpa
+        }
+      };
+    });
+
+    return res.json({ results: results });
+  } catch (error) {
+    console.error("Error:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while processing the request." });
+  }
+};
