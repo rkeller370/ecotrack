@@ -23,6 +23,7 @@ async function setUpFAISS() {
     fs.readFileSync("./info/colleges.json", "utf-8")
   );
 
+  // Check if all vectors have the same length
   const dimensions = universities.map(uni => uni.normalizedVector.length);
   const uniqueDimensions = new Set(dimensions);
   
@@ -31,22 +32,21 @@ async function setUpFAISS() {
     return;
   }
 
-  const dimension = dimensions[0];
+  const dimension = dimensions[0]; // Vector dimension
   const numUniversities = universities.length;
-  const flatVectors = new Float32Array(numUniversities * dimension);
-  
-  universities.forEach((uni, index) => {
-    if (!Array.isArray(uni.normalizedVector)) {
-      throw new Error(`Invalid vector format for ${uni.name}. Expected array.`);
-    }
-    flatVectors.set(uni.normalizedVector, index * dimension);
-  });
 
+  // Create a 2D array where each row is a university's normalized vector
+  const flatVectors = universities.map(uni => new Float32Array(uni.normalizedVector));
+
+  // Create the FAISS index
   const index = new faiss.IndexFlatIP(dimension);
+
+  // Add vectors to the FAISS index (each vector is a row in flatVectors)
   index.add(flatVectors);
 
   return index;
 }
+
 
 // Usage
 setUpFAISS()
