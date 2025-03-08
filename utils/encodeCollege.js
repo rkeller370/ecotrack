@@ -35,12 +35,16 @@ function encodeUniversityAttributes(university) {
     moderate: 1,
     "not-important": 0,
   };
+
+  // Adding default values when data is missing
+  const safeGetOrdinal = (value) => ordinalMap[value] || 0;
+
   vector.push(
-    ordinalMap[university.academicRigor] / 3,
-    ordinalMap[university.athletics] / 3,
-    ordinalMap[university.diversity] / 3,
-    ordinalMap[university.internships] / 3,
-    ordinalMap[university.studyAbroad] / 3
+    safeGetOrdinal(university.academicRigor) / 3,
+    safeGetOrdinal(university.athletics) / 3,
+    safeGetOrdinal(university.diversity) / 3,
+    safeGetOrdinal(university.internships) / 3,
+    safeGetOrdinal(university.studyAbroad) / 3
   );
 
   vector.push(
@@ -73,6 +77,8 @@ function initalize() {
     ...uni,
     normalizedVector: encodeUniversityAttributes(uni),
   }));
+
+  console.log(universitiesWithVectors); // Log universities with vectors
 
   fs.writeFileSync(
     "./info/colleges.json",
