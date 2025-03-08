@@ -86,4 +86,4 @@ function initialize() {
   return universitiesWithVectors;
 }
 
-module.exports = { initalize };
+module.exports = { initialize };
