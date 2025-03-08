@@ -18,7 +18,7 @@ const url = "https://creative-horse-1afc49.netlify.app";
 
 initializeDatabase();
 
-const universities = JSON.parse(fs.readFileSync("universities.json", "utf-8"));
+const universities = JSON.parse(fs.readFileSync("../info/colleges.json", "utf-8"));
 
 const universityVectors = universities.map((uni) => uni.normalizedVector);
 const universityNames = universities.map((uni) => uni.name);
