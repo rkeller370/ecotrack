@@ -581,7 +581,8 @@ exports.getCollegePreferences = async (req, res) => {
 
   try {
     let { pg } = req.body;
-    if (!pg || !Number.isInteger(pg)) {
+    pg = Number(pg)
+    if (!pg || pg < 1 || !Number.isInteger(pg)) {
       pg = 1;
     }
 
