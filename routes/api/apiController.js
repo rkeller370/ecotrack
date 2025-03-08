@@ -643,34 +643,55 @@ exports.getCollegePreferences = async (req, res) => {
   if (!db) {
     db = getDb();
   }
+  
   try {
-    // Retrieve the user document
+    // Retrieve user from database
     const user = await db.collection("users").findOne({ userId: req.user });
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
     if (!user.collegePrefVector) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No college preferences found" });
+      return res.status(404).json({ 
+        success: false, 
+        message: "No college preferences found" 
+      });
     }
 
-    // Set number of nearest neighbors to return
-    const k = 20;
-    // Use the FAISS index to search. Pass the user's vector directly.
-    const { distances, labels } = index.search(user.collegePrefVector, k);
+    // Convert to proper FAISS format
+    let userVector;
+    try {
+      userVector = new Float32Array(user.collegePrefVector);
+    } catch (e) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid vector format in database"
+      });
+    }
 
-    // Map search results to university details.
-    // Ensure that `universities` is accessible (e.g., loaded from your JSON file or a global variable)
+    // Verify dimensions match FAISS index
+    const expectedDimension = index.d;
+    if (userVector.length !== expectedDimension) {
+      return res.status(400).json({
+        success: false,
+        message: `Vector dimension mismatch. Expected ${expectedDimension}, got ${userVector.length}`
+      });
+    }
+
+    // FAISS requires 2D array even for single vectors
+    const queryMatrix = new Float32Array(expectedDimension);
+    queryMatrix.set(userVector);
+
+    // Perform search with proper typing
+    const k = 20;
+    const { distances, labels } = index.search(queryMatrix, k);
+
+    // Map results to university data
     const results = labels.map((label, i) => {
       const university = universities[label];
-      // For normalized vectors using inner product,
-      // dot products range from -1 to 1. Adjust accordingly for a match percentage.
-      const matchPercentage = ((distances[i] + 1) * 50).toFixed(2);
       return {
         name: university.name,
-        match_percentage: parseFloat(matchPercentage),
+        match_percentage: ((distances[i] + 1) * 50).toFixed(2),
         details: {
           location: university.location,
           type: university.type,
@@ -684,16 +705,18 @@ exports.getCollegePreferences = async (req, res) => {
           climate: university.climate,
           socialLife: university.socialLife,
           campusSize: university.campusSize,
-          gpa: university.gpa,
-        },
+          gpa: university.gpa
+        }
       };
     });
 
     return res.json({ results });
+
   } catch (error) {
-    console.error("Error:", error);
+    console.error("FAISS Search Error:", error);
     return res.status(500).json({
-      error: "An error occurred while processing the request."
+      error: "Search operation failed",
+      details: error.message
     });
   }
 };
