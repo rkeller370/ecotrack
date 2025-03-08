@@ -75,7 +75,7 @@ exports.evaluateStudent = async (req, res) => {
     db = getDb();
   }
   try {
-    const studentData = req.body;
+    const studentData = req.query;
     const user = await db.collection("users").findOne({ userId: req.user });
 
     if (!studentData) {
