@@ -643,77 +643,64 @@ exports.getCollegePreferences = async (req, res) => {
   if (!db) {
     db = getDb();
   }
-  
+
   try {
-    // Retrieve user from database
+    // Load universities
+    const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
+    const universities = JSON.parse(rawData).filter(uni => 
+      Array.isArray(uni.normalizedVector) && 
+      uni.normalizedVector.every(Number.isFinite)
+    );
+
+    // Get user
     const user = await db.collection("users").findOne({ userId: req.user });
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+    if (!user?.collegePrefVector) {
+      return res.status(404).json({ success: false, message: "No preferences found" });
     }
 
-    if (!user.collegePrefVector) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "No college preferences found" 
-      });
-    }
+    // Convert to Float32Array for performance
+    const userVector = new Float32Array(user.collegePrefVector);
+    const userNorm = Math.sqrt(userVector.reduce((sum, val) => sum + val * val, 0));
 
-    // Convert to proper FAISS format
-    let userVector;
-    try {
-      userVector = new Float32Array(user.collegePrefVector);
-    } catch (e) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid vector format in database"
-      });
-    }
+    // Calculate cosine similarity for each university
+    const results = universities.map(uni => {
+      const uniVector = new Float32Array(uni.normalizedVector);
+      
+      // Calculate dot product
+      let dotProduct = 0;
+      for (let i = 0; i < userVector.length; i++) {
+        dotProduct += userVector[i] * uniVector[i];
+      }
+      
+      // Calculate magnitudes
+      const uniNorm = Math.sqrt(uniVector.reduce((sum, val) => sum + val * val, 0));
+      const similarity = dotProduct / (userNorm * uniNorm);
 
-    // Verify dimensions match FAISS index
-    const expectedDimension = index.d;
-    if (userVector.length !== expectedDimension) {
-      return res.status(400).json({
-        success: false,
-        message: `Vector dimension mismatch. Expected ${expectedDimension}, got ${userVector.length}`
-      });
-    }
-
-    // FAISS requires 2D array even for single vectors
-    const queryMatrix = new Float32Array(expectedDimension);
-    queryMatrix.set(userVector);
-
-    // Perform search with proper typing
-    const k = 20;
-    const { distances, labels } = index.search(queryMatrix, k);
-
-    // Map results to university data
-    const results = labels.map((label, i) => {
-      const university = universities[label];
       return {
-        name: university.name,
-        match_percentage: ((distances[i] + 1) * 50).toFixed(2),
+        name: uni.name,
+        similarity: similarity,
         details: {
-          location: university.location,
-          type: university.type,
-          tuition: university.tuition,
-          athletics: university.athletics,
-          academicRigor: university.academicRigor,
-          diversity: university.diversity,
-          internships: university.internships,
-          studyAbroad: university.studyAbroad,
-          housing: university.housing,
-          climate: university.climate,
-          socialLife: university.socialLife,
-          campusSize: university.campusSize,
-          gpa: university.gpa
+          location: uni.location,
+          type: uni.type,
+          tuition: uni.tuition,
+          // ... other fields
         }
       };
-    });
+    })
+    // Sort descending by similarity
+    .sort((a, b) => b.similarity - a.similarity)
+    // Take top 20
+    .slice(0, 20)
+    // Convert to percentage
+    .map(item => ({
+      ...item,
+      match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)
+    }));
 
     return res.json({ results });
 
   } catch (error) {
-    console.error("FAISS Search Error:", error);
+    console.error("Error:", error);
     return res.status(500).json({
       error: "Search operation failed",
       details: error.message
