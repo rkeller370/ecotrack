@@ -440,7 +440,12 @@ exports.reviewEssay = async (req, res) => {
     3. Never use vague statements - ALWAYS anchor in text
     4. Prioritize changes with biggest admissions impact
 
-    ** RETURN ONLY A JSON FILE, DO NOT PROVIDE TEXT RESPONSES, DO NOT WRAP IT IN A CODE BLOCK. JSON MUST BE FULLY FUNCTIONAL AND CONTAIN NO ERRORS **
+    ** RETURN ONLY A JSON FILE, DO NOT PROVIDE TEXT RESPONSES, DO NOT WRAP IT IN A CODE BLOCK. **
+
+    **OTHER INSTRUCTIONS:**
+    1. Move ALL parenthetical line numbers inside the quotes.
+    2. Escape any internal double quotes in examples:
+    "example": "\"I was angry\" (line 6)"
     
     Essay: ${sanitizeEssayInput(essay)}`;
 
