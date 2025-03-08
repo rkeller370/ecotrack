@@ -647,8 +647,8 @@ exports.getCollegePreferences = async (req, res) => {
   try {
     // Load universities
     const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
-    const universities = JSON.parse(rawData).filter(uni => 
-      Array.isArray(uni.normalizedVector) && 
+    const universities = JSON.parse(rawData).filter(uni =>
+      Array.isArray(uni.normalizedVector) &&
       uni.normalizedVector.every(Number.isFinite)
     );
 
@@ -694,7 +694,7 @@ exports.getCollegePreferences = async (req, res) => {
     // Convert to percentage
     .map(item => ({
       ...item,
-      match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)
+      match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)) // Fixed parentheses here
     }));
 
     return res.json({ results });
