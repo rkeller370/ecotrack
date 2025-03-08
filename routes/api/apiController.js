@@ -75,7 +75,7 @@ exports.evaluateStudent = async (req, res) => {
     db = getDb();
   }
   try {
-    const studentData = req.query;
+    const studentData = req.body;
     const user = await db.collection("users").findOne({ userId: req.user });
 
     if (!studentData) {
@@ -580,7 +580,7 @@ exports.getCollegePreferences = async (req, res) => {
   }
 
   try {
-    let { pg } = req.body;
+    let { pg } = req.query;
     pg = Number(pg)
     if (!pg || pg < 1 || !Number.isInteger(pg) || pg === 'NaN' || pg === 'Infinity') {
       pg = 1;
