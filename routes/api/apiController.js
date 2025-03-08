@@ -582,7 +582,7 @@ exports.getCollegePreferences = async (req, res) => {
   try {
     let { pg } = req.body;
     pg = Number(pg)
-    if (!pg || pg < 1 || !Number.isInteger(pg)) {
+    if (!pg || pg < 1 || !Number.isInteger(pg) || pg === 'NaN' || pg === 'Infinity') {
       pg = 1;
     }
 
