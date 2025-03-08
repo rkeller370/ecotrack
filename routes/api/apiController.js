@@ -645,67 +645,100 @@ exports.getCollegePreferences = async (req, res) => {
   }
 
   try {
-    // Load universities
+    // Load and filter universities
     const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
     const universities = JSON.parse(rawData).filter(uni =>
       Array.isArray(uni.normalizedVector) &&
       uni.normalizedVector.every(Number.isFinite)
     );
 
-    // Get user
+    // Retrieve user document
     const user = await db.collection("users").findOne({ userId: req.user });
     if (!user?.collegePrefVector) {
-      return res.status(404).json({ success: false, message: "No preferences found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "No preferences found" });
     }
 
-    // Convert to Float32Array for performance
+    // Convert user's college preference vector to a Float32Array
     const userVector = new Float32Array(user.collegePrefVector);
-    const userNorm = Math.sqrt(userVector.reduce((sum, val) => sum + val * val, 0));
+    const userNorm = Math.sqrt(
+      userVector.reduce((sum, val) => sum + val * val, 0)
+    );
+    if (userNorm === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User preference vector norm is zero" });
+    }
 
     // Calculate cosine similarity for each university
-    const results = universities.map(uni => {
-      const uniVector = new Float32Array(uni.normalizedVector);
-      
-      // Calculate dot product
-      let dotProduct = 0;
-      for (let i = 0; i < userVector.length; i++) {
-        dotProduct += userVector[i] * uniVector[i];
-      }
-      
-      // Calculate magnitudes
-      const uniNorm = Math.sqrt(uniVector.reduce((sum, val) => sum + val * val, 0));
-      const similarity = dotProduct / (userNorm * uniNorm);
+    const results = universities
+      .map(uni => {
+        const uniVector = new Float32Array(uni.normalizedVector);
 
-      return {
-        name: uni.name,
-        similarity: similarity,
-        details: {
-          location: uni.location,
-          type: uni.type,
-          tuition: uni.tuition,
-          // ... other fields
+        // Check that dimensions match
+        if (userVector.length !== uniVector.length) {
+          console.warn(
+            `Dimension mismatch for ${uni.name}: user vector length ${userVector.length}, university vector length ${uniVector.length}`
+          );
+          return null;
         }
-      };
-    })
-    // Sort descending by similarity
-    .sort((a, b) => b.similarity - a.similarity)
-    // Take top 20
-    .slice(0, 20)
-    // Convert to percentage
-    .map(item => ({
-      ...item,
-      match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)) // Fixed parentheses here
-    }));
 
-    console.log(results)
+        // Compute dot product
+        let dotProduct = 0;
+        for (let i = 0; i < userVector.length; i++) {
+          dotProduct += userVector[i] * uniVector[i];
+        }
 
+        // Compute university vector norm
+        const uniNorm = Math.sqrt(
+          uniVector.reduce((sum, val) => sum + val * val, 0)
+        );
+        // If uniNorm is zero, similarity cannot be computed; skip this uni.
+        if (uniNorm === 0) return null;
+
+        // Calculate cosine similarity
+        const similarity = dotProduct / (userNorm * uniNorm);
+
+        return {
+          name: uni.name,
+          similarity: similarity,
+          details: {
+            location: uni.location,
+            type: uni.type,
+            tuition: uni.tuition,
+            athletics: uni.athletics,
+            academicRigor: uni.academicRigor,
+            diversity: uni.diversity,
+            internships: uni.internships,
+            studyAbroad: uni.studyAbroad,
+            housing: uni.housing,
+            climate: uni.climate,
+            socialLife: uni.socialLife,
+            campusSize: uni.campusSize,
+            gpa: uni.gpa,
+          },
+        };
+      })
+      // Remove any universities with issues (null values)
+      .filter(item => item !== null)
+      // Sort by descending similarity
+      .sort((a, b) => b.similarity - a.similarity)
+      // Limit to top 20 results
+      .slice(0, 20)
+      // Convert similarity to a match percentage, assuming cosine similarity in [-1, 1]
+      .map(item => ({
+        ...item,
+        match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)),
+      }));
+
+    console.log(results);
     return res.json({ results });
-
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
       error: "Search operation failed",
-      details: error.message
+      details: error.message,
     });
   }
 };
