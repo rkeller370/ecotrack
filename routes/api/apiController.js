@@ -38,8 +38,10 @@ async function setUpFAISS() {
   // Create a 2D array where each row is a university's normalized vector
   const flatVectors = universities.map(uni => new Float32Array(uni.normalizedVector));
 
+  console.log(flatVectors)
+
   // Create the FAISS index
-  const index = new faiss.IndexFlatIP(dimension);
+  const index = new faiss.IndexFlatL2(dimension);
 
   // Add vectors to the FAISS index (each vector is a row in flatVectors)
   index.add(flatVectors);
