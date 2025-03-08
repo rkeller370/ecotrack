@@ -655,33 +655,40 @@ exports.getCollegePreferences = async (req, res) => {
     // Retrieve user document
     const user = await db.collection("users").findOne({ userId: req.user });
     if (!user?.collegePrefVector) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No preferences found" });
+      return res.status(404).json({ success: false, message: "No preferences found" });
     }
 
     // Convert user's college preference vector to a Float32Array
     const userVector = new Float32Array(user.collegePrefVector);
-    const userNorm = Math.sqrt(
-      userVector.reduce((sum, val) => sum + val * val, 0)
-    );
+    const userNorm = Math.sqrt(userVector.reduce((sum, val) => sum + val * val, 0));
+
+    // If the user norm is zero, return error as similarity can't be calculated
     if (userNorm === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User preference vector norm is zero" });
+      return res.status(400).json({ success: false, message: "User preference vector norm is zero" });
     }
 
     // Calculate cosine similarity for each university
     const results = universities
       .map(uni => {
-        const uniVector = new Float32Array(uni.normalizedVector);
+        let uniVector = new Float32Array(uni.normalizedVector);
 
-        // Check that dimensions match
+        // Check that vectors have the same length, if not pad the shorter one
         if (userVector.length !== uniVector.length) {
-          console.warn(
-            `Dimension mismatch for ${uni.name}: user vector length ${userVector.length}, university vector length ${uniVector.length}`
-          );
-          return null;
+          const maxLength = Math.max(userVector.length, uniVector.length);
+          
+          // Create new vectors with max length
+          const paddedUserVector = new Float32Array(maxLength);
+          const paddedUniVector = new Float32Array(maxLength);
+          
+          // Copy values from original vectors
+          paddedUserVector.set(userVector);
+          paddedUniVector.set(uniVector);
+
+          // Assign padded vectors back
+          userVector = paddedUserVector;
+          uniVector = paddedUniVector;
+
+          console.warn(`Dimension mismatch for ${uni.name}: padded vectors to length ${maxLength}`);
         }
 
         // Compute dot product
@@ -691,10 +698,9 @@ exports.getCollegePreferences = async (req, res) => {
         }
 
         // Compute university vector norm
-        const uniNorm = Math.sqrt(
-          uniVector.reduce((sum, val) => sum + val * val, 0)
-        );
-        // If uniNorm is zero, similarity cannot be computed; skip this uni.
+        const uniNorm = Math.sqrt(uniVector.reduce((sum, val) => sum + val * val, 0));
+
+        // If uniNorm is zero, similarity can't be calculated
         if (uniNorm === 0) return null;
 
         // Calculate cosine similarity
@@ -720,7 +726,7 @@ exports.getCollegePreferences = async (req, res) => {
           },
         };
       })
-      // Remove any universities with issues (null values)
+      // Remove any universities with null results due to errors or dimension mismatch
       .filter(item => item !== null)
       // Sort by descending similarity
       .sort((a, b) => b.similarity - a.similarity)
@@ -732,8 +738,9 @@ exports.getCollegePreferences = async (req, res) => {
         match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)),
       }));
 
-    console.log(results);
+    console.log(results); // Logs the results for debugging
     return res.json({ results });
+
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
