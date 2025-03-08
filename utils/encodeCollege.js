@@ -72,7 +72,7 @@ function encodeUniversityAttributes(university) {
   return vector.map((v) => v / norm);
 }
 
-function initalize() {
+function initialize() {
   const universitiesWithVectors = universities.map((uni) => ({
     ...uni,
     normalizedVector: encodeUniversityAttributes(uni),

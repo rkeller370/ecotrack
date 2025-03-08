@@ -1,7 +1,7 @@
 const { getDb, initializeMongo } = require("../../config/db");
 const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
 const { encodeUserPreferences } = require("../../utils/encodePref");
-const { initalize } = require("../../utils/encodeCollege");
+const { initialize } = require("../../utils/encodeCollege");
 const { OpenAI } = require("openai");
 const axios = require("axios");
 const fs = require("fs");
@@ -18,28 +18,44 @@ const initializeDatabase = async () => {
 let index = null;
 
 async function setUpFAISS() {
-  await initalize();
+  await initialize();
   const universities = JSON.parse(
     fs.readFileSync("./info/colleges.json", "utf-8")
   );
 
-  const dimensions = universities.map((uni) => uni.normalizedVector.length);
-  console.log(dimensions);
-  if (new Set(dimensions).size !== 1) {
-    console.error('Vectors have different lengths!');
+  const dimensions = universities.map(uni => uni.normalizedVector.length);
+  const uniqueDimensions = new Set(dimensions);
+  
+  if (uniqueDimensions.size !== 1) {
+    console.error('Vectors have different lengths! Found dimensions:', [...uniqueDimensions]);
     return;
   }
 
-  const universityVectors = universities.map((uni) => new Float32Array(uni.normalizedVector));
-  const universityNames = universities.map((uni) => uni.name);
+  const dimension = dimensions[0];
+  const numUniversities = universities.length;
+  const flatVectors = new Float32Array(numUniversities * dimension);
+  
+  universities.forEach((uni, index) => {
+    if (!Array.isArray(uni.normalizedVector)) {
+      throw new Error(`Invalid vector format for ${uni.name}. Expected array.`);
+    }
+    flatVectors.set(uni.normalizedVector, index * dimension);
+  });
 
-  const dimension = universityVectors[0].length;
   const index = new faiss.IndexFlatIP(dimension);
+  index.add(flatVectors, numUniversities);
 
-  index.add(universityVectors);
+  return index;
 }
 
-setUpFAISS();
+// Usage
+setUpFAISS()
+  .then(index => {
+    console.log('FAISS index ready with', index.ntotal, 'vectors');
+  })
+  .catch(err => {
+    console.error('FAISS initialization failed:', err);
+  });
 
 const url = "https://creative-horse-1afc49.netlify.app";
 
