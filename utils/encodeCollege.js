@@ -75,7 +75,7 @@ function initalize() {
   }));
 
   fs.writeFileSync(
-    universities,
+    "./info/colleges.json",
     JSON.stringify(universitiesWithVectors, null, 2)
   );
 
