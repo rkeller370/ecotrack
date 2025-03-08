@@ -644,11 +644,10 @@ exports.getCollegePreferences = async (req, res) => {
     db = getDb();
   }
   try {
+    // Retrieve the user document
     const user = await db.collection("users").findOne({ userId: req.user });
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
     if (!user.collegePrefVector) {
@@ -657,12 +656,18 @@ exports.getCollegePreferences = async (req, res) => {
         .json({ success: false, message: "No college preferences found" });
     }
 
+    // Set number of nearest neighbors to return
     const k = 20;
-    const { distances, labels } = index.search([user.collegePrefVector], k);
+    // Use the FAISS index to search. Pass the user's vector directly.
+    const { distances, labels } = index.search(user.collegePrefVector, k);
 
-    const results = labels[0].map((label, i) => {
+    // Map search results to university details.
+    // Ensure that `universities` is accessible (e.g., loaded from your JSON file or a global variable)
+    const results = labels.map((label, i) => {
       const university = universities[label];
-      const matchPercentage = ((distances[0][i] + 1) * 50).toFixed(2);
+      // For normalized vectors using inner product,
+      // dot products range from -1 to 1. Adjust accordingly for a match percentage.
+      const matchPercentage = ((distances[i] + 1) * 50).toFixed(2);
       return {
         name: university.name,
         match_percentage: parseFloat(matchPercentage),
@@ -684,11 +689,11 @@ exports.getCollegePreferences = async (req, res) => {
       };
     });
 
-    return res.json({ results: results });
+    return res.json({ results });
   } catch (error) {
     console.error("Error:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while processing the request." });
+    return res.status(500).json({
+      error: "An error occurred while processing the request."
+    });
   }
 };
