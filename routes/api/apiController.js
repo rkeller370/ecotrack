@@ -659,7 +659,7 @@ exports.getCollegePreferences = async (req, res) => {
     }
 
     // Convert user's college preference vector to a Float32Array
-    const userVector = new Float32Array(user.collegePrefVector);
+    let userVector = new Float32Array(user.collegePrefVector);
     const userNorm = Math.sqrt(userVector.reduce((sum, val) => sum + val * val, 0));
 
     // If the user norm is zero, return error as similarity can't be calculated
