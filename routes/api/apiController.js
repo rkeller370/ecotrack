@@ -43,7 +43,7 @@ async function setUpFAISS() {
   });
 
   const index = new faiss.IndexFlatIP(dimension);
-  index.add(flatVectors, numUniversities);
+  index.add(flatVectors);
 
   return index;
 }
