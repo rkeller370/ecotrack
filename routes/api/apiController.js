@@ -1,6 +1,7 @@
 const { getDb, initializeMongo } = require("../../config/db");
 const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
 const { encodeUserPreferences } = require("../../utils/encodePref");
+const { initalize } = require("../../utils/encodeCollege");
 const { OpenAI } = require("openai");
 const axios = require("axios");
 const fs = require("fs");
@@ -14,11 +15,17 @@ const initializeDatabase = async () => {
   db = await getDb();
 };
 
+async function setUp() {
+  await initalize()
+}
+
+setUp()
+
 const url = "https://creative-horse-1afc49.netlify.app";
 
 initializeDatabase();
 
-const universities = JSON.parse(fs.readFileSync("../info/colleges.json", "utf-8"));
+const universities = JSON.parse(fs.readFileSync("./info/colleges.json", "utf-8"));
 
 const universityVectors = universities.map((uni) => uni.normalizedVector);
 const universityNames = universities.map((uni) => uni.name);
