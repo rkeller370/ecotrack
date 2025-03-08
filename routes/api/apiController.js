@@ -23,8 +23,6 @@ async function setUpFAISS() {
     fs.readFileSync("./info/colleges.json", "utf-8")
   );
 
-  console.log(universities);
-
   const dimensions = universities.map((uni) => uni.normalizedVector.length);
   console.log(dimensions);
   if (new Set(dimensions).size !== 1) {
