@@ -19,73 +19,9 @@ let index = null;
 
 async function initializeFAISS() {
   await initialize();
-  try {
-    // 1. Load and parse the JSON file
-    const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
-    const universities = JSON.parse(rawData);
-
-    if (!Array.isArray(universities) || universities.length === 0) {
-      throw new Error("No universities found in JSON file");
-    }
-
-    // 2. Filter out entries with invalid normalizedVector arrays
-    const validUniversities = universities.filter(uni =>
-      Array.isArray(uni.normalizedVector) &&
-      uni.normalizedVector.length > 0 &&
-      uni.normalizedVector.every(n => Number.isFinite(n))
-    );
-
-    if (validUniversities.length !== universities.length) {
-      console.warn(`Filtered ${universities.length - validUniversities.length} invalid vector(s).`);
-    }
-
-    // 3. Verify that all vectors have the same dimension
-    const dims = validUniversities.map(uni => uni.normalizedVector.length);
-    const uniqueDims = [...new Set(dims)];
-    if (uniqueDims.length !== 1) {
-      throw new Error(`Mixed vector dimensions found: ${uniqueDims.join(', ')}`);
-    }
-    const dimension = uniqueDims[0];
-
-    // 4. Initialize the FAISS index (using inner product)
-    index = new faiss.IndexFlatIP(dimension);
-
-    // 5. Add each vector individually using index.add(vector)
-    validUniversities.forEach((uni, idx) => {
-      const vector = uni.normalizedVector.map(Number);
-      if (vector.length !== dimension) {
-        throw new Error(`Vector for university at index ${idx} has invalid dimension`);
-      }
-      index.add(vector);
-    });
-
-    console.log(`Successfully initialized FAISS index with ${validUniversities.length} vectors of dimension ${dimension}.`);
-
-    // Optionally, build metadata for later reference
-    const metadata = validUniversities.map((uni, idx) => ({
-      name: uni.name,
-      id: idx // or use a unique identifier from your data
-    }));
-
-    return { index, metadata };
-
-  } catch (error) {
-    console.error("FAISS initialization failed:", error);
-    process.exit(1);
-  }
 }
 
-// Usage
-let faissIndex;
-let universityMetadata;
-
 initializeFAISS()
-  .then(({ index, metadata }) => {
-    faissIndex = index;
-    universityMetadata = metadata;
-    console.log("FAISS ready for searches");
-  })
-  .catch(err => console.error("Initialization error:", err));
 
 const url = "https://creative-horse-1afc49.netlify.app";
 
@@ -133,7 +69,6 @@ exports.getUniversities = async (req, res) => {
   }
 };
 
-// Evaluate student profile
 exports.evaluateStudent = async (req, res) => {
   if (!db) {
     db = getDb();
@@ -194,7 +129,7 @@ exports.evaluateStudent = async (req, res) => {
 
     await db
       .collection("users")
-      .updateOne({ userId: req.user }, { $set: validatedData });
+      .updateOne({ userId: req.user }, { $set: { inputtedValues: validatedData } });
 
     const prompt = `You are an elite AI-powered college admissions consultant, specializing in meticulously analyzing high school student applications. Your mission is to deliver an extraordinarily detailed evaluation, packed with precise, high-value recommendations that dramatically increase the student’s admission chances at their target colleges.
 
@@ -374,7 +309,6 @@ exports.evaluateStudent = async (req, res) => {
   }
 };
 
-// Get analysis
 exports.getAnalysis = async (req, res) => {
   if (!db) {
     db = getDb();
@@ -395,7 +329,6 @@ exports.getAnalysis = async (req, res) => {
   }
 };
 
-// Review essay
 exports.reviewEssay = async (req, res) => {
   if (!db) {
     db = getDb();
@@ -604,14 +537,15 @@ exports.submitCollegePreferences = async (req, res) => {
       "goodMajor",
       "tuition",
       "athletics",
-      "rigor",
+      "academicRigor",
       "diversity",
-      "jobOpp",
-      "abroad",
+      "internships",
+      "studyAbroad",
       "housing",
       "climate",
       "socialLife",
-      "size",
+      "campusSize",
+      "gpa",
     ];
 
     const validatedData = {};
@@ -645,65 +579,52 @@ exports.getCollegePreferences = async (req, res) => {
   }
 
   try {
-    // Load and filter universities
     const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
     const universities = JSON.parse(rawData).filter(uni =>
       Array.isArray(uni.normalizedVector) &&
       uni.normalizedVector.every(Number.isFinite)
     );
 
-    // Retrieve user document
     const user = await db.collection("users").findOne({ userId: req.user });
     if (!user?.collegePrefVector) {
       return res.status(404).json({ success: false, message: "No preferences found" });
     }
 
-    // Convert user's college preference vector to a Float32Array
     let userVector = new Float32Array(user.collegePrefVector);
     const userNorm = Math.sqrt(userVector.reduce((sum, val) => sum + val * val, 0));
 
-    // If the user norm is zero, return error as similarity can't be calculated
     if (userNorm === 0) {
       return res.status(400).json({ success: false, message: "User preference vector norm is zero" });
     }
 
-    // Calculate cosine similarity for each university
     const results = universities
       .map(uni => {
         let uniVector = new Float32Array(uni.normalizedVector);
 
-        // Check that vectors have the same length, if not pad the shorter one
         if (userVector.length !== uniVector.length) {
           const maxLength = Math.max(userVector.length, uniVector.length);
           
-          // Create new vectors with max length
           const paddedUserVector = new Float32Array(maxLength);
           const paddedUniVector = new Float32Array(maxLength);
           
-          // Copy values from original vectors
           paddedUserVector.set(userVector);
           paddedUniVector.set(uniVector);
 
-          // Assign padded vectors back
           userVector = paddedUserVector;
           uniVector = paddedUniVector;
 
           console.warn(`Dimension mismatch for ${uni.name}: padded vectors to length ${maxLength}`);
         }
 
-        // Compute dot product
         let dotProduct = 0;
         for (let i = 0; i < userVector.length; i++) {
           dotProduct += userVector[i] * uniVector[i];
         }
 
-        // Compute university vector norm
         const uniNorm = Math.sqrt(uniVector.reduce((sum, val) => sum + val * val, 0));
 
-        // If uniNorm is zero, similarity can't be calculated
         if (uniNorm === 0) return null;
 
-        // Calculate cosine similarity
         const similarity = dotProduct / (userNorm * uniNorm);
 
         return {
@@ -726,19 +647,14 @@ exports.getCollegePreferences = async (req, res) => {
           },
         };
       })
-      // Remove any universities with null results due to errors or dimension mismatch
       .filter(item => item !== null)
-      // Sort by descending similarity
       .sort((a, b) => b.similarity - a.similarity)
-      // Limit to top 20 results
       .slice(0, 20)
-      // Convert similarity to a match percentage, assuming cosine similarity in [-1, 1]
       .map(item => ({
         ...item,
         match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)),
       }));
 
-    console.log(results); // Logs the results for debugging
     return res.json({ results });
 
   } catch (error) {
