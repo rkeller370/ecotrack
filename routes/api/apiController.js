@@ -18,38 +18,37 @@ const initializeDatabase = async () => {
 let index = null;
 
 async function initializeFAISS() {
-  await initialize();
+  await initialize()
   try {
     // 1. Load and validate university data
     const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
     const universities = JSON.parse(rawData);
 
-    if (!universities.length) {
+    if (!Array.isArray(universities) || universities.length === 0) {
       throw new Error("No universities found in JSON file");
     }
 
-    // 2. Validate vector structure
-    const validUniversities = universities.filter(uni => 
+    // 2. Filter out entries with invalid normalizedVector arrays
+    const validUniversities = universities.filter(uni =>
       Array.isArray(uni.normalizedVector) &&
+      uni.normalizedVector.length > 0 &&
       uni.normalizedVector.every(Number.isFinite)
     );
 
     if (validUniversities.length !== universities.length) {
-      console.warn(`Filtered ${universities.length - validUniversities.length} invalid vectors`);
+      console.warn(`Filtered ${universities.length - validUniversities.length} invalid vector(s).`);
     }
 
-    // 3. Verify vector dimensions
+    // 3. Verify that all vectors have the same dimension
     const dimensions = validUniversities.map(uni => uni.normalizedVector.length);
     const uniqueDims = [...new Set(dimensions)];
-    
     if (uniqueDims.length !== 1) {
       throw new Error(`Mixed vector dimensions found: ${uniqueDims.join(', ')}`);
     }
-    
     const dimension = uniqueDims[0];
     const numVectors = validUniversities.length;
 
-    // 4. Prepare FAISS-compatible Float32Array
+    // 4. Prepare FAISS-compatible flat Float32Array
     const flatArray = new Float32Array(numVectors * dimension);
     validUniversities.forEach((uni, idx) => {
       const vector = uni.normalizedVector.map(Number);
@@ -59,23 +58,23 @@ async function initializeFAISS() {
       flatArray.set(vector, idx * dimension);
     });
 
-    // 5. Initialize and populate FAISS index
-    await faiss.ready; // Ensure FAISS is initialized
-    const index = new faiss.IndexFlatIP(dimension); // Use Inner Product for cosine similarity
-    index.add(flatArray); // Add vectors with explicit count
+    // 5. Initialize and populate the FAISS index
+    await faiss.ready; // Wait for FAISS to be ready if it has an async initialization
+    const index = new faiss.IndexFlatIP(dimension); // Using Inner Product for cosine similarity
+    index.add(flatArray); // Add the flat array of vectors
 
     console.log(`Successfully initialized FAISS with:
-    - ${numVectors} vectors
-    - ${dimension} dimensions
-    - Index type: ${index.constructor.name}`);
+      - ${numVectors} vectors,
+      - each of dimension ${dimension},
+      - Index type: ${index.constructor.name}`);
 
-    return {
-      index,
-      metadata: validUniversities.map(uni => ({
-        name: uni.name,
-        id: 1 // Add unique identifier if available
-      }))
-    };
+    // Generate metadata with unique IDs for later reference
+    const metadata = validUniversities.map((uni, idx) => ({
+      name: uni.name,
+      id: idx // Use the index as a unique identifier (or replace with a real id if available)
+    }));
+
+    return { index, metadata };
 
   } catch (error) {
     console.error("FAISS initialization failed:", error);
