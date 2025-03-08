@@ -48,7 +48,7 @@ async function initializeFAISS() {
     const dimension = uniqueDims[0];
 
     // 4. Initialize the FAISS index (using inner product)
-    const index = new faiss.IndexFlatIP(dimension);
+    index = new faiss.IndexFlatIP(dimension);
 
     // 5. Add each vector individually using index.add(vector)
     validUniversities.forEach((uni, idx) => {
