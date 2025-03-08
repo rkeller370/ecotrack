@@ -697,6 +697,8 @@ exports.getCollegePreferences = async (req, res) => {
       match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)) // Fixed parentheses here
     }));
 
+    console.log(results)
+
     return res.json({ results });
 
   } catch (error) {
