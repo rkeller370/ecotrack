@@ -2,6 +2,7 @@ const { getDb, initializeMongo } = require("../../config/db");
 const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
 const { encodeUserPreferences } = require("../../utils/encodePref");
 const { initialize } = require("../../utils/encodeCollege");
+const { getCachedCollegeData } = require("../../utils/getCollege");
 const { OpenAI } = require("openai");
 const axios = require("axios");
 const fs = require("fs");
@@ -574,89 +575,87 @@ exports.submitCollegePreferences = async (req, res) => {
 };
 
 exports.getCollegePreferences = async (req, res) => {
-  if (!db) {
-    db = getDb();
+  if (!global.db) {
+    global.db = getDb();
   }
 
   try {
+    let { pg } = req.body;
+    if (!pg || !Number.isInteger(pg)) {
+      pg = 1;
+    }
+
     const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
     const universities = JSON.parse(rawData).filter(uni =>
       Array.isArray(uni.normalizedVector) &&
       uni.normalizedVector.every(Number.isFinite)
     );
 
-    const user = await db.collection("users").findOne({ userId: req.user });
+    const user = await global.db.collection("users").findOne({ userId: req.user });
     if (!user?.collegePrefVector) {
       return res.status(404).json({ success: false, message: "No preferences found" });
     }
 
     let userVector = new Float32Array(user.collegePrefVector);
     const userNorm = Math.sqrt(userVector.reduce((sum, val) => sum + val * val, 0));
-
     if (userNorm === 0) {
       return res.status(400).json({ success: false, message: "User preference vector norm is zero" });
     }
 
-    const results = universities
-      .map(uni => {
-        let uniVector = new Float32Array(uni.normalizedVector);
+    const resultsPromises = universities.map(async (uni) => {
+      let uniVector = new Float32Array(uni.normalizedVector);
+      if (userVector.length !== uniVector.length) {
+        const maxLength = Math.max(userVector.length, uniVector.length);
+        const paddedUserVector = new Float32Array(maxLength);
+        const paddedUniVector = new Float32Array(maxLength);
+        paddedUserVector.set(userVector);
+        paddedUniVector.set(uniVector);
+        userVector = paddedUserVector;
+        uniVector = paddedUniVector;
+      }
 
-        if (userVector.length !== uniVector.length) {
-          const maxLength = Math.max(userVector.length, uniVector.length);
-          
-          const paddedUserVector = new Float32Array(maxLength);
-          const paddedUniVector = new Float32Array(maxLength);
-          
-          paddedUserVector.set(userVector);
-          paddedUniVector.set(uniVector);
+      let dotProduct = 0;
+      for (let i = 0; i < userVector.length; i++) {
+        dotProduct += userVector[i] * uniVector[i];
+      }
+      const uniNorm = Math.sqrt(uniVector.reduce((sum, val) => sum + val * val, 0));
+      if (uniNorm === 0) return null;
+      const similarity = dotProduct / (userNorm * uniNorm);
 
-          userVector = paddedUserVector;
-          uniVector = paddedUniVector;
+      const extraDetails = await getCachedCollegeData(uni.name, uni);
 
-          console.warn(`Dimension mismatch for ${uni.name}: padded vectors to length ${maxLength}`);
-        }
+      return {
+        name: uni.name,
+        match_percentage: Number(((similarity + 1) * 50).toFixed(2)),
+        similarity: similarity,
+        description: extraDetails.description ||
+          `${uni.name} is a ${uni.type} institution located in ${uni.location} offering tuition around $${uni.tuition}.`,
+        acceptance_rate: extraDetails.acceptance_rate || "N/A",
+        header_image: extraDetails.header_image || "https://via.placeholder.com/800x400?text=No+Image+Available",
+        details: {
+          location: extraDetails.location || uni.location,
+          tuition: extraDetails.tuition || uni.tuition,
+          athletics: uni.athletics,
+          academicRigor: uni.academicRigor,
+          diversity: uni.diversity,
+          internships: uni.internships,
+          studyAbroad: uni.studyAbroad,
+          housing: uni.housing,
+          climate: uni.climate,
+          socialLife: uni.socialLife,
+          campusSize: extraDetails.collegeSize,
+          gpa: uni.gpa,
+        },
+      };
+    });
 
-        let dotProduct = 0;
-        for (let i = 0; i < userVector.length; i++) {
-          dotProduct += userVector[i] * uniVector[i];
-        }
-
-        const uniNorm = Math.sqrt(uniVector.reduce((sum, val) => sum + val * val, 0));
-
-        if (uniNorm === 0) return null;
-
-        const similarity = dotProduct / (userNorm * uniNorm);
-
-        return {
-          name: uni.name,
-          similarity: similarity,
-          details: {
-            location: uni.location,
-            type: uni.type,
-            tuition: uni.tuition,
-            athletics: uni.athletics,
-            academicRigor: uni.academicRigor,
-            diversity: uni.diversity,
-            internships: uni.internships,
-            studyAbroad: uni.studyAbroad,
-            housing: uni.housing,
-            climate: uni.climate,
-            socialLife: uni.socialLife,
-            campusSize: uni.campusSize,
-            gpa: uni.gpa,
-          },
-        };
-      })
+    const resultsArray = await Promise.all(resultsPromises);
+    const sortedResults = resultsArray
       .filter(item => item !== null)
       .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, 20)
-      .map(item => ({
-        ...item,
-        match_percentage: Number(((item.similarity + 1) * 50).toFixed(2)),
-      }));
+      .slice(0, 20 * pg);
 
-    return res.json({ results });
-
+    return res.json({ results: sortedResults });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
