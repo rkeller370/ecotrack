@@ -421,29 +421,29 @@ exports.logout = async (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 
-// Refresh access token
 exports.refreshToken = async (req, res) => {
   if (!db) {
     db = getDb();
   }
+
   const refreshToken = req.cookies.refreshToken;
 
+  console.log(refreshToken)
+
   if (!refreshToken) {
-    return res
-      .status(401)
-      .json({ success: false, message: "No refresh token provided" });
+    return res.status(401).json({ success: false, message: "No refresh token provided" });
   }
 
-  try {
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
-    const user = await db
-      .collection("users")
-      .findOne({ userId: decoded.userId });
+  jwt.verify(refreshToken, process.env.REFRESH_SECRET, async (err, decoded) => {
+    if (err) {
+      console.error("Error refreshing token:", err);
+      return res.status(403).json({ success: false, message: "Invalid or expired refresh token" });
+    }
+
+    const user = await db.collection("users").findOne({ userId: decoded.userId });
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
     const accessToken = generateAccessToken(user.userId);
@@ -457,12 +457,7 @@ exports.refreshToken = async (req, res) => {
     });
 
     res.status(200).json({ success: true, message: "Token refreshed" });
-  } catch (err) {
-    console.error("Error refreshing token:", err);
-    res
-      .status(403)
-      .json({ success: false, message: "Invalid or expired refresh token" });
-  }
+  });
 };
 
 // Verify user token

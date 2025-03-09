@@ -2,7 +2,7 @@ const { getDb, initializeMongo } = require("../../config/db");
 const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
 const { encodeUserPreferences } = require("../../utils/encodePref");
 const { initialize } = require("../../utils/encodeCollege");
-const { getCachedCollegeData } = require("../../utils/getCollege");
+const { getCollegeData } = require("../../utils/getCollege");
 const { OpenAI } = require("openai");
 const axios = require("axios");
 const fs = require("fs");
@@ -628,7 +628,7 @@ exports.getCollegePreferences = async (req, res) => {
       if (uniNorm === 0) return null;
       const similarity = dotProduct / (userNorm * uniNorm);
 
-      const extraDetails = await getCachedCollegeData(uni.name, uni);
+      const extraDetails = await getCollegeData(uni.name);
 
       return {
         name: uni.name,
@@ -636,8 +636,9 @@ exports.getCollegePreferences = async (req, res) => {
         similarity: similarity,
         description: extraDetails.description ||
           `${uni.name} is a ${uni.type} institution located in ${uni.location} offering tuition around $${uni.tuition}.`,
-        acceptance_rate: extraDetails.acceptance_rate || "N/A",
-        header_image: extraDetails.header_image || "https://via.placeholder.com/800x400?text=No+Image+Available",
+        acceptance_rate: extraDetails.acceptanceRate || "N/A",
+        header_image: extraDetails.headerImage || "https://via.placeholder.com/800x400?text=No+Image+Available",
+        uniqueFact: extraDetails.uniqueFact || null,
         details: {
           location: extraDetails.location || uni.location,
           tuition: extraDetails.tuition || uni.tuition,
@@ -649,7 +650,7 @@ exports.getCollegePreferences = async (req, res) => {
           housing: uni.housing,
           climate: uni.climate,
           socialLife: uni.socialLife,
-          campusSize: extraDetails.collegeSize,
+          campusSize: extraDetails.studentSize,
           gpa: uni.gpa,
         },
       };

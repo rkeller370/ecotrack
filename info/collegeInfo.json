@@ -1,0 +1,732 @@
+[
+    {
+        "name": "Harvard University",
+        "uniqueFact": "Harvard is the oldest institution of higher education in the United States, founded in 1636.",
+        "description": "A prestigious Ivy League university known for its rigorous academics and influential alumni.",
+        "location": "Cambridge, Massachusetts",
+        "acceptanceRate": "5%",
+        "studentSize": "20,000",
+        "tuition": "$51,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Harvard_University_Widener_Library.jpg/800px-Harvard_University_Widener_Library.jpg"
+    },
+    {
+        "name": "Stanford University",
+        "uniqueFact": "Stanford's campus is one of the largest in the world, spanning over 8,000 acres.",
+        "description": "A leading research university known for its innovation and proximity to Silicon Valley.",
+        "location": "Stanford, California",
+        "acceptanceRate": "4%",
+        "studentSize": "17,000",
+        "tuition": "$53,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/8/88/Stanford_University%2C_California_%2823238123251%29.jpg"
+    },
+    {
+        "name": "Massachusetts Institute of Technology (MIT)",
+        "uniqueFact": "MIT has produced 96 Nobel laureates, among the highest of any university.",
+        "description": "A world-renowned institution focused on science, engineering, and technology.",
+        "location": "Cambridge, Massachusetts",
+        "acceptanceRate": "7%",
+        "studentSize": "11,000",
+        "tuition": "$55,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/1/17/MIT_Building_10.jpg"
+    },
+    {
+        "name": "California Institute of Technology (Caltech)",
+        "uniqueFact": "Caltech manages the Jet Propulsion Laboratory for NASA.",
+        "description": "A small but highly prestigious university specializing in science and engineering.",
+        "location": "Pasadena, California",
+        "acceptanceRate": "6%",
+        "studentSize": "2,200",
+        "tuition": "$54,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Beckman_Institute_at_Caltech.jpg"
+    },
+    {
+        "name": "Princeton University",
+        "uniqueFact": "Princeton is one of the few universities to offer a no-loan financial aid policy.",
+        "description": "An Ivy League university known for its strong emphasis on undergraduate education.",
+        "location": "Princeton, New Jersey",
+        "acceptanceRate": "6%",
+        "studentSize": "8,000",
+        "tuition": "$52,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Princeton_University_Campus.jpg/800px-Princeton_University_Campus.jpg"
+    },
+    {
+        "name": "Yale University",
+        "uniqueFact": "Yale's secret societies, like Skull and Bones, are famous worldwide.",
+        "description": "A historic Ivy League university known for its law school and arts programs.",
+        "location": "New Haven, Connecticut",
+        "acceptanceRate": "6%",
+        "studentSize": "13,000",
+        "tuition": "$53,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Yale_University_commencement_2017.jpg/800px-Yale_University_commencement_2017.jpg"
+    },
+    {
+        "name": "University of Pennsylvania",
+        "uniqueFact": "UPenn was founded by Benjamin Franklin in 1740.",
+        "description": "An Ivy League university known for its business school and interdisciplinary programs.",
+        "location": "Philadelphia, Pennsylvania",
+        "acceptanceRate": "8%",
+        "studentSize": "22,000",
+        "tuition": "$54,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/University_of_Pennsylvania_aerial.jpg/800px-University_of_Pennsylvania_aerial.jpg"
+    },
+    {
+        "name": "Columbia University",
+        "uniqueFact": "Columbia is the oldest institution of higher education in New York State.",
+        "description": "An Ivy League university located in the heart of New York City.",
+        "location": "New York City, New York",
+        "acceptanceRate": "6%",
+        "studentSize": "31,000",
+        "tuition": "$55,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Columbia_University_New_York_City.jpg/800px-Columbia_University_New_York_City.jpg"
+    },
+    {
+        "name": "University of Chicago",
+        "uniqueFact": "The university is known for its unique Core Curriculum.",
+        "description": "A leading research university with a strong focus on critical thinking.",
+        "location": "Chicago, Illinois",
+        "acceptanceRate": "7%",
+        "studentSize": "16,000",
+        "tuition": "$53,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/University_of_Chicago_Campus.jpg/800px-University_of_Chicago_Campus.jpg"
+    },
+    {
+        "name": "Duke University",
+        "uniqueFact": "Duke's basketball team is one of the most successful in NCAA history.",
+        "description": "A prestigious university known for its research and athletics.",
+        "location": "Durham, North Carolina",
+        "acceptanceRate": "8%",
+        "studentSize": "16,000",
+        "tuition": "$52,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Duke_University_Chapel.jpg/800px-Duke_University_Chapel.jpg"
+    },
+    {
+        "name": "Johns Hopkins University",
+        "uniqueFact": "Johns Hopkins is the first research university in the United States.",
+        "description": "A world-renowned institution for medicine and public health.",
+        "location": "Baltimore, Maryland",
+        "acceptanceRate": "11%",
+        "studentSize": "26,000",
+        "tuition": "$54,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Johns_Hopkins_University_Homewood_Campus.jpg/800px-Johns_Hopkins_University_Homewood_Campus.jpg"
+    },
+    {
+        "name": "Northwestern University",
+        "uniqueFact": "Northwestern's campus is located along the shores of Lake Michigan.",
+        "description": "A leading research university with strong programs in journalism and performing arts.",
+        "location": "Evanston, Illinois",
+        "acceptanceRate": "9%",
+        "studentSize": "21,000",
+        "tuition": "$53,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Northwestern_University_Campus.jpg/800px-Northwestern_University_Campus.jpg"
+    },
+    {
+        "name": "Cornell University",
+        "uniqueFact": "Cornell is the only Ivy League university that is also a land-grant institution.",
+        "description": "A diverse Ivy League university with a wide range of academic programs.",
+        "location": "Ithaca, New York",
+        "acceptanceRate": "11%",
+        "studentSize": "24,000",
+        "tuition": "$52,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Cornell_University_Campus.jpg/800px-Cornell_University_Campus.jpg"
+    },
+    {
+        "name": "Brown University",
+        "uniqueFact": "Brown has an open curriculum, allowing students to design their own courses of study.",
+        "description": "An Ivy League university known for its liberal arts and innovative curriculum.",
+        "location": "Providence, Rhode Island",
+        "acceptanceRate": "8%",
+        "studentSize": "10,000",
+        "tuition": "$53,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Brown_University_Campus.jpg/800px-Brown_University_Campus.jpg"
+    },
+    {
+        "name": "University of California, Berkeley",
+        "uniqueFact": "Berkeley has produced 107 Nobel laureates, the most of any public university.",
+        "description": "A top public research university known for its activism and academic excellence.",
+        "location": "Berkeley, California",
+        "acceptanceRate": "16%",
+        "studentSize": "42,000",
+        "tuition": "$44,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/UC_Berkeley_Campus.jpg/800px-UC_Berkeley_Campus.jpg"
+    },
+    {
+        "name": "University of California, Los Angeles (UCLA)",
+        "uniqueFact": "UCLA is the most applied-to university in the United States.",
+        "description": "A leading public research university with a strong focus on the arts and sciences.",
+        "location": "Los Angeles, California",
+        "acceptanceRate": "14%",
+        "studentSize": "45,000",
+        "tuition": "$43,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/UCLA_Campus.jpg/800px-UCLA_Campus.jpg"
+    },
+    {
+        "name": "University of Michigan, Ann Arbor",
+        "uniqueFact": "Michigan's football stadium is the largest in the United States.",
+        "description": "A top public research university with a strong emphasis on interdisciplinary studies.",
+        "location": "Ann Arbor, Michigan",
+        "acceptanceRate": "23%",
+        "studentSize": "46,000",
+        "tuition": "$48,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Michigan_Campus.jpg/800px-University_of_Michigan_Campus.jpg"
+    },
+    {
+        "name": "Carnegie Mellon University",
+        "uniqueFact": "CMU is known for its strong programs in computer science and robotics.",
+        "description": "A private research university with a focus on technology and the arts.",
+        "location": "Pittsburgh, Pennsylvania",
+        "acceptanceRate": "17%",
+        "studentSize": "14,000",
+        "tuition": "$57,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Carnegie_Mellon_University_Campus.jpg/800px-Carnegie_Mellon_University_Campus.jpg"
+    },
+    {
+        "name": "University of Texas at Austin",
+        "uniqueFact": "UT Austin is one of the largest universities in the United States.",
+        "description": "A leading public research university with a strong focus on engineering and business.",
+        "location": "Austin, Texas",
+        "acceptanceRate": "32%",
+        "studentSize": "51,000",
+        "tuition": "$41,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/University_of_Texas_at_Austin_Campus.jpg/800px-University_of_Texas_at_Austin_Campus.jpg"
+    },
+    {
+        "name": "University of Southern California (USC)",
+        "uniqueFact": "USC is the oldest private research university in California.",
+        "description": "A private research university known for its film school and strong alumni network.",
+        "location": "Los Angeles, California",
+        "acceptanceRate": "13%",
+        "studentSize": "48,000",
+        "tuition": "$58,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/University_of_Southern_California_Campus.jpg/800px-University_of_Southern_California_Campus.jpg"
+    },
+    {
+        "name": "University of Wisconsin-Madison",
+        "uniqueFact": "UW-Madison is known for its research contributions, including the discovery of vitamins A and B.",
+        "description": "A top public research university with a strong emphasis on innovation.",
+        "location": "Madison, Wisconsin",
+        "acceptanceRate": "54%",
+        "studentSize": "44,000",
+        "tuition": "$39,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/University_of_Wisconsin-Madison_Campus.jpg/800px-University_of_Wisconsin-Madison_Campus.jpg"
+    },
+    {
+        "name": "New York University (NYU)",
+        "uniqueFact": "NYU has campuses in Abu Dhabi and Shanghai, in addition to its main campus in New York City.",
+        "description": "A global university known for its arts, business, and law programs.",
+        "location": "New York City, New York",
+        "acceptanceRate": "16%",
+        "studentSize": "51,000",
+        "tuition": "$55,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/New_York_University_Campus.jpg/800px-New_York_University_Campus.jpg"
+    },
+    {
+        "name": "University of Florida",
+        "uniqueFact": "UF is one of the few universities to offer a degree in astrobiology.",
+        "description": "A top public research university with a strong focus on science and engineering.",
+        "location": "Gainesville, Florida",
+        "acceptanceRate": "37%",
+        "studentSize": "52,000",
+        "tuition": "$28,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Florida_Campus.jpg/800px-University_of_Florida_Campus.jpg"
+    },
+    {
+        "name": "University of Washington",
+        "uniqueFact": "UW is one of the top recipients of federal research funding in the United States.",
+        "description": "A leading public research university with a strong focus on medicine and engineering.",
+        "location": "Seattle, Washington",
+        "acceptanceRate": "49%",
+        "studentSize": "47,000",
+        "tuition": "$39,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/University_of_Washington_Campus.jpg/800px-University_of_Washington_Campus.jpg"
+    },
+    {
+        "name": "Texas A&M University",
+        "uniqueFact": "Texas A&M is the largest university in the United States by enrollment.",
+        "description": "A top public research university with a strong focus on agriculture and engineering.",
+        "location": "College Station, Texas",
+        "acceptanceRate": "58%",
+        "studentSize": "69,000",
+        "tuition": "$32,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Texas_A%26M_University_Campus.jpg/800px-Texas_A%26M_University_Campus.jpg"
+    },
+    {
+        "name": "Ohio State University",
+        "uniqueFact": "Ohio State's marching band is known for its intricate halftime shows.",
+        "description": "A top public research university with a strong focus on business and engineering.",
+        "location": "Columbus, Ohio",
+        "acceptanceRate": "54%",
+        "studentSize": "61,000",
+        "tuition": "$37,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Ohio_State_University_Campus.jpg/800px-Ohio_State_University_Campus.jpg"
+    },
+    {
+        "name": "University of North Carolina at Chapel Hill",
+        "uniqueFact": "UNC is the oldest public university in the United States.",
+        "description": "A top public research university known for its strong programs in medicine and journalism.",
+        "location": "Chapel Hill, North Carolina",
+        "acceptanceRate": "23%",
+        "studentSize": "30,000",
+        "tuition": "$36,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_North_Carolina_at_Chapel_Hill_Campus.jpg/800px-University_of_North_Carolina_at_Chapel_Hill_Campus.jpg"
+    },
+    {
+        "name": "Pennsylvania State University",
+        "uniqueFact": "Penn State's alumni network is one of the largest in the world.",
+        "description": "A top public research university with a strong focus on engineering and business.",
+        "location": "University Park, Pennsylvania",
+        "acceptanceRate": "56%",
+        "studentSize": "47,000",
+        "tuition": "$38,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Pennsylvania_State_University_Campus.jpg/800px-Pennsylvania_State_University_Campus.jpg"
+    },
+    {
+        "name": "University of Illinois Urbana-Champaign",
+        "uniqueFact": "UIUC is known for its engineering program, which is among the best in the world.",
+        "description": "A top public research university with a strong focus on technology and innovation.",
+        "location": "Champaign, Illinois",
+        "acceptanceRate": "59%",
+        "studentSize": "51,000",
+        "tuition": "$40,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/University_of_Illinois_Urbana-Champaign_Campus.jpg/800px-University_of_Illinois_Urbana-Champaign_Campus.jpg"
+    },
+    {
+        "name": "University of Georgia",
+        "uniqueFact": "UGA is the birthplace of American public higher education.",
+        "description": "A top public research university with a strong focus on agriculture and business.",
+        "location": "Athens, Georgia",
+        "acceptanceRate": "49%",
+        "studentSize": "39,000",
+        "tuition": "$29,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Georgia_Campus.jpg/800px-University_of_Georgia_Campus.jpg"
+    },
+    {
+        "name": "Purdue University",
+        "uniqueFact": "Purdue is known for its aerospace engineering program and its own airport.",
+        "description": "A top public research university with a strong focus on engineering and technology.",
+        "location": "West Lafayette, Indiana",
+        "acceptanceRate": "60%",
+        "studentSize": "45,000",
+        "tuition": "$38,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Purdue_University_Campus.jpg/800px-Purdue_University_Campus.jpg"
+    },
+    {
+        "name": "University of Virginia",
+        "uniqueFact": "UVA was founded by Thomas Jefferson in 1819.",
+        "description": "A top public research university known for its historic campus and strong academics.",
+        "location": "Charlottesville, Virginia",
+        "acceptanceRate": "24%",
+        "studentSize": "25,000",
+        "tuition": "$44,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Virginia_Campus.jpg/800px-University_of_Virginia_Campus.jpg"
+    },
+    {
+        "name": "University of Colorado Boulder",
+        "uniqueFact": "CU Boulder is known for its strong programs in aerospace engineering and environmental science.",
+        "description": "A top public research university located at the foothills of the Rocky Mountains.",
+        "location": "Boulder, Colorado",
+        "acceptanceRate": "78%",
+        "studentSize": "37,000",
+        "tuition": "$38,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Colorado_Boulder_Campus.jpg/800px-University_of_Colorado_Boulder_Campus.jpg"
+    },
+    {
+        "name": "University of Arizona",
+        "uniqueFact": "UA is home to the largest telescope operated by a single university.",
+        "description": "A top public research university with a strong focus on astronomy and environmental science.",
+        "location": "Tucson, Arizona",
+        "acceptanceRate": "85%",
+        "studentSize": "45,000",
+        "tuition": "$36,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Arizona_Campus.jpg/800px-University_of_Arizona_Campus.jpg"
+    },
+    {
+        "name": "Boston University",
+        "uniqueFact": "BU is one of the largest private research universities in the United States.",
+        "description": "A leading private research university with a strong focus on the arts and sciences.",
+        "location": "Boston, Massachusetts",
+        "acceptanceRate": "19%",
+        "studentSize": "34,000",
+        "tuition": "$63,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Boston_University_Campus.jpg/800px-Boston_University_Campus.jpg"
+    },
+    {
+        "name": "University of Miami",
+        "uniqueFact": "UM is known for its strong programs in marine science and music.",
+        "description": "A private research university located in a vibrant, multicultural city.",
+        "location": "Coral Gables, Florida",
+        "acceptanceRate": "27%",
+        "studentSize": "17,000",
+        "tuition": "$57,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Miami_Campus.jpg/800px-University_of_Miami_Campus.jpg"
+    },
+    {
+        "name": "Michigan State University",
+        "uniqueFact": "MSU is home to the nation's first land-grant college of agriculture.",
+        "description": "A top public research university with a strong focus on agriculture and business.",
+        "location": "East Lansing, Michigan",
+        "acceptanceRate": "71%",
+        "studentSize": "50,000",
+        "tuition": "$39,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Michigan_State_University_Campus.jpg/800px-Michigan_State_University_Campus.jpg"
+    },
+    {
+        "name": "University of Oregon",
+        "uniqueFact": "UO is known for its strong programs in journalism and environmental studies.",
+        "description": "A top public research university located in the Pacific Northwest.",
+        "location": "Eugene, Oregon",
+        "acceptanceRate": "82%",
+        "studentSize": "22,000",
+        "tuition": "$35,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Oregon_Campus.jpg/800px-University_of_Oregon_Campus.jpg"
+    },
+    {
+        "name": "Clemson University",
+        "uniqueFact": "Clemson is known for its strong programs in engineering and agriculture.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Clemson, South Carolina",
+        "acceptanceRate": "51%",
+        "studentSize": "26,000",
+        "tuition": "$39,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Clemson_University_Campus.jpg/800px-Clemson_University_Campus.jpg"
+    },
+    {
+        "name": "University of Notre Dame",
+        "uniqueFact": "Notre Dame is known for its strong Catholic identity and football program.",
+        "description": "A private research university with a strong focus on liberal arts and theology.",
+        "location": "Notre Dame, Indiana",
+        "acceptanceRate": "19%",
+        "studentSize": "12,000",
+        "tuition": "$55,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Notre_Dame_Campus.jpg/800px-University_of_Notre_Dame_Campus.jpg"
+    },
+    {
+        "name": "Vanderbilt University",
+        "uniqueFact": "Vanderbilt is known for its strong programs in medicine and law.",
+        "description": "A private research university located in the heart of Nashville.",
+        "location": "Nashville, Tennessee",
+        "acceptanceRate": "10%",
+        "studentSize": "13,000",
+        "tuition": "$54,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Vanderbilt_University_Campus.jpg/800px-Vanderbilt_University_Campus.jpg"
+    },
+    {
+        "name": "Rice University",
+        "uniqueFact": "Rice has a student-to-faculty ratio of 6:1, one of the best in the nation.",
+        "description": "A private research university known for its strong programs in engineering and science.",
+        "location": "Houston, Texas",
+        "acceptanceRate": "11%",
+        "studentSize": "7,000",
+        "tuition": "$52,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Rice_University_Campus.jpg/800px-Rice_University_Campus.jpg"
+    },
+    {
+        "name": "Georgetown University",
+        "uniqueFact": "Georgetown is the oldest Catholic university in the United States.",
+        "description": "A private research university known for its strong programs in international relations and law.",
+        "location": "Washington, D.C.",
+        "acceptanceRate": "14%",
+        "studentSize": "19,000",
+        "tuition": "$56,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Georgetown_University_Campus.jpg/800px-Georgetown_University_Campus.jpg"
+    },
+    {
+        "name": "Emory University",
+        "uniqueFact": "Emory is known for its strong programs in public health and business.",
+        "description": "A private research university located in Atlanta, Georgia.",
+        "location": "Atlanta, Georgia",
+        "acceptanceRate": "16%",
+        "studentSize": "15,000",
+        "tuition": "$54,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Emory_University_Campus.jpg/800px-Emory_University_Campus.jpg"
+    },
+    {
+        "name": "University of Rochester",
+        "uniqueFact": "Rochester is known for its strong programs in optics and music.",
+        "description": "A private research university with a strong focus on interdisciplinary studies.",
+        "location": "Rochester, New York",
+        "acceptanceRate": "30%",
+        "studentSize": "12,000",
+        "tuition": "$55,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Rochester_Campus.jpg/800px-University_of_Rochester_Campus.jpg"
+    },
+    {
+        "name": "Tufts University",
+        "uniqueFact": "Tufts is known for its strong programs in international relations and veterinary medicine.",
+        "description": "A private research university located just outside of Boston.",
+        "location": "Medford, Massachusetts",
+        "acceptanceRate": "15%",
+        "studentSize": "11,000",
+        "tuition": "$58,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tufts_University_Campus.jpg/800px-Tufts_University_Campus.jpg"
+    },
+    {
+        "name": "Wake Forest University",
+        "uniqueFact": "Wake Forest is known for its strong programs in business and law.",
+        "description": "A private research university with a strong focus on liberal arts and professional studies.",
+        "location": "Winston-Salem, North Carolina",
+        "acceptanceRate": "30%",
+        "studentSize": "8,000",
+        "tuition": "$56,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Wake_Forest_University_Campus.jpg/800px-Wake_Forest_University_Campus.jpg"
+    },
+    {
+        "name": "University of Minnesota, Twin Cities",
+        "uniqueFact": "UMN is one of the largest universities in the United States by enrollment.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Minneapolis, Minnesota",
+        "acceptanceRate": "57%",
+        "studentSize": "51,000",
+        "tuition": "$35,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Minnesota_Campus.jpg/800px-University_of_Minnesota_Campus.jpg"
+    },
+    {
+        "name": "University of Pittsburgh",
+        "uniqueFact": "Pitt is known for its strong programs in medicine and engineering.",
+        "description": "A top public research university located in the heart of Pittsburgh.",
+        "location": "Pittsburgh, Pennsylvania",
+        "acceptanceRate": "59%",
+        "studentSize": "29,000",
+        "tuition": "$34,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Pittsburgh_Campus.jpg/800px-University_of_Pittsburgh_Campus.jpg"
+    },
+    {
+        "name": "University of Utah",
+        "uniqueFact": "Utah is known for its strong programs in computer science and engineering.",
+        "description": "A top public research university located in Salt Lake City.",
+        "location": "Salt Lake City, Utah",
+        "acceptanceRate": "62%",
+        "studentSize": "33,000",
+        "tuition": "$33,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Utah_Campus.jpg/800px-University_of_Utah_Campus.jpg"
+    },
+    {
+        "name": "University of Kansas",
+        "uniqueFact": "KU is known for its strong programs in journalism and pharmacy.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Lawrence, Kansas",
+        "acceptanceRate": "93%",
+        "studentSize": "28,000",
+        "tuition": "$32,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Kansas_Campus.jpg/800px-University_of_Kansas_Campus.jpg"
+    },
+    {
+        "name": "University of Iowa",
+        "uniqueFact": "Iowa is known for its strong programs in creative writing and healthcare.",
+        "description": "A top public research university with a strong focus on the arts and sciences.",
+        "location": "Iowa City, Iowa",
+        "acceptanceRate": "83%",
+        "studentSize": "32,000",
+        "tuition": "$31,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Iowa_Campus.jpg/800px-University_of_Iowa_Campus.jpg"
+    },
+    {
+        "name": "University of Nebraska-Lincoln",
+        "uniqueFact": "UNL is known for its strong programs in agriculture and engineering.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Lincoln, Nebraska",
+        "acceptanceRate": "78%",
+        "studentSize": "26,000",
+        "tuition": "$30,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Nebraska-Lincoln_Campus.jpg/800px-University_of_Nebraska-Lincoln_Campus.jpg"
+    },
+    {
+        "name": "University of Oklahoma",
+        "uniqueFact": "OU is known for its strong programs in meteorology and petroleum engineering.",
+        "description": "A top public research university with a strong focus on energy and natural resources.",
+        "location": "Norman, Oklahoma",
+        "acceptanceRate": "80%",
+        "studentSize": "28,000",
+        "tuition": "$29,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Oklahoma_Campus.jpg/800px-University_of_Oklahoma_Campus.jpg"
+    },
+    {
+        "name": "University of Tennessee, Knoxville",
+        "uniqueFact": "UTK is known for its strong programs in nuclear engineering and business.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Knoxville, Tennessee",
+        "acceptanceRate": "79%",
+        "studentSize": "30,000",
+        "tuition": "$31,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Tennessee_Knoxville_Campus.jpg/800px-University_of_Tennessee_Knoxville_Campus.jpg"
+    },
+    {
+        "name": "University of South Carolina",
+        "uniqueFact": "USC is known for its strong programs in international business and hospitality.",
+        "description": "A top public research university with a strong focus on business and the arts.",
+        "location": "Columbia, South Carolina",
+        "acceptanceRate": "69%",
+        "studentSize": "35,000",
+        "tuition": "$33,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_South_Carolina_Campus.jpg/800px-University_of_South_Carolina_Campus.jpg"
+    },
+    {
+        "name": "University of Kentucky",
+        "uniqueFact": "UK is known for its strong programs in agriculture and healthcare.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Lexington, Kentucky",
+        "acceptanceRate": "96%",
+        "studentSize": "30,000",
+        "tuition": "$32,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Kentucky_Campus.jpg/800px-University_of_Kentucky_Campus.jpg"
+    },
+    {
+        "name": "University of Arkansas",
+        "uniqueFact": "UARK is known for its strong programs in agriculture and architecture.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Fayetteville, Arkansas",
+        "acceptanceRate": "77%",
+        "studentSize": "28,000",
+        "tuition": "$28,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Arkansas_Campus.jpg/800px-University_of_Arkansas_Campus.jpg"
+    },
+    {
+        "name": "University of Mississippi (Ole Miss)",
+        "uniqueFact": "Ole Miss is known for its strong programs in pharmacy and law.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Oxford, Mississippi",
+        "acceptanceRate": "88%",
+        "studentSize": "24,000",
+        "tuition": "$27,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Mississippi_Campus.jpg/800px-University_of_Mississippi_Campus.jpg"
+    },
+    {
+        "name": "University of Alabama",
+        "uniqueFact": "UA is known for its strong programs in engineering and business.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Tuscaloosa, Alabama",
+        "acceptanceRate": "83%",
+        "studentSize": "38,000",
+        "tuition": "$30,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Alabama_Campus.jpg/800px-University_of_Alabama_Campus.jpg"
+    },
+    {
+        "name": "University of Missouri",
+        "uniqueFact": "Mizzou is known for its strong programs in journalism and agriculture.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Columbia, Missouri",
+        "acceptanceRate": "81%",
+        "studentSize": "30,000",
+        "tuition": "$29,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Missouri_Campus.jpg/800px-University_of_Missouri_Campus.jpg"
+    },
+    {
+        "name": "University of Connecticut",
+        "uniqueFact": "UConn is known for its strong programs in business and healthcare.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Storrs, Connecticut",
+        "acceptanceRate": "49%",
+        "studentSize": "27,000",
+        "tuition": "$37,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Connecticut_Campus.jpg/800px-University_of_Connecticut_Campus.jpg"
+    },
+    {
+        "name": "University of Vermont",
+        "uniqueFact": "UVM is known for its strong programs in environmental studies and healthcare.",
+        "description": "A top public research university with a strong focus on sustainability and innovation.",
+        "location": "Burlington, Vermont",
+        "acceptanceRate": "67%",
+        "studentSize": "13,000",
+        "tuition": "$42,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Vermont_Campus.jpg/800px-University_of_Vermont_Campus.jpg"
+    },
+    {
+        "name": "University of Delaware",
+        "uniqueFact": "UD is known for its strong programs in chemical engineering and business.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Newark, Delaware",
+        "acceptanceRate": "66%",
+        "studentSize": "24,000",
+        "tuition": "$34,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Delaware_Campus.jpg/800px-University_of_Delaware_Campus.jpg"
+    },
+    {
+        "name": "University of Rhode Island",
+        "uniqueFact": "URI is known for its strong programs in oceanography and pharmacy.",
+        "description": "A top public research university with a strong focus on marine sciences and innovation.",
+        "location": "Kingston, Rhode Island",
+        "acceptanceRate": "75%",
+        "studentSize": "18,000",
+        "tuition": "$33,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Rhode_Island_Campus.jpg/800px-University_of_Rhode_Island_Campus.jpg"
+    },
+    {
+        "name": "University of New Hampshire",
+        "uniqueFact": "UNH is known for its strong programs in environmental science and business.",
+        "description": "A top public research university with a strong focus on sustainability and innovation.",
+        "location": "Durham, New Hampshire",
+        "acceptanceRate": "77%",
+        "studentSize": "15,000",
+        "tuition": "$36,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_New_Hampshire_Campus.jpg/800px-University_of_New_Hampshire_Campus.jpg"
+    },
+    {
+        "name": "University of Maine",
+        "uniqueFact": "UMaine is known for its strong programs in forestry and engineering.",
+        "description": "A top public research university with a strong focus on natural resources and innovation.",
+        "location": "Orono, Maine",
+        "acceptanceRate": "90%",
+        "studentSize": "11,000",
+        "tuition": "$32,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Maine_Campus.jpg/800px-University_of_Maine_Campus.jpg"
+    },
+    {
+        "name": "University of Wyoming",
+        "uniqueFact": "UW is known for its strong programs in energy and natural resources.",
+        "description": "A top public research university with a strong focus on sustainability and innovation.",
+        "location": "Laramie, Wyoming",
+        "acceptanceRate": "96%",
+        "studentSize": "12,000",
+        "tuition": "$20,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Wyoming_Campus.jpg/800px-University_of_Wyoming_Campus.jpg"
+    },
+    {
+        "name": "University of Idaho",
+        "uniqueFact": "UI is known for its strong programs in agriculture and engineering.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Moscow, Idaho",
+        "acceptanceRate": "78%",
+        "studentSize": "12,000",
+        "tuition": "$25,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Idaho_Campus.jpg/800px-University_of_Idaho_Campus.jpg"
+    },
+    {
+        "name": "University of Montana",
+        "uniqueFact": "UM is known for its strong programs in environmental studies and journalism.",
+        "description": "A top public research university with a strong focus on sustainability and innovation.",
+        "location": "Missoula, Montana",
+        "acceptanceRate": "82%",
+        "studentSize": "13,000",
+        "tuition": "$27,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Montana_Campus.jpg/800px-University_of_Montana_Campus.jpg"
+    },
+    {
+        "name": "University of North Dakota",
+        "uniqueFact": "UND is known for its strong programs in aerospace and energy.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Grand Forks, North Dakota",
+        "acceptanceRate": "81%",
+        "studentSize": "15,000",
+        "tuition": "$22,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_North_Dakota_Campus.jpg/800px-University_of_North_Dakota_Campus.jpg"
+    },
+    {
+        "name": "University of South Dakota",
+        "uniqueFact": "USD is known for its strong programs in law and healthcare.",
+        "description": "A top public research university with a strong focus on innovation and research.",
+        "location": "Vermillion, South Dakota",
+        "acceptanceRate": "86%",
+        "studentSize": "10,000",
+        "tuition": "$23,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_South_Dakota_Campus.jpg/800px-University_of_South_Dakota_Campus.jpg"
+    },
+    {
+        "name": "University of Alaska Fairbanks",
+        "uniqueFact": "UAF is known for its strong programs in Arctic research and engineering.",
+        "description": "A top public research university with a strong focus on sustainability and innovation.",
+        "location": "Fairbanks, Alaska",
+        "acceptanceRate": "76%",
+        "studentSize": "9,000",
+        "tuition": "$21,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Alaska_Fairbanks_Campus.jpg/800px-University_of_Alaska_Fairbanks_Campus.jpg"
+    }
+]
