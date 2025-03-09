@@ -1,4 +1,5 @@
 const axios = require("axios");
+const fs = require("fs");
 
 const collegeDataCache = new Map();
 const CACHE_EXPIRATION_MS = 24 * 60 * 60 * 1000;
