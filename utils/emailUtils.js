@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const { changeIP } = require("./ipToLocation");
 
 const url = "https://creative-horse-1afc49.netlify.app";
 
@@ -26,17 +27,7 @@ const sendVerifEmail = async (email, subject, html, token) => {
 };
 
 const sendLockoutEmail = async (email, ip, lockDuration) => {
-  let location = "";
-  if (ip) {
-    try {
-      const response = await fetch(`https://ipapi.co/${ip}/json/`);
-      const data = await response.json();
-      location = `${data.city}, ${data.region}, ${data.country_name}`;
-    } catch (err) {
-      console.error("Error fetching location:", err);
-      location = "Unknown";
-    }
-  }
+  let location = await changeIP(ip);
 
   const mailOptions = {
     from: "donotreply.mshstutoring@gmail.com",

@@ -11,5 +11,6 @@ router.get("/settings", authenticateJWT, limiter.limiter, apiController.getSetti
 router.get("/preferences", authenticateJWT, limiter.limiter, apiController.getCollegePreferences);
 router.post("/essay-review", authenticateJWT, limiter.limiter, apiController.reviewEssay);
 router.post("/submitPreferences", authenticateJWT, limiter.limiter, apiController.submitCollegePreferences)
+router.post("/changeSettings", authenticateJWT, limiter.limiter, apiController.changeSettings)
 
 module.exports = router;

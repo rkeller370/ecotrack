@@ -3,6 +3,12 @@ const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
 const { encodeUserPreferences } = require("../../utils/encodePref");
 const { initialize } = require("../../utils/encodeCollege");
 const { getCollegeData } = require("../../utils/getCollege");
+const {
+  validateEmail,
+  validatePassword,
+} = require("../../utils/validationUtils");
+const { getClientIp }  = require("../../utils/getIP");
+const { changeIP }  = require("../../utils/ipToLocation");
 const { OpenAI } = require("openai");
 const axios = require("axios");
 const fs = require("fs");
@@ -671,3 +677,240 @@ exports.getCollegePreferences = async (req, res) => {
     });
   }
 };
+
+exports.changeSettings = async (req, res) => {
+  if (!db) {
+    db = getDb();
+  }
+  try {
+    const { type, value, oldpassword, newpassword } = req.body
+    const ip = await getClientIp(req)
+    const location = await changeIP(ip)
+    if(type === "email") {
+      const user = await db.collection("users").findOne({ userId: req.user });
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+      if(!validateEmail(value)) {
+        return res.status(400).json({ success: false, message: "Invalid email format" });
+      }
+      if (user.email !== value) {
+        const userExists = await db.collection("users").findOne({ email: value });
+        if (userExists) {
+          return res.status(400).json({ success: false, message: "Email already in use" });
+        } else {
+          const emailVerificationToken = jwt.sign(
+            { userId: user.userId },
+            process.env.JWT_SECRET,
+            {
+              expiresIn: "15m",
+              algorithm: "HS256",
+            }
+          );
+      
+          sendVerifEmail(
+            value,
+            "Email Verification",
+            `<!DOCTYPE html>
+            <html>
+              <head>
+                <style>
+                  body {
+                    font-family: 'Inter', sans-serif;
+                    background-color: #f5f5f5;
+                    color: #333333;
+                    margin: 0;
+                    padding: 0;
+                  }
+                  .email-container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: white;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                  }
+                  .email-header {
+                    background-color: #4caf50;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                  }
+                  .email-body {
+                    padding: 30px;
+                    text-align: center;
+                  }
+                  .email-body h1 {
+                    font-size: 1.8rem;
+                    margin-bottom: 20px;
+                  }
+                  .email-body p {
+                    font-size: 1rem;
+                    margin-bottom: 30px;
+                    line-height: 1.5;
+                    color: #666;
+                  }
+                  .email-body .verify-button {
+                    display: inline-block;
+                    padding: 15px 25px;
+                    font-size: 1rem;
+                    font-weight: bold;
+                    color: white;
+                    background-color: #4caf50;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    transition: background-color 0.3s ease;
+                  }
+                  .email-body .verify-button:hover {
+                    background-color: #3e8e41;
+                  }
+                  .email-footer {
+                    background-color: #212121;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    font-size: 0.9rem;
+                  }
+                  .email-footer a {
+                    color: #4caf50;
+                    text-decoration: none;
+                    font-weight: bold;
+                  }
+                  .email-footer a:hover {
+                    color: #3e8e41;
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="email-container">
+                  <div class="email-header">
+                    Verify Your Email
+                  </div>
+                  <div class="email-body">
+                    <h1>Hello, ${user.name}!</h1>
+                    <p>Please verify your email to continue.</p>
+                    <a href="${url}/verifyemail.html?token=${emailVerificationToken}" class="verify-button">Verify Email</a>
+                    <p>If you did not sign up, please ignore this email and contact our support team.</p>
+                  </div>
+                  <div class="email-footer">
+                    © AdmitVault 2024. All rights reserved. <br />
+                    <a href="${url}">Visit our website</a> | <a href="${url}/privacy">Privacy Policy</a> | <a href="${url}/terms">Terms of Service</a>
+                  </div>
+                </div>
+              </body>
+            </html>`,
+            emailVerificationToken
+          );
+
+          sendVerifEmail(
+            user.email,
+            "Email Changed",
+            `<!DOCTYPE html>
+            <html>
+              <head>
+                <style>
+                  body {
+                    font-family: 'Inter', sans-serif;
+                    background-color: #f5f5f5;
+                    color: #333333;
+                    margin: 0;
+                    padding: 0;
+                  }
+                  .email-container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: white;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                  }
+                  .email-header {
+                    background-color: #4caf50;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                  }
+                  .email-body {
+                    padding: 30px;
+                    text-align: center;
+                  }
+                  .email-body h1 {
+                    font-size: 1.8rem;
+                    margin-bottom: 20px;
+                  }
+                  .email-body p {
+                    font-size: 1rem;
+                    margin-bottom: 30px;
+                    line-height: 1.5;
+                    color: #666;
+                  }
+                  .email-body .verify-button {
+                    display: inline-block;
+                    padding: 15px 25px;
+                    font-size: 1rem;
+                    font-weight: bold;
+                    color: white;
+                    background-color: #4caf50;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    transition: background-color 0.3s ease;
+                  }
+                  .email-body .verify-button:hover {
+                    background-color: #3e8e41;
+                  }
+                  .email-footer {
+                    background-color: #212121;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    font-size: 0.9rem;
+                  }
+                  .email-footer a {
+                    color: #4caf50;
+                    text-decoration: none;
+                    font-weight: bold;
+                  }
+                  .email-footer a:hover {
+                    color: #3e8e41;
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="email-container">
+                  <div class="email-header">
+                    Verify Your Email
+                  </div>
+                  <div class="email-body">
+                    <h1>Hello, ${user.name}!</h1>
+                    <p>We've detected a change in your email address.</p>
+                    <p><strong>Details:</strong></p>
+                    <ul>
+                      <li>Time: ${new Date().toLocaleString()}</li>
+                      <li>IP Address: ${ip} (${location})</li>
+                      <li>New Email: ${value}</li>
+                    </ul>
+                    <p>Wasn't you? Please contact our support team immediately.</p>
+                  </div>
+                  <div class="email-footer">
+                    © AdmitVault 2024. All rights reserved. <br />
+                    <a href="${url}">Visit our website</a> | <a href="${url}/privacy">Privacy Policy</a> | <a href="${url}/terms">Terms of Service</a>
+                  </div>
+                </div>
+              </body>
+            </html>`,
+            emailVerificationToken
+          );
+
+          await db.collection("users").findOne({userId: req.user}, {$set: {email: value, verified: false, verificationCode: emailVerificationToken}});
+        }
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: "Internal server error." });
+  }
+}
