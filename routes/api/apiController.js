@@ -14,6 +14,7 @@ const axios = require("axios");
 const fs = require("fs");
 const faiss = require("faiss-node");
 const jwt = require("jsonwebtoken");
+const { sendVerifEmail } = require("../../utils/emailUtils"); 
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
