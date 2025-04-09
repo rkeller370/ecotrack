@@ -7,7 +7,7 @@
         "acceptanceRate": "5%",
         "studentSize": "20,000",
         "tuition": "$51,000",
-        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Harvard_University_Widener_Library.jpg/800px-Harvard_University_Widener_Library.jpg"
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Harvard_University_Widener_Library.jpg/960px-Harvard_University_Widener_Library.jpg?20080416021642"
     },
     {
         "name": "Stanford University",
@@ -17,7 +17,7 @@
         "acceptanceRate": "4%",
         "studentSize": "17,000",
         "tuition": "$53,000",
-        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/8/88/Stanford_University%2C_California_%2823238123251%29.jpg"
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Stanford_Oval_May_2011_panorama.jpg/960px-Stanford_Oval_May_2011_panorama.jpg?20121118084241"
     },
     {
         "name": "Massachusetts Institute of Technology (MIT)",
@@ -27,7 +27,7 @@
         "acceptanceRate": "7%",
         "studentSize": "11,000",
         "tuition": "$55,000",
-        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/1/17/MIT_Building_10.jpg"
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Great_Dome%2C_Massachusetts_Institute_of_Technology%2C_Aug_2019.jpg/640px-Great_Dome%2C_Massachusetts_Institute_of_Technology%2C_Aug_2019.jpg"
     },
     {
         "name": "California Institute of Technology (Caltech)",
@@ -37,7 +37,7 @@
         "acceptanceRate": "6%",
         "studentSize": "2,200",
         "tuition": "$54,000",
-        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Beckman_Institute_at_Caltech.jpg"
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Caltech_Entrance.jpg/640px-Caltech_Entrance.jpg"
     },
     {
         "name": "Princeton University",
@@ -47,7 +47,7 @@
         "acceptanceRate": "6%",
         "studentSize": "8,000",
         "tuition": "$52,000",
-        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Princeton_University_Campus.jpg/800px-Princeton_University_Campus.jpg"
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Stairs_and_arch%2C_Lockhart_Hall%2C_Princeton_University%2C_2007.jpg/640px-Stairs_and_arch%2C_Lockhart_Hall%2C_Princeton_University%2C_2007.jpg"
     },
     {
         "name": "Yale University",
@@ -57,7 +57,7 @@
         "acceptanceRate": "6%",
         "studentSize": "13,000",
         "tuition": "$53,000",
-        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Yale_University_commencement_2017.jpg/800px-Yale_University_commencement_2017.jpg"
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Yale_Law_School_in_the_Sterling_Law_Building.jpg/640px-Yale_Law_School_in_the_Sterling_Law_Building.jpg"
     },
     {
         "name": "University of Pennsylvania",
@@ -67,7 +67,7 @@
         "acceptanceRate": "8%",
         "studentSize": "22,000",
         "tuition": "$54,000",
-        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/University_of_Pennsylvania_aerial.jpg/800px-University_of_Pennsylvania_aerial.jpg"
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Penn_campus_2.jpg/800px-Penn_campus_2.jpg?20070316230819"
     },
     {
         "name": "Columbia University",
