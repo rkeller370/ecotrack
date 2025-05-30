@@ -2,7 +2,7 @@ const sanitizeHtml = require("sanitize-html");
 
 const sanitizeInput = (
   input,
-  maxLength = 255,
+  maxLength = 1000,
   allowedChars = /[^\p{L}\p{N}\s.,!?\-]/gu
 ) => {
   if (typeof input !== "string" || !input) return "";

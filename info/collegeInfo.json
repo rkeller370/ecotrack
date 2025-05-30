@@ -728,5 +728,395 @@
         "studentSize": "9,000",
         "tuition": "$21,000",
         "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_Alaska_Fairbanks_Campus.jpg/800px-University_of_Alaska_Fairbanks_Campus.jpg"
+    },
+    {
+        "name": "Dartmouth College",
+        "uniqueFact": "Dartmouth is the smallest of the Ivy League schools and has a unique D-Plan calendar system.",
+        "description": "A prestigious Ivy League university known for its strong undergraduate focus and unique quarter system.",
+        "location": "Hanover, New Hampshire",
+        "acceptanceRate": "8%",
+        "studentSize": "6,500",
+        "tuition": "$52,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Dartmouth_College_Campus.jpg/800px-Dartmouth_College_Campus.jpg"
+    },
+    {
+        "name": "Washington University in St. Louis",
+        "uniqueFact": "WashU is known for its strong programs in medicine and architecture.",
+        "description": "A private research university with a strong focus on interdisciplinary studies and research.",
+        "location": "St. Louis, Missouri",
+        "acceptanceRate": "15%",
+        "studentSize": "15,000",
+        "tuition": "$54,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Washington_University_in_St_Louis_Campus.jpg/800px-Washington_University_in_St_Louis_Campus.jpg"
+    },
+    {
+        "name": "University of California, San Diego (UCSD)",
+        "uniqueFact": "UCSD is home to the Scripps Institution of Oceanography, one of the world's oldest and largest centers for ocean and earth science research.",
+        "description": "A leading public research university known for its strong programs in science and engineering.",
+        "location": "La Jolla, California",
+        "acceptanceRate": "34%",
+        "studentSize": "39,000",
+        "tuition": "$42,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/UC_San_Diego_Campus.jpg/800px-UC_San_Diego_Campus.jpg"
+    },
+    {
+        "name": "University of California, Davis (UC Davis)",
+        "uniqueFact": "UC Davis has the largest veterinary school in the United States.",
+        "description": "A top public research university known for its agricultural and environmental science programs.",
+        "location": "Davis, California",
+        "acceptanceRate": "46%",
+        "studentSize": "39,000",
+        "tuition": "$41,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/UC_Davis_Campus.jpg/800px-UC_Davis_Campus.jpg"
+    },
+    {
+        "name": "University of California, Irvine (UCI)",
+        "uniqueFact": "UCI is home to the first Earth System Science Department in the United States.",
+        "description": "A leading public research university known for its strong programs in science and engineering.",
+        "location": "Irvine, California",
+        "acceptanceRate": "29%",
+        "studentSize": "36,000",
+        "tuition": "$43,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/UC_Irvine_Campus.jpg/800px-UC_Irvine_Campus.jpg"
+    },
+    {
+        "name": "Case Western Reserve University",
+        "uniqueFact": "CWRU is known for its strong programs in biomedical engineering and polymer science.",
+        "description": "A private research university with a strong focus on science, engineering, and medicine.",
+        "location": "Cleveland, Ohio",
+        "acceptanceRate": "27%",
+        "studentSize": "12,000",
+        "tuition": "$52,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Case_Western_Reserve_University_Campus.jpg/800px-Case_Western_Reserve_University_Campus.jpg"
+    },
+    {
+        "name": "Northeastern University",
+        "uniqueFact": "Northeastern is known for its co-op program, which is one of the largest and most innovative in the world.",
+        "description": "A private research university with a strong focus on experiential learning and professional development.",
+        "location": "Boston, Massachusetts",
+        "acceptanceRate": "18%",
+        "studentSize": "22,000",
+        "tuition": "$56,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Northeastern_University_Campus.jpg/800px-Northeastern_University_Campus.jpg"
+    },
+    {
+        "name": "Tulane University",
+        "uniqueFact": "Tulane is the only major research university in the United States that requires public service for graduation.",
+        "description": "A private research university known for its strong programs in public health and law.",
+        "location": "New Orleans, Louisiana",
+        "acceptanceRate": "13%",
+        "studentSize": "14,000",
+        "tuition": "$58,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Tulane_University_Campus.jpg/800px-Tulane_University_Campus.jpg"
+    },
+    {
+        "name": "Brandeis University",
+        "uniqueFact": "Brandeis is the youngest private research university in the United States.",
+        "description": "A private research university with a strong focus on social justice and the liberal arts.",
+        "location": "Waltham, Massachusetts",
+        "acceptanceRate": "31%",
+        "studentSize": "5,800",
+        "tuition": "$57,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Brandeis_University_Campus.jpg/800px-Brandeis_University_Campus.jpg"
+    },
+    {
+        "name": "Rensselaer Polytechnic Institute (RPI)",
+        "uniqueFact": "RPI is the oldest technological research university in the English-speaking world.",
+        "description": "A private research university with a strong focus on engineering and technology.",
+        "location": "Troy, New York",
+        "acceptanceRate": "47%",
+        "studentSize": "7,500",
+        "tuition": "$58,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Rensselaer_Polytechnic_Institute_Campus.jpg/800px-Rensselaer_Polytechnic_Institute_Campus.jpg"
+    },
+    {
+        "name": "Williams College",
+        "uniqueFact": "Williams is known for its tutorial system, similar to Oxford and Cambridge.",
+        "description": "A private liberal arts college consistently ranked as one of the best in the nation.",
+        "location": "Williamstown, Massachusetts",
+        "acceptanceRate": "13%",
+        "studentSize": "2,000",
+        "tuition": "$59,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Williams_College_Campus.jpg/800px-Williams_College_Campus.jpg"
+    },
+    {
+        "name": "Amherst College",
+        "uniqueFact": "Amherst is part of the Five College Consortium, allowing students to take classes at four other nearby institutions.",
+        "description": "A private liberal arts college known for its open curriculum and strong academic programs.",
+        "location": "Amherst, Massachusetts",
+        "acceptanceRate": "11%",
+        "studentSize": "1,800",
+        "tuition": "$58,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Amherst_College_Campus.jpg/800px-Amherst_College_Campus.jpg"
+    },
+    {
+        "name": "Swarthmore College",
+        "uniqueFact": "Swarthmore is known for its Honors Program, which is one of the oldest in the nation.",
+        "description": "A private liberal arts college with a strong focus on social responsibility and academic excellence.",
+        "location": "Swarthmore, Pennsylvania",
+        "acceptanceRate": "9%",
+        "studentSize": "1,600",
+        "tuition": "$57,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Swarthmore_College_Campus.jpg/800px-Swarthmore_College_Campus.jpg"
+    },
+    {
+        "name": "Pomona College",
+        "uniqueFact": "Pomona is part of the Claremont Colleges, a unique consortium of five undergraduate and two graduate institutions.",
+        "description": "A private liberal arts college known for its strong academic programs and beautiful campus.",
+        "location": "Claremont, California",
+        "acceptanceRate": "7%",
+        "studentSize": "1,700",
+        "tuition": "$56,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Pomona_College_Campus.jpg/800px-Pomona_College_Campus.jpg"
+    },
+    {
+        "name": "Bowdoin College",
+        "uniqueFact": "Bowdoin was the first college to make the SAT optional for admissions.",
+        "description": "A private liberal arts college known for its strong academic programs and commitment to the common good.",
+        "location": "Brunswick, Maine",
+        "acceptanceRate": "9%",
+        "studentSize": "1,800",
+        "tuition": "$55,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Bowdoin_College_Campus.jpg/800px-Bowdoin_College_Campus.jpg"
+    },
+    {
+        "name": "Middlebury College",
+        "uniqueFact": "Middlebury is known for its language schools and environmental studies program.",
+        "description": "A private liberal arts college with a strong focus on international studies and environmental science.",
+        "location": "Middlebury, Vermont",
+        "acceptanceRate": "15%",
+        "studentSize": "2,500",
+        "tuition": "$58,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Middlebury_College_Campus.jpg/800px-Middlebury_College_Campus.jpg"
+    },
+    {
+        "name": "Carleton College",
+        "uniqueFact": "Carleton is known for its strong programs in the natural sciences and mathematics.",
+        "description": "A private liberal arts college with a strong focus on undergraduate research and academic excellence.",
+        "location": "Northfield, Minnesota",
+        "acceptanceRate": "20%",
+        "studentSize": "2,000",
+        "tuition": "$56,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Carleton_College_Campus.jpg/800px-Carleton_College_Campus.jpg"
+    },
+    {
+        "name": "Grinnell College",
+        "uniqueFact": "Grinnell has one of the largest per-student endowments of any liberal arts college.",
+        "description": "A private liberal arts college known for its strong academic programs and commitment to social justice.",
+        "location": "Grinnell, Iowa",
+        "acceptanceRate": "23%",
+        "studentSize": "1,700",
+        "tuition": "$55,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Grinnell_College_Campus.jpg/800px-Grinnell_College_Campus.jpg"
+    },
+    {
+        "name": "Haverford College",
+        "uniqueFact": "Haverford is known for its Honor Code, which is entirely student-run.",
+        "description": "A private liberal arts college with a strong focus on academic excellence and community values.",
+        "location": "Haverford, Pennsylvania",
+        "acceptanceRate": "18%",
+        "studentSize": "1,300",
+        "tuition": "$57,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Haverford_College_Campus.jpg/800px-Haverford_College_Campus.jpg"
+    },
+    {
+        "name": "Vassar College",
+        "uniqueFact": "Vassar was the first college in the United States to be founded with a full faculty of women.",
+        "description": "A private liberal arts college known for its strong academic programs and commitment to diversity.",
+        "location": "Poughkeepsie, New York",
+        "acceptanceRate": "25%",
+        "studentSize": "2,500",
+        "tuition": "$58,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Vassar_College_Campus.jpg/800px-Vassar_College_Campus.jpg"
+    },
+    {
+        "name": "Colby College",
+        "uniqueFact": "Colby was the first all-male college in New England to admit women.",
+        "description": "A private liberal arts college with a strong focus on environmental studies and global engagement.",
+        "location": "Waterville, Maine",
+        "acceptanceRate": "13%",
+        "studentSize": "2,000",
+        "tuition": "$56,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Colby_College_Campus.jpg/800px-Colby_College_Campus.jpg"
+    },
+    {
+        "name": "Bates College",
+        "uniqueFact": "Bates was the first coeducational college in New England.",
+        "description": "A private liberal arts college known for its strong academic programs and commitment to social justice.",
+        "location": "Lewiston, Maine",
+        "acceptanceRate": "17%",
+        "studentSize": "1,800",
+        "tuition": "$55,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Bates_College_Campus.jpg/800px-Bates_College_Campus.jpg"
+    },
+    {
+        "name": "Hamilton College",
+        "uniqueFact": "Hamilton is known for its open curriculum and strong writing program.",
+        "description": "A private liberal arts college with a strong focus on writing and communication skills.",
+        "location": "Clinton, New York",
+        "acceptanceRate": "16%",
+        "studentSize": "1,900",
+        "tuition": "$57,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Hamilton_College_Campus.jpg/800px-Hamilton_College_Campus.jpg"
+    },
+    {
+        "name": "Wesleyan University",
+        "uniqueFact": "Wesleyan is known for its strong programs in film and the performing arts.",
+        "description": "A private liberal arts university with a strong focus on the arts and social sciences.",
+        "location": "Middletown, Connecticut",
+        "acceptanceRate": "19%",
+        "studentSize": "3,200",
+        "tuition": "$58,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Wesleyan_University_Campus.jpg/800px-Wesleyan_University_Campus.jpg"
+    },
+    {
+        "name": "Marquette University",
+        "uniqueFact": "Marquette is the largest private university in Wisconsin and has a strong Jesuit Catholic tradition.",
+        "description": "A private research university known for its strong programs in business, law, and healthcare.",
+        "location": "Milwaukee, Wisconsin",
+        "acceptanceRate": "83%",
+        "studentSize": "11,500",
+        "tuition": "$45,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marquette_University_Campus.jpg/800px-Marquette_University_Campus.jpg"
+    },
+    {
+        "name": "Arizona State University (ASU)",
+        "uniqueFact": "ASU is one of the largest public universities by enrollment in the United States.",
+        "description": "A public research university known for its innovation and entrepreneurship programs.",
+        "location": "Tempe, Arizona",
+        "acceptanceRate": "88%",
+        "studentSize": "74,000",
+        "tuition": "$30,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Arizona_State_University_Campus.jpg/800px-Arizona_State_University_Campus.jpg"
+    },
+    {
+        "name": "University of Central Florida (UCF)",
+        "uniqueFact": "UCF is the largest university by enrollment in Florida and one of the largest in the United States.",
+        "description": "A public research university known for its strong programs in engineering and computer science.",
+        "location": "Orlando, Florida",
+        "acceptanceRate": "44%",
+        "studentSize": "69,000",
+        "tuition": "$22,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Central_Florida_Campus.jpg/800px-University_of_Central_Florida_Campus.jpg"
+    },
+    {
+        "name": "Miami University (Ohio)",
+        "uniqueFact": "Miami University is known as the 'Cradle of Coaches' for producing many notable football coaches.",
+        "description": "A public research university known for its strong liberal arts foundation and business programs.",
+        "location": "Oxford, Ohio",
+        "acceptanceRate": "80%",
+        "studentSize": "19,000",
+        "tuition": "$35,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Miami_University_Ohio_Campus.jpg/800px-Miami_University_Ohio_Campus.jpg"
+    },
+    {
+        "name": "Rutgers University",
+        "uniqueFact": "Rutgers is the eighth oldest college in the United States and was one of the nine colonial colleges.",
+        "description": "A public research university with a strong focus on research and innovation across multiple campuses.",
+        "location": "New Brunswick, New Jersey",
+        "acceptanceRate": "68%",
+        "studentSize": "50,000",
+        "tuition": "$32,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Rutgers_University_Campus.jpg/800px-Rutgers_University_Campus.jpg"
+    },
+    {
+        "name": "Indiana University Bloomington",
+        "uniqueFact": "IU Bloomington is home to the world's first school of philanthropy.",
+        "description": "A public research university known for its strong programs in business, music, and informatics.",
+        "location": "Bloomington, Indiana",
+        "acceptanceRate": "78%",
+        "studentSize": "43,000",
+        "tuition": "$38,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Indiana_University_Bloomington_Campus.jpg/800px-Indiana_University_Bloomington_Campus.jpg"
+    },
+    {
+        "name": "University of Houston",
+        "uniqueFact": "UH is home to the first college of optometry in Texas and one of the first in the nation.",
+        "description": "A public research university known for its strong programs in energy, health, and business.",
+        "location": "Houston, Texas",
+        "acceptanceRate": "65%",
+        "studentSize": "47,000",
+        "tuition": "$27,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Houston_Campus.jpg/800px-University_of_Houston_Campus.jpg"
+    },
+    {
+        "name": "University of North Texas",
+        "uniqueFact": "UNT is home to the world's first jazz studies program.",
+        "description": "A public research university known for its strong programs in music, education, and business.",
+        "location": "Denton, Texas",
+        "acceptanceRate": "74%",
+        "studentSize": "40,000",
+        "tuition": "$24,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/University_of_North_Texas_Campus.jpg/800px-University_of_North_Texas_Campus.jpg"
+    },
+    {
+        "name": "University of South Florida",
+        "uniqueFact": "USF is one of the fastest-rising universities in the nation for research activity.",
+        "description": "A public research university known for its strong programs in medicine and engineering.",
+        "location": "Tampa, Florida",
+        "acceptanceRate": "49%",
+        "studentSize": "50,000",
+        "tuition": "$23,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_South_Florida_Campus.jpg/800px-University_of_South_Florida_Campus.jpg"
+    },
+    {
+        "name": "Liberty University",
+        "uniqueFact": "Liberty is the largest Christian university in the world.",
+        "description": "A private Christian university known for its strong online programs and conservative values.",
+        "location": "Lynchburg, Virginia",
+        "acceptanceRate": "56%",
+        "studentSize": "15,000",
+        "tuition": "$28,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Liberty_University_Campus.jpg/800px-Liberty_University_Campus.jpg"
+    },
+    {
+        "name": "Florida International University",
+        "uniqueFact": "FIU is the largest university in South Florida and has the largest business school in the state.",
+        "description": "A public research university known for its strong programs in international business and hospitality.",
+        "location": "Miami, Florida",
+        "acceptanceRate": "58%",
+        "studentSize": "58,000",
+        "tuition": "$22,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Florida_International_University_Campus.jpg/800px-Florida_International_University_Campus.jpg"
+    },
+    {
+        "name": "Utah Valley University",
+        "uniqueFact": "UVU is the largest public university in Utah and has the largest enrollment of any university in the state.",
+        "description": "A public university known for its strong programs in aviation, business, and technology.",
+        "location": "Orem, Utah",
+        "acceptanceRate": "100%",
+        "studentSize": "41,000",
+        "tuition": "$18,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Utah_Valley_University_Campus.jpg/800px-Utah_Valley_University_Campus.jpg"
+    },
+    {
+        "name": "Temple University",
+        "uniqueFact": "Temple is one of the largest providers of professional education in the United States.",
+        "description": "A public research university known for its strong programs in business, law, and healthcare.",
+        "location": "Philadelphia, Pennsylvania",
+        "acceptanceRate": "60%",
+        "studentSize": "40,000",
+        "tuition": "$34,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Temple_University_Campus.jpg/800px-Temple_University_Campus.jpg"
+    },
+    {
+        "name": "San Diego State University",
+        "uniqueFact": "SDSU is the oldest and largest higher education institution in San Diego County.",
+        "description": "A public research university known for its strong programs in business and engineering.",
+        "location": "San Diego, California",
+        "acceptanceRate": "34%",
+        "studentSize": "36,000",
+        "tuition": "$29,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/San_Diego_State_University_Campus.jpg/800px-San_Diego_State_University_Campus.jpg"
+    },
+    {
+        "name": "University of Cincinnati",
+        "uniqueFact": "UC is home to the first cooperative education program in the United States.",
+        "description": "A public research university known for its strong programs in design, medicine, and engineering.",
+        "location": "Cincinnati, Ohio",
+        "acceptanceRate": "76%",
+        "studentSize": "46,000",
+        "tuition": "$32,000",
+        "headerImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/University_of_Cincinnati_Campus.jpg/800px-University_of_Cincinnati_Campus.jpg"
     }
 ]
