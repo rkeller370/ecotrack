@@ -1,8 +1,5 @@
 const { getDb, initializeMongo } = require("../../config/db");
 const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
-const { encodeUserPreferences } = require("../../utils/encodePref");
-const { initialize } = require("../../utils/encodeCollege");
-const { getCollegeData } = require("../../utils/getCollege");
 const {
   validateEmail,
   validatePassword,
@@ -12,9 +9,7 @@ const { changeIP }  = require("../../utils/ipToLocation");
 const { OpenAI } = require("openai");
 const axios = require("axios");
 const fs = require("fs");
-const faiss = require("faiss-node");
 const jwt = require("jsonwebtoken");
-const { sendVerifEmail } = require("../../utils/emailUtils"); 
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -25,12 +20,6 @@ const initializeDatabase = async () => {
 };
 
 let index = null;
-
-async function initializeFAISS() {
-  await initialize();
-}
-
-initializeFAISS()
 
 const url = "https://creative-horse-1afc49.netlify.app";
 

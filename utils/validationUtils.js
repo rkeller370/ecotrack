@@ -4,7 +4,7 @@ const validateEmail = (email) => {
   };
   
   const validatePassword = (password, email, previousPasswords = []) => {
-    const minLength = 10; // Increased minimum length
+    const minLength = 8;
     const hasUpperCase = /[A-Z]/;
     const hasLowerCase = /[a-z]/;
     const hasNumbers = /\d/;
@@ -159,8 +159,7 @@ const validateEmail = (email) => {
       };
     }
   
-    // Check for email or username in password
-    const emailParts = email.split("@")[0].split(/[.\-_]/); // Split email local part
+    const emailParts = email.split("@")[0].split(/[.\-_]/);
     if (
       emailParts.some((part) => password.toLowerCase().includes(part.toLowerCase()))
     ) {
@@ -170,7 +169,6 @@ const validateEmail = (email) => {
       };
     }
   
-    // Check for password reuse
     if (previousPasswords.length > 0) {
       const isReused = previousPasswords.some((prevPassword) =>
         bcrypt.compareSync(password, prevPassword)
@@ -183,7 +181,6 @@ const validateEmail = (email) => {
       }
     }
   
-    // Check for sequential or repeated characters
     if (/(.)\1{2,}/.test(password)) {
       return {
         valid: false,

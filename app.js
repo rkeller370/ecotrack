@@ -14,7 +14,7 @@ const SECRET = process.env.TIMESTAMP_SECRET_KEY;
 const FRONTEND_URL = "https://creative-horse-1afc49.netlify.app";
 const whitelist = ENVIRONMENT === "production" 
   ? [FRONTEND_URL]
-  : [FRONTEND_URL, "http://127.0.0.1:5500", "http://localhost:3000"];
+  : [FRONTEND_URL, "http://127.0.0.1:5500", "http://127.0.0.1:3000", "http://localhost:3000"];
 
 app.set("trust proxy", 1);
 
