@@ -11,7 +11,7 @@ const app = express();
 
 const ENVIRONMENT = process.env.NODE_ENV || "development";
 const SECRET = process.env.TIMESTAMP_SECRET_KEY;
-const FRONTEND_URL = "https://creative-horse-1afc49.netlify.app";
+const FRONTEND_URL = "https://ecoweb-pwh6.onrender.com";
 const whitelist = ENVIRONMENT === "production" 
   ? [FRONTEND_URL]
   : [FRONTEND_URL, "http://127.0.0.1:5500", "http://127.0.0.1:3000", "http://localhost:3000"];

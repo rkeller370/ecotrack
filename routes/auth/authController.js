@@ -65,6 +65,9 @@ exports.register = async (req, res) => {
     email: email,
     userId: userId,
     name: name,
+    activities: [],
+    badges: [],
+    settings: [],
     password: hashedPassword,
     auth: "pass",
   });
