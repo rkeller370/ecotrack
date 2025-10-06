@@ -47,7 +47,7 @@ exports.addLog = async (req,res) => {
       })
     }
 
-    await db.users.updateOne({userId: req.user}, {$push: {
+    await db.collection('users').updateOne({userId: req.user}, {$push: {
       activities: {id: Date.now(),timestamp: new Date().toISOString(),category: category,activityType: activityType,amount: amount,unit: unit,duration: duration,notes: notes,carbonImpact: carbonImpact,carbonSaved: carbonSaved}
     }})
 
