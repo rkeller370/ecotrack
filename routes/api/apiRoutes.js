@@ -4,7 +4,7 @@ const apiController = require("./apiController");
 const { authenticateJWT } = require("../../middleware/authMiddleware");
 const limiter = require("../../middleware/rateLimiter");
 
-router.post("/addLog",authenticateJWT,limiter.limiter)
+router.post("/addLog",authenticateJWT,limiter.limiter, apiController.addLog)
 router.get("/universities", authenticateJWT, limiter.limiter, apiController.getUniversities);
 router.post("/eval", authenticateJWT, limiter.limiter, apiController.evaluateStudent);
 router.get("/analysis", authenticateJWT, limiter.limiter, apiController.getAnalysis);
