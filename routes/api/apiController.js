@@ -55,6 +55,7 @@ exports.addLog = async (req,res) => {
       success: true
     })
   } catch (err) {
+    console.error(err)
     return res.status(500).json({
       success: false,
       message: "Internal server error"
