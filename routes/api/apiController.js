@@ -27,9 +27,9 @@ initializeDatabase();
 
 exports.addLog = async (req,res) => {
   try {
-    const { category,activityType,amount,unit,duration,notes,carbonImpact,carbonSaved } = req.body;
+    let { category,activityType,amount,unit,duration,notes,carbonImpact,carbonSaved } = req.body;
 
-    console.log(!category,!activityType,!amount,!unit,!duration,!notes,!carbonImpact,!carbonSaved)
+    carbonSaved = carbonSaved ? carbonSaved : 0
 
     if(!category || !activityType || !amount || !unit || !duration || !carbonImpact || !carbonSaved) {
       return res.status(400).json({
