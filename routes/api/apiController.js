@@ -25,6 +25,41 @@ const url = "https://creative-horse-1afc49.netlify.app";
 
 initializeDatabase();
 
+exports.addLog = async (req,res) => {
+  try {
+    const { category,activityType,amount,unit,duration,notes,carbonImpact,carbonSaved } = req.body;
+
+    if(!category || !activityType || !amount || !unit || !duration || !carbonImpact || !carbonSaved || !Number(carbonImpact) || !Number(carbonSaved)) {
+      return res.status(400).json({
+        success: false,
+        response: "Invalid paramaters"
+      })
+    }
+
+    const user = await db.collection("users").findOne({ userId: req.user });
+
+    if(!user) { 
+      return res.status(403).json({
+        success: false,
+        message: "Auth error"
+      })
+    }
+
+    await db.users.updateOne({userId: req.user}, {$push: {
+      activities: {id: Date.now(),timestamp: new Date().toISOString(),category: category,activityType: activityType,amount: amount,unit: unit,duration: duration,notes: notes,carbonImpact: carbonImpact,carbonSaved: carbonSaved}
+    }})
+
+    return res.status(200).json({
+      success: true
+    })
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+}
+
 exports.getUniversities = async (req, res) => {
   try {
     const { college } = req.query;
