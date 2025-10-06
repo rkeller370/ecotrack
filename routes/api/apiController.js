@@ -31,7 +31,9 @@ exports.addLog = async (req,res) => {
 
     carbonSaved = carbonSaved ? carbonSaved : 0
 
-    if(!category || !activityType || !amount || !unit || !duration || !carbonImpact || !carbonSaved) {
+    console.log(!category)
+
+    if(!category || !activityType || !amount || !unit || !duration || !carbonImpact) {
       return res.status(400).json({
         success: false,
         response: "Invalid paramaters"
