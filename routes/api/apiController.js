@@ -29,9 +29,9 @@ exports.addLog = async (req,res) => {
   try {
     const { category,activityType,amount,unit,duration,notes,carbonImpact,carbonSaved } = req.body;
 
-    console.log(category,activityType,amount,unit,duration,notes,carbonImpact,carbonSaved)
+    console.log(!category,!activityType,!amount,!unit,!duration,!notes,!carbonImpact,!carbonSaved)
 
-    if(!category || !activityType || !amount || !unit || !duration || !carbonImpact || !carbonSaved || !Number(carbonImpact) || !Number(carbonSaved)) {
+    if(!category || !activityType || !amount || !unit || !duration || !carbonImpact || !carbonSaved) {
       return res.status(400).json({
         success: false,
         response: "Invalid paramaters"
