@@ -68,9 +68,9 @@ exports.addLog = async (req,res) => {
 exports.ecoSuggestions = async (req, res) => {
   try {
     const ip = await getClientIp(req)
+    console.log(ip)
     const location = await changeIP(ip)
-
-    console.log(location,ip)
+    console.log(location)
 
     const prompt = `
     You are an assistant that suggests eco-friendly and sustainable activities, shops, or events in a given location. 
