@@ -5,6 +5,7 @@ const { authenticateJWT } = require("../../middleware/authMiddleware");
 const limiter = require("../../middleware/rateLimiter");
 
 router.post("/addLog",authenticateJWT,limiter.limiter, apiController.addLog)
+router.get("/ecoRecommendations",authenticateJWT,limiter.ailimiter,apiController.ecoSuggestions)
 router.get("/universities", authenticateJWT, limiter.limiter, apiController.getUniversities);
 router.post("/eval", authenticateJWT, limiter.limiter, apiController.evaluateStudent);
 router.get("/analysis", authenticateJWT, limiter.limiter, apiController.getAnalysis);

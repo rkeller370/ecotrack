@@ -65,6 +65,73 @@ exports.addLog = async (req,res) => {
   }
 }
 
+exports.ecoSuggestions = async (req, res) => {
+  try {
+    const ip = await getClientIp(req)
+    const location = await changeIP(ip)
+
+    const prompt = `
+    You are an assistant that suggests eco-friendly and sustainable activities, shops, or events in a given location. 
+    Focus on specific, actionable recommendations such as local farmers markets, sustainable shops, community recycling events, local public transportation, bike routes, local forest trails, community cleanups, eco-conscious cafes and more. 
+    
+    No emojis in response, make it easy to understand as well.
+
+    Location context: ${location} (or IP ${ip})
+    
+    Return the response strictly in JSON format with the following structure:
+    [
+      {
+        "name": "string",                // Name of the place or activity
+        "description": "string",         // One-line friendly description
+        "address": "string",             // Street address or general area
+        "recommend_icon": "string"       // Font Awesome icon suggestion (e.g., 'fa-leaf', 'fa-store', 'fa-recycle')
+      },
+      ...
+    ]
+    
+    Provide exactly 5 recommendations.
+    `
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are an eco-friendly adviser.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.7,
+    });
+
+    if (!response.choices || response.choices.length === 0) {
+      return res
+        .status(500)
+        .json({ error: "OpenAI API returned no response." });
+    }
+
+    const aiResponse = response.choices[0].message.content;
+
+    await db
+    .collection("users")
+    .updateOne(
+      { userId: req.user },
+      { $set: { ecoRecommendations: aiResponse } }
+    );
+
+    return res.status(200).json({
+      success: true,
+      response: aiResponse,
+    })
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+}
+
 exports.getUniversities = async (req, res) => {
   try {
     const { college } = req.query;
@@ -169,148 +236,29 @@ exports.evaluateStudent = async (req, res) => {
       .collection("users")
       .updateOne({ userId: req.user }, { $set: { inputtedValues: validatedData } });
 
-    const prompt = `You are an elite AI-powered college admissions consultant, specializing in meticulously analyzing high school student applications. Your mission is to deliver an extraordinarily detailed evaluation, packed with precise, high-value recommendations that dramatically increase the student’s admission chances at their target colleges.
-
-      You must:
-      - **Tailor all feedback** to the student’s data and the unique priorities of their target colleges (based on Common Data Set (CDS), mission statements, and admissions trends).
-      - **Be hyper-specific** by comparing the student's profile against competitive benchmarks (e.g., middle 50% ranges for GPA, SAT/ACT, course rigor, extracurricular expectations).
-      - **Provide a vast number of insights**—not just 3-4, but **multiple, highly detailed, strategic** recommendations per section.
-      - **Prioritize actionable strategies**—every recommendation must be measurable, concrete, and immediately implementable.
+      const prompt = `
+      You are an assistant that suggests eco-friendly and sustainable activities, shops, or events in a given location. 
+      Focus on specific, actionable recommendations such as local farmers markets, sustainable shops, community recycling events, or eco-conscious cafes. 
       
-      ---
+      Location context: ${location} (or IP ${ip})
       
-      ### **Structured Input:**
-      \`\`\`json
-      ${JSON.stringify(validatedData, null, 2)}
-      \`\`\`
+      Return the response strictly in **valid JSON** with the following structure:
       
-      ---
-      
-      ### **Deliverables:**
-      You must generate a JSON object that contains **four comprehensive sections**:  
-      
-      #### **1. Holistic Portfolio Assessment**
-      - Assign an overall **portfolio rating** ('Exceptional', 'Very Strong', 'Strong', 'Good', 'Fair', 'Needs Improvement') based on the student’s profile.
-      - Justify this rating by analyzing the student’s strengths, weaknesses, and alignment with their college goals.
-      - **Summarize unique strengths** that set the student apart, connecting them to the priorities of their target colleges.
-      
-      #### **2. In-Depth Analysis of Key Areas**
-      For **each** category below, provide **at least 6-8 highly detailed** recommendations tailored to the student's strengths, weaknesses, and target colleges.
-      
-      - **Academics:**
-        - Evaluate **GPA, course rigor, trends, and standardized test scores** compared to CDS data.
-        - **Identify inconsistencies or areas for improvement.**
-        - Provide **specific, multi-step recommendations** for academic enhancement.
-        - **Examples of strong recommendations:**
-          - “Enroll in AP Chemistry and AP Calculus BC next year, as [Target College] reports 92% of admitted students taking both.”
-          - “Increase SAT Math score from 710 to 770 to meet [Target College’s] middle 50% range (750-790).”
-      
-      - **Extracurriculars:**
-        - Assess **leadership, impact, depth of involvement, and initiative.**
-        - **Recommend at least 6-8 strategic moves** to enhance extracurricular strength.
-        - **Examples of strong recommendations:**
-          - “Launch a self-led research project on AI in healthcare and submit findings to the Regeneron Science Talent Search.”
-          - “Expand [volunteering initiative] by partnering with [organization] to reach 500+ people annually.”
-          - “Compete in the USA Biology Olympiad to gain national-level recognition.”
-      
-      - **Awards & Recognition:**
-        - **Analyze the competitiveness** of current awards.
-        - Suggest **at least 5-6 new high-profile awards or competitions.**
-        - **Examples of strong recommendations:**
-          - “Apply for the Davidson Fellows Scholarship ($50,000) for your work in [field].”
-          - “Compete in the Conrad Challenge to gain entrepreneurial recognition.”
-      
-      - **Scholarships:**
-        - Identify **specific, high-value scholarships** based on the student’s profile.
-        - Provide **at least 5-6 opportunities with clear justification**.
-        - **Examples of strong recommendations:**
-          - “Apply for the Coca-Cola Scholars Program ($20,000) given your leadership in [activity].”
-          - “Submit your STEM research to the Intel Science and Engineering Fair for scholarship opportunities.”
-      
-      #### **3. Targeted Improvement Recommendations**
-      For **each** of the following, provide **at least 6-8 concrete, strategic recommendations** tailored to the student’s situation:
-      
-      - **Academics**
-      - **Extracurriculars**
-      - **Essays**
-      - **Time Management**
-      - **College List Optimization**
-      
-      Each recommendation must be **highly detailed and actionable**, such as:
-      - “Reduce extracurricular overload by prioritizing [top 3 activities] and cutting [least impactful one].”
-      - “Structure personal statement around a ‘challenge-growth-impact’ framework to enhance narrative flow.”
-      
-      #### **4. College List Evaluation & Expansion**
-      - **Assess the competitiveness** of the student’s college list.
-      - Provide **at least 4-5 additional schools** tailored to the student's profile.
-      - Justify each new school based on **program strength, financial aid, admissions probability, and alignment with the student’s goals.**
-      - **Example recommendations:**
-        - “Consider applying to [Highly Competitive College] because of its [specialized program], where [X%] of students pursue [intended major].”
-        - “Add [Safety School] to your list, as it offers strong merit aid and has a [X%] admissions rate.”
-      
-      ---
-      
-      ### **Output Format**
-      Return a **pure JSON response** (NO code blocks, NO formatting, NO extra text). The JSON must be **deeply structured** for seamless integration into a frontend UI.
-      
-      \`\`\`json
-      {
-        "portfolioRating": "Exceptional",
-        "summary": "This student presents a compelling profile...",
-        "areas": {
-          "academics": {
-            "analysis": "The student has a strong GPA...",
-            "recommendations": [
-              "Take AP Calculus BC to align with [Target College’s] rigorous academic expectations.",
-              "Raise SAT Math score to 770 to meet [Target College’s] middle 50% range (750-790).",
-              "Conduct independent research in [intended major] and submit findings to a peer-reviewed journal.",
-              "Enroll in a dual-enrollment program at a local university to showcase college-level coursework."
-            ]
-          },
-          "extracurriculars": {
-            "analysis": "The student has deep involvement in...",
-            "recommendations": [
-              "Expand leadership role in [activity] by founding a new initiative.",
-              "Compete in [national competition] to gain recognition in [field].",
-              "Quantify impact by tracking growth metrics (e.g., 'raised $10,000 for X cause').",
-              "Secure an internship in [field] to strengthen real-world experience."
-            ]
-          },
-          "awards": {
-            "analysis": "The student has received notable awards in...",
-            "recommendations": [
-              "Apply for the Regeneron STS competition.",
-              "Submit work to the MIT Think Scholars program.",
-              "Compete in the Conrad Challenge for recognition in innovation."
-            ]
-          },
-          "scholarships": {
-            "analysis": "The student is eligible for several competitive scholarships...",
-            "recommendations": [
-              "Apply for the Coca-Cola Scholars Program ($20,000).",
-              "Submit application for the Davidson Fellows Scholarship ($50,000).",
-              "Consider the Jack Kent Cooke Foundation scholarship for high-achieving students with financial need."
-            ]
-          }
-        },
-        "collegeListEvaluation": {
-          "analysis": "The student’s college list is well-balanced...",
-          "recommendations": [
-            "Add [Reach College] for its strong [program].",
-            "Remove [Target College] as its median GPA is significantly higher than the student’s.",
-            "Explore [Safety School] due to strong merit aid opportunities."
-          ]
+      [
+        {
+          "name": "string",                // Name of the place or activity
+          "description": "string",         // One-line friendly description
+          "address": "string",             // Street address or general area
+          "website": "string",             // Website URL (or "" if none available)
+          "recommend_icon": "string"       // Font Awesome icon suggestion (e.g., 'fa-leaf', 'fa-store', 'fa-recycle')
         }
-      }
-      \`\`\`
+      ]
       
-      ---
+      Rules:
+      - Provide exactly 5 recommendations.
+      - Do not include extra text, explanations, or formatting — only the raw JSON.
+      `
       
-      ### **Critical Guidelines**
-      - **Every section must contain at least 6-8 recommendations.**
-      - **Justify all suggestions with specific benchmarks, data points, or strategic reasoning.**
-      - **Be as detailed, insightful, and data-driven as possible.**
-      - **Return only JSON. No explanations, no formatting, no extra text.**`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
