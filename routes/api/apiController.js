@@ -70,26 +70,31 @@ exports.ecoSuggestions = async (req, res) => {
     const ip = await getClientIp(req)
     const location = await changeIP(ip)
 
+    console.log(location,ip)
+
     const prompt = `
     You are an assistant that suggests eco-friendly and sustainable activities, shops, or events in a given location. 
-    Focus on specific, actionable recommendations such as local farmers markets, sustainable shops, community recycling events, local public transportation, bike routes, local forest trails, community cleanups, eco-conscious cafes and more. 
+    Focus on specific, actionable recommendations such as local farmers markets, sustainable shops, community recycling events, or eco-conscious cafes. 
     
-    No emojis in response, make it easy to understand as well.
-
     Location context: ${location} (or IP ${ip})
     
-    Return the response strictly in JSON format with the following structure:
+    Return the response strictly in **valid JSON** with the following structure:
+    
     [
       {
         "name": "string",                // Name of the place or activity
         "description": "string",         // One-line friendly description
         "address": "string",             // Street address or general area
+        "website": "string",             // Website URL (or "" if none available)
         "recommend_icon": "string"       // Font Awesome icon suggestion (e.g., 'fa-leaf', 'fa-store', 'fa-recycle')
-      },
-      ...
+      }
     ]
     
-    Provide exactly 5 recommendations.
+    Rules:
+    - Provide exactly 5 recommendations.
+    - YOU MUST PROVIDE SUGGESTIONS AROUND THE INPUTTED LOCATION
+    - Do not include extra text, explanations, or formatting — only the raw JSON.
+    - DO NOT INCLUDE CODE BLOCK, DO NOT INCLUDE THE \`\`\` JSON and \`\`\` at the end
     `
 
     const response = await openai.chat.completions.create({
@@ -257,6 +262,7 @@ exports.evaluateStudent = async (req, res) => {
       Rules:
       - Provide exactly 5 recommendations.
       - Do not include extra text, explanations, or formatting — only the raw JSON.
+      - DO NOT INCLUDE CODE BLOCK, DO NOT INCLUDE THE \`\`\` JSON and \`\`\` at the 
       `
       
 
