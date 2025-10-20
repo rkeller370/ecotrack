@@ -150,7 +150,7 @@ exports.getVolunteerEvents = async (req, res) => {
     
     return res.status(200).json({
       success: true,
-      userEvents: user.volunteer || [],
+      userEvents: user.events || [],
       allEvents: events || [],
     })
   } catch (err) {
