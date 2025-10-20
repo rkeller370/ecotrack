@@ -302,7 +302,7 @@ exports.unregisterEvent = async (req, res) => {
 
 exports.createEvent = async (req,res) => {
   try {
-    const { eventData } = req.body
+    const eventData = req.body
     if(!eventData) {
       return res.status(400).json({
         success: false,
