@@ -68,6 +68,7 @@ exports.register = async (req, res) => {
     activities: [],
     badges: [],
     settings: [],
+    volunteer: [],
     password: hashedPassword,
     auth: "pass",
   });

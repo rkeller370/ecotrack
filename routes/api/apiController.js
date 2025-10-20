@@ -1,5 +1,5 @@
 const { getDb, initializeMongo } = require("../../config/db");
-const { sanitizeInput, sanitizeEssayInput } = require("../../utils/sanitize");
+const { sanitizeInput } = require("../../utils/sanitize");
 const {
   validateEmail,
   validatePassword,
@@ -20,8 +20,6 @@ const initializeDatabase = async () => {
 };
 
 let index = null;
-
-const url = "https://creative-horse-1afc49.netlify.app";
 
 initializeDatabase();
 
@@ -74,7 +72,7 @@ exports.ecoSuggestions = async (req, res) => {
 
     const prompt = `
     You are an assistant that suggests eco-friendly and sustainable activities, shops, or events in a given location. 
-    Focus on specific, actionable recommendations such as local farmers markets, sustainable shops, community recycling events, or eco-conscious cafes. 
+    Focus on specific, actionable recommendations such as local farmers markets, sustainable shops, community recycling events, trails, surronding nature, community cleanups, etc. 
     
     Location context: ${location} (or IP ${ip})
     
@@ -82,8 +80,8 @@ exports.ecoSuggestions = async (req, res) => {
     
     [
       {
-        "name": "string",                // Name of the place or activity
-        "description": "string",         // One-line friendly description
+        "name": "string",                // Name
+        "description": "string",         // One line description
         "address": "string",             // Street address or general area
         "website": "string",             // Website URL (or "" if none available)
         "recommend_icon": "string"       // Font Awesome icon suggestion (e.g., 'fa-leaf', 'fa-store', 'fa-recycle')
@@ -91,9 +89,10 @@ exports.ecoSuggestions = async (req, res) => {
     ]
     
     Rules:
-    - Provide exactly 5 recommendations.
+    - Provide 5 recommendations.
     - YOU MUST PROVIDE SUGGESTIONS AROUND THE INPUTTED LOCATION
     - Do not include extra text, explanations, or formatting — only the raw JSON.
+    - IF YOU ARE NOT POSITIVE THAT THE WEBSITE IS CORRECT OR NOT 100% SURE IT EXISTS **DO NOT INCLUDE IT**
     - DO NOT INCLUDE CODE BLOCK, DO NOT INCLUDE THE \`\`\` JSON and \`\`\` at the end
     `
 
@@ -137,765 +136,217 @@ exports.ecoSuggestions = async (req, res) => {
   }
 }
 
-exports.getUniversities = async (req, res) => {
+exports.getVolunteerEvents = async (req, res) => {
   try {
-    const { college } = req.query;
+    const user = await db.collection("users").findOne({ userId: req.user });
+    const events = await db.collection("events").find().toArray()
 
-    if (!college || !String(college) || college.trim() === "") {
-      return res.status(400).json({
+    if(!user) {
+      return res.status(403).json({
         success: false,
-        message: "No college provided",
-      });
+        message: 'Auth error',
+      })
     }
-
-    const govApiKey = process.env.GOV_API_KEY;
-    const response = await axios.get(
-      `https://api.data.gov/ed/collegescorecard/v1/schools.json`,
-      {
-        params: {
-          api_key: govApiKey,
-          "school.name": college,
-          per_page: 10,
-        },
-      }
-    );
-
-    const universities = response.data.results.map((uni) => ({
-      name: uni.school.name,
-      city: uni.school.city,
-      state: uni.school.state,
-    }));
-
-    return res.json({
+    
+    return res.status(200).json({
       success: true,
-      results: universities,
-    });
-  } catch (error) {
-    console.error(error);
+      userEvents: user.volunteer || [],
+      allEvents: events || [],
+    })
+  } catch (err) {
+    console.error(err)
     return res.status(500).json({
       success: false,
-      message: "An error occurred while fetching university data",
-    });
+      message: 'Internal server error'
+    })
   }
-};
+}
 
-exports.evaluateStudent = async (req, res) => {
-  if (!db) {
-    db = getDb();
-  }
+exports.registerEvent = async (req, res) => {
   try {
-    const studentData = req.body;
-    const user = await db.collection("users").findOne({ userId: req.user });
-
-    if (!studentData) {
+    const { eventId } = req.body;
+    if(!eventId || !String(eventId)) {
       return res.status(400).json({
         success: false,
-        message: "No student data provided",
-      });
+        message: "Invalid paramaters"
+      })
     }
 
-    if (!user) {
-      return res.status(404).json({
+    const user = await db.collection("users").findOne({ userId: req.user })
+    if(!user) {
+      return res.status(403).json({
         success: false,
-        message: "User not found",
-      });
+        message: 'Auth error'
+      })
     }
 
-    if (user.recommended) {
+    const event = await db.collection("events").findOne({id: eventId})
+    if(!event) {
       return res.status(400).json({
         success: false,
-        message: "User already recommended",
-      });
+        message: "Event not found"
+      })
     }
 
-    const allowedFields = [
-      "gpa",
-      "major",
-      "gradeLevel",
-      "classRank",
-      "currentCourses",
-      "studyHours",
-      "studyMethods",
-      "strengths",
-      "weaknesses",
-      "extracurriculars",
-      "targetSchool",
-      "testsTaken",
-      "testScores",
-      "skills",
-      "awards",
-    ];
-
-    const validatedData = {};
-
-    for (const field of allowedFields) {
-      if (studentData[field] !== undefined) {
-        validatedData[field] = sanitizeInput(
-          studentData[field],
-          field == "extracurriculars" ? 700 : 200
-        );
-      }
-    }
-
-    await db
-      .collection("users")
-      .updateOne({ userId: req.user }, { $set: { inputtedValues: validatedData } });
-
-      const prompt = `
-      You are an assistant that suggests eco-friendly and sustainable activities, shops, or events in a given location. 
-      Focus on specific, actionable recommendations such as local farmers markets, sustainable shops, community recycling events, or eco-conscious cafes. 
-      
-      Location context: ${location} (or IP ${ip})
-      
-      Return the response strictly in **valid JSON** with the following structure:
-      
-      [
-        {
-          "name": "string",                // Name of the place or activity
-          "description": "string",         // One-line friendly description
-          "address": "string",             // Street address or general area
-          "website": "string",             // Website URL (or "" if none available)
-          "recommend_icon": "string"       // Font Awesome icon suggestion (e.g., 'fa-leaf', 'fa-store', 'fa-recycle')
-        }
-      ]
-      
-      Rules:
-      - Provide exactly 5 recommendations.
-      - Do not include extra text, explanations, or formatting — only the raw JSON.
-      - DO NOT INCLUDE CODE BLOCK, DO NOT INCLUDE THE \`\`\` JSON and \`\`\` at the 
-      `
-      
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert college admissions advisor.",
-        },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.7,
-    });
-
-    if (!response.choices || response.choices.length === 0) {
-      return res
-        .status(500)
-        .json({ error: "OpenAI API returned no response." });
-    }
-
-    await db
-      .collection("users")
-      .updateOne(
-        { userId: req.user },
-        { $set: { recommended: response.choices[0].message.content } }
-      );
-
-    const aiResponse = response.choices[0].message.content;
-    return res.json({ evaluation: aiResponse });
-  } catch (error) {
-    console.error("Error:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while processing the request." });
-  }
-};
-
-exports.getAnalysis = async (req, res) => {
-  if (!db) {
-    db = getDb();
-  }
-  try {
-    const user = await db.collection("users").findOne({ userId: req.user });
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-    return res.json({ recommended: user.recommended });
-  } catch (error) {
-    console.error("Error:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while processing the request." });
-  }
-};
-
-exports.reviewEssay = async (req, res) => {
-  if (!db) {
-    db = getDb();
-  }
-  try {
-    const { essay } = req.body;
-    const userId = req.user;
-
-    if (!essay || typeof essay !== "string" || essay.trim().length === 0) {
+    if(event.registeredVolunteers >= event.requiredVolunteers) {
       return res.status(400).json({
         success: false,
-        message: "Valid essay text is required",
-      });
+        message: "Max volunteers reached"
+      })
     }
 
-    if (essay.length > 10000) {
-      return res.status(400).json({
-        success: false,
-        message: "Essay exceeds maximum length of 10,000 characters",
-      });
-    }
+    await db.collection('events').updateOne({id: eventId}, {$push: {
+      registeredVolunteers: {name: user.name,email: user.email}
+    }, $inc: {
+      volunteersRegistered: 1
+    }}) 
 
-    const user = await db.collection("users").findOne({ userId });
-    const now = new Date();
-    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    await db.collection('users').updateOne({userId: req.user}, {$push: {
+      events: {eventId: eventId,date: event.date,hours: event.duration}
+    }})
 
-    const monthlyReviews = user.essayReviews
-      ? user.essayReviews.filter((date) => new Date(date) >= currentMonthStart)
-      : [];
-
-    if (monthlyReviews.length >= 3) {
-      return res.status(429).json({
-        success: false,
-        message: "Monthly limit of 3 essay reviews exceeded",
-      });
-    }
-
-    const defaultPrompt = `Act as a elite college essay specialist. Provide EXTREMELY DETAILED, line-by-line feedback focused on actionables. Analyze:
-
-    **Core Elements**
-    1. Grammar/Syntax (highlight specific errors)
-    2. Tone (formal/informal balance)
-    3. Word Choice (precise vs vague language)
-    4. Diction (academic vs conversational) 
-    5. Sentence Structure (variety/complexity)
-    6. Narrative Flow (transitions/pacing)
-    7. Hook Effectiveness (opening impact)
-    8. Unique Voice (authenticity markers)
-    9. Concrete Examples (specificity level)
-    10. Admissions Fit (alignment with college values)
-    
-    **Response Requirements**
-    - For EACH category: 3-5 SPECIFIC examples FROM THE ESSAY
-    - Provide a minimum of 7 (recommended more) suggested improvements
-    - Direct quotes from text with line numbers
-    - Concrete revision suggestions
-    - Percentage ratings reflecting skill level
-    
-    **JSON Template**
-    \`\`\`json
-    {
-      "ratings": {
-        "grammar": <1-100>, 
-        "tone": <1-100>,
-        "word_choice": <1-100>,
-        "diction": <1-100>,
-        "sentence_structure": <1-100>,
-        "narrative_flow": <1-100>,
-        "hook": <1-100>,
-        "uniqueness": <1-100>,
-        "examples": <1-100>,
-        "admissions_fit": <1-100>
-      },
-      "strengths": [
-        {
-          "category": "Word Choice",
-          "example": "\"The laboratory's sterile environment\" (line 12)",
-          "analysis": "Excellent precise terminology showing scientific awareness"
-        }
-      ],
-      "improvements": [
-        {
-          "category": "Tone",
-          "excerpt": "\"I kinda stumbled into research\" (line 8)",
-          "issue": "Overly casual for academic context",
-          "fix": "\"My research journey began unexpectedly\"",
-          "rationale": "Maintains authenticity while using more formal academic register"
-        }
-      ],
-      "overall_impression": {
-        "summary": "Strong foundation needing polish in...",
-        "top_3_priorities": [
-          "Revise informal phrases in lines 8,15,22",
-          "Vary sentence starters in paragraphs 3-4", 
-          "Add 2-3 discipline-specific terms in methods section"
-        ]
-      }
-    }
-    \`\`\`
-    
-    **Rules**
-    1. Minimum 15 specific examples TOTAL
-    2. Every improvement MUST include:
-       - Exact text excerpt 
-       - Line number reference
-       - Suggested revision
-       - Brief technical rationale
-    3. Never use vague statements - ALWAYS anchor in text
-    4. Prioritize changes with biggest admissions impact
-
-    ** RETURN ONLY A JSON FILE, DO NOT PROVIDE TEXT RESPONSES, DO NOT WRAP IT IN A CODE BLOCK. **
-
-    **OTHER INSTRUCTIONS:**
-    1. Move ALL parenthetical line numbers inside the quotes.
-    2. Escape any internal double quotes in examples:
-    "example": "\"I was angry\" (line 6)"
-    
-    Essay: ${sanitizeEssayInput(essay)}`;
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a college admissions essay expert.",
-        },
-        { role: "user", content: defaultPrompt },
-      ],
-      temperature: 0.4,
-      max_tokens: 1500,
-    });
-
-    const feedback = response.choices[0].message.content;
-
-    await db
-      .collection("users")
-      .updateOne(
-        { userId },
-        { $push: { essayReviews: new Date().toISOString() } }
-      );
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      feedback: feedback,
-      reviewsRemaining: 3 - (monthlyReviews.length + 1),
-    });
-  } catch (error) {
-    console.error("Essay review error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error processing essay review",
-    });
-  }
-};
-
-exports.getSettings = async (req, res) => {
-  if (!db) {
-    db = getDb();
-  }
-  try {
-    let defaultSettings = {
-      apptwo: false,
-      emailtwo: false,
-      emailNot: true,
-    };
-    const user = await db.collection("users").findOne({ userId: req.user });
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-
-    return res.json({
-      success: true,
-      settings: user.settings ? user.settings : defaultSettings,
-      email: user.email,
-      name: user.name,
-      auth: user.auth,
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while processing the request." });
-  }
-};
-
-exports.submitCollegePreferences = async (req, res) => {
-  if (!db) {
-    db = getDb();
-  }
-  try {
-    const studentData = req.body;
-
-    if (!studentData) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing student data",
-      });
-    }
-    const user = await db.collection("users").findOne({ userId: req.user });
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-
-    const allowedFields = [
-      "location",
-      "type",
-      "goodMajor",
-      "tuition",
-      "athletics",
-      "academicRigor",
-      "diversity",
-      "internships",
-      "studyAbroad",
-      "housing",
-      "climate",
-      "socialLife",
-      "campusSize",
-      "gpa",
-    ];
-
-    const validatedData = {};
-
-    for (const field of allowedFields) {
-      if (studentData[field] !== undefined) {
-        validatedData[field] = sanitizeInput(studentData[field]);
-      }
-    }
-
-    const userVector = encodeUserPreferences(validatedData);
-
-    await db
-      .collection("users")
-      .updateOne(
-        { userId: req.user },
-        { $set: { collegePref: validatedData, collegePrefVector: userVector } }
-      );
-    return res.json({ success: true });
-  } catch (error) {
-    console.error("Error:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while processing the request." });
-  }
-};
-
-exports.getCollegePreferences = async (req, res) => {
-  if (!global.db) {
-    global.db = getDb();
-  }
-
-  try {
-    let { pg } = req.query;
-    pg = Number(pg)
-    if (!pg || pg < 1 || !Number.isInteger(pg) || pg === 'NaN' || pg === 'Infinity') {
-      pg = 1;
-    }
-
-    const rawData = fs.readFileSync("./info/colleges.json", "utf-8");
-    const universities = JSON.parse(rawData).filter(uni =>
-      Array.isArray(uni.normalizedVector) &&
-      uni.normalizedVector.every(Number.isFinite)
-    );
-
-    const user = await global.db.collection("users").findOne({ userId: req.user });
-    if (!user?.collegePrefVector) {
-      return res.status(404).json({ success: false, message: "No preferences found" });
-    }
-
-    let userVector = new Float32Array(user.collegePrefVector);
-    const userNorm = Math.sqrt(userVector.reduce((sum, val) => sum + val * val, 0));
-    if (userNorm === 0) {
-      return res.status(400).json({ success: false, message: "User preference vector norm is zero" });
-    }
-
-    const resultsPromises = universities.map(async (uni) => {
-      let uniVector = new Float32Array(uni.normalizedVector);
-      if (userVector.length !== uniVector.length) {
-        const maxLength = Math.max(userVector.length, uniVector.length);
-        const paddedUserVector = new Float32Array(maxLength);
-        const paddedUniVector = new Float32Array(maxLength);
-        paddedUserVector.set(userVector);
-        paddedUniVector.set(uniVector);
-        userVector = paddedUserVector;
-        uniVector = paddedUniVector;
-      }
-
-      let dotProduct = 0;
-      for (let i = 0; i < userVector.length; i++) {
-        dotProduct += userVector[i] * uniVector[i];
-      }
-      const uniNorm = Math.sqrt(uniVector.reduce((sum, val) => sum + val * val, 0));
-      if (uniNorm === 0) return null;
-      const similarity = dotProduct / (userNorm * uniNorm);
-
-      const extraDetails = await getCollegeData(uni.name);
-
-      return {
-        name: uni.name,
-        match_percentage: Number(((similarity + 1) * 50).toFixed(2)),
-        similarity: similarity,
-        description: extraDetails.description ||
-          `${uni.name} is a ${uni.type} institution located in ${uni.location} offering tuition around $${uni.tuition}.`,
-        acceptance_rate: extraDetails.acceptanceRate || "N/A",
-        header_image: extraDetails.headerImage || "https://via.placeholder.com/800x400?text=No+Image+Available",
-        uniqueFact: extraDetails.uniqueFact || null,
-        details: {
-          location: extraDetails.location || uni.location,
-          tuition: extraDetails.tuition || uni.tuition,
-          athletics: uni.athletics,
-          academicRigor: uni.academicRigor,
-          diversity: uni.diversity,
-          internships: uni.internships,
-          studyAbroad: uni.studyAbroad,
-          housing: uni.housing,
-          climate: uni.climate,
-          socialLife: uni.socialLife,
-          campusSize: extraDetails.studentSize,
-          gpa: uni.gpa,
-        },
-      };
-    });
-
-    const resultsArray = await Promise.all(resultsPromises);
-    const sortedResults = resultsArray
-      .filter(item => item !== null)
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, 20 * pg);
-
-    return res.json({ results: sortedResults });
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({
-      error: "Search operation failed",
-      details: error.message,
-    });
-  }
-};
-
-exports.changeSettings = async (req, res) => {
-  if (!db) {
-    db = getDb();
-  }
-  try {
-    const { type, value, oldpassword, newpassword } = req.body
-    const ip = await getClientIp(req)
-    const location = await changeIP(ip)
-    if(type === "email") {
-      const user = await db.collection("users").findOne({ userId: req.user });
-      if (!user) {
-        return res.status(404).json({ success: false, message: "User not found" });
-      }
-      if(!validateEmail(value)) {
-        return res.status(400).json({ success: false, message: "Invalid email format" });
-      }
-      if (user.email !== value) {
-        const userExists = await db.collection("users").findOne({ email: value });
-        if (userExists) {
-          return res.status(400).json({ success: false, message: "Email already in use" });
-        } else {
-          const emailVerificationToken = jwt.sign(
-            { userId: user.userId },
-            process.env.JWT_SECRET,
-            {
-              expiresIn: "15m",
-              algorithm: "HS256",
-            }
-          );
-      
-          sendVerifEmail(
-            value,
-            "Email Verification",
-            `<!DOCTYPE html>
-            <html>
-              <head>
-                <style>
-                  body {
-                    font-family: 'Inter', sans-serif;
-                    background-color: #f5f5f5;
-                    color: #333333;
-                    margin: 0;
-                    padding: 0;
-                  }
-                  .email-container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background-color: white;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                  }
-                  .email-header {
-                    background-color: #4caf50;
-                    color: white;
-                    padding: 20px;
-                    text-align: center;
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                  }
-                  .email-body {
-                    padding: 30px;
-                    text-align: center;
-                  }
-                  .email-body h1 {
-                    font-size: 1.8rem;
-                    margin-bottom: 20px;
-                  }
-                  .email-body p {
-                    font-size: 1rem;
-                    margin-bottom: 30px;
-                    line-height: 1.5;
-                    color: #666;
-                  }
-                  .email-body .verify-button {
-                    display: inline-block;
-                    padding: 15px 25px;
-                    font-size: 1rem;
-                    font-weight: bold;
-                    color: white;
-                    background-color: #4caf50;
-                    border-radius: 5px;
-                    text-decoration: none;
-                    transition: background-color 0.3s ease;
-                  }
-                  .email-body .verify-button:hover {
-                    background-color: #3e8e41;
-                  }
-                  .email-footer {
-                    background-color: #212121;
-                    color: white;
-                    padding: 20px;
-                    text-align: center;
-                    font-size: 0.9rem;
-                  }
-                  .email-footer a {
-                    color: #4caf50;
-                    text-decoration: none;
-                    font-weight: bold;
-                  }
-                  .email-footer a:hover {
-                    color: #3e8e41;
-                  }
-                </style>
-              </head>
-              <body>
-                <div class="email-container">
-                  <div class="email-header">
-                    Verify Your Email
-                  </div>
-                  <div class="email-body">
-                    <h1>Hello, ${user.name}!</h1>
-                    <p>Please verify your email to continue.</p>
-                    <a href="${url}/verifyemail.html?token=${emailVerificationToken}" class="verify-button">Verify Email</a>
-                    <p>If you did not sign up, please ignore this email and contact our support team.</p>
-                  </div>
-                  <div class="email-footer">
-                    © AdmitVault 2024. All rights reserved. <br />
-                    <a href="${url}">Visit our website</a> | <a href="${url}/privacy">Privacy Policy</a> | <a href="${url}/terms">Terms of Service</a>
-                  </div>
-                </div>
-              </body>
-            </html>`,
-            emailVerificationToken
-          );
-
-          sendVerifEmail(
-            user.email,
-            "Email Changed",
-            `<!DOCTYPE html>
-            <html>
-              <head>
-                <style>
-                  body {
-                    font-family: 'Inter', sans-serif;
-                    background-color: #f5f5f5;
-                    color: #333333;
-                    margin: 0;
-                    padding: 0;
-                  }
-                  .email-container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background-color: white;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                  }
-                  .email-header {
-                    background-color: #4caf50;
-                    color: white;
-                    padding: 20px;
-                    text-align: center;
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                  }
-                  .email-body {
-                    padding: 30px;
-                    text-align: center;
-                  }
-                  .email-body h1 {
-                    font-size: 1.8rem;
-                    margin-bottom: 20px;
-                  }
-                  .email-body p {
-                    font-size: 1rem;
-                    margin-bottom: 30px;
-                    line-height: 1.5;
-                    color: #666;
-                  }
-                  .email-body .verify-button {
-                    display: inline-block;
-                    padding: 15px 25px;
-                    font-size: 1rem;
-                    font-weight: bold;
-                    color: white;
-                    background-color: #4caf50;
-                    border-radius: 5px;
-                    text-decoration: none;
-                    transition: background-color 0.3s ease;
-                  }
-                  .email-body .verify-button:hover {
-                    background-color: #3e8e41;
-                  }
-                  .email-footer {
-                    background-color: #212121;
-                    color: white;
-                    padding: 20px;
-                    text-align: center;
-                    font-size: 0.9rem;
-                  }
-                  .email-footer a {
-                    color: #4caf50;
-                    text-decoration: none;
-                    font-weight: bold;
-                  }
-                  .email-footer a:hover {
-                    color: #3e8e41;
-                  }
-                </style>
-              </head>
-              <body>
-                <div class="email-container">
-                  <div class="email-header">
-                    Verify Your Email
-                  </div>
-                  <div class="email-body">
-                    <h1>Hello, ${user.name}!</h1>
-                    <p>We've detected a change in your email address.</p>
-                    <p><strong>Details:</strong></p>
-                    <ul>
-                      <li>Time: ${new Date().toLocaleString()}</li>
-                      <li>IP Address: ${ip} (${location})</li>
-                      <li>New Email: ${value}</li>
-                    </ul>
-                    <p>Wasn't you? Please contact our support team immediately.</p>
-                  </div>
-                  <div class="email-footer">
-                    © AdmitVault 2024. All rights reserved. <br />
-                    <a href="${url}">Visit our website</a> | <a href="${url}/privacy">Privacy Policy</a> | <a href="${url}/terms">Terms of Service</a>
-                  </div>
-                </div>
-              </body>
-            </html>`,
-            emailVerificationToken
-          );
-
-          await db.collection("users").findOne({userId: req.user}, {$set: {email: value, verified: false, verificationCode: emailVerificationToken}});
-        }
-      }
-    }
+    })
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: "Internal server error." });
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+}
+
+exports.unregisterEvent = async (req, res) => {
+  try {
+    const { eventId } = req.body;
+    if(!eventId || !String(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid params"
+      })
+    }
+
+    const user = await db.collection("users").findOne({userId: req.user})
+    if(!user) {
+      return res.status(403).json({
+        success: false,
+        message: "Auth err"
+      })
+    }
+
+    const event = await db.collection("events").findOne({id: eventId})
+    if(!event) {
+      return res.status(400).json({
+        success: false,
+        message: "Event not found"
+      })
+    }
+
+    await db.collection("events").updateOne(
+      { id: eventId },
+      {
+        $pull: {
+          registeredVolunteers: { email: user.email }
+        },
+        $inc: {
+          volunteersRegistered: -1
+        }
+      }
+    );
+    
+    await db.collection("users").updateOne(
+      { userId: req.user },
+      {
+        $pull: {
+          events: { eventId: eventId }
+        }
+      }
+    );
+    
+    return res.status(200).json({
+      success: true,
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+}
+
+
+/*
+{
+                    id: 2,
+                    title: "Tree Planting - Griffith Park",
+                    status: "upcoming",
+                    date: "2024-01-20",
+                    time: "8:00 AM - 2:00 PM",
+                    location: "Griffith Park, Los Angeles, CA",
+                    description: "Help plant native trees to restore the local ecosystem. Great for families and individuals.",
+                    organizer: "LA Parks Foundation",
+                    volunteersNeeded: 50,
+                    volunteersRegistered: 32,
+                    duration: 4,
+                    category: "Tree Planting",
+                    impact: "Plant 100+ native trees",
+                    requirements: "Work gloves, water bottle",
+                    creatorId: "org2",
+                    registeredVolunteers: [
+                        { name: "Mike Johnson", email: "mike@example.com" }
+                    ]
+                }
+                */
+
+exports.createEvent = async (req,res) => {
+  try {
+    const { eventData } = req.body
+    if(!eventData) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid params"
+      })
+    }
+
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let eventId = "";
+    let length = 8;
+    for (let i = 0; i < length; i++) {
+      eventId += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    let event = {
+      id: eventId,
+      title: sanitizeInput(eventData.title || ""),
+      status: sanitizeInput(eventData.status || ""),
+      date: eventData.date,
+      time: eventData.time,
+      location: eventData.location,
+      description: sanitizeInput(eventData.description),
+      organizer: eventData.organizer,
+      volunteersNeeded: eventData.volunteersNeeded,
+      volunteersRegistered: 0,
+      duration: eventData.duration,
+      category: sanitizeInput(eventData.category),
+      impact: sanitizeInput(eventData.impact),
+      requirements: sanitizeInput(eventData.requirements),
+      creatorId: req.user,
+      registeredVolunteers: [],
+    }
+
+    await db.collection('events').insertOne(event);
+    
+    return res.status(200).json({
+      success: true,
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
   }
 }

@@ -5,14 +5,10 @@ const { authenticateJWT } = require("../../middleware/authMiddleware");
 const limiter = require("../../middleware/rateLimiter");
 
 router.post("/addLog",authenticateJWT,limiter.limiter, apiController.addLog)
+router.post("/registerEvent",authenticateJWT,limiter.limiter, apiController.registerEvent)
+router.post("/unregisterEvent",authenticateJWT,limiter.limiter, apiController.unregisterEvent)
+router.post("/createEvent",authenticateJWT,limiter.limiter, apiController.createEvent)
 router.get("/ecoRecommendations",authenticateJWT,limiter.ailimiter,apiController.ecoSuggestions)
-router.get("/universities", authenticateJWT, limiter.limiter, apiController.getUniversities);
-router.post("/eval", authenticateJWT, limiter.limiter, apiController.evaluateStudent);
-router.get("/analysis", authenticateJWT, limiter.limiter, apiController.getAnalysis);
-router.get("/settings", authenticateJWT, limiter.limiter, apiController.getSettings);
-router.get("/preferences", authenticateJWT, limiter.limiter, apiController.getCollegePreferences);
-router.post("/essay-review", authenticateJWT, limiter.limiter, apiController.reviewEssay);
-router.post("/submitPreferences", authenticateJWT, limiter.limiter, apiController.submitCollegePreferences)
-router.post("/changeSettings", authenticateJWT, limiter.limiter, apiController.changeSettings)
+router.get("/volunteerEvents",authenticateJWT,limiter.limiter,apiController.getVolunteerEvents)
 
 module.exports = router;
