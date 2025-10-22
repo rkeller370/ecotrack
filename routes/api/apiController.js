@@ -208,6 +208,7 @@ exports.dailySuggestion = async (req,res) => {
     - Return only one brief suggestion (1–2 sentences).
     - Do NOT include any explanations, extra text, or formatting — just the suggestion itself.
     - Do NOT include uncertain or unverifiable local details.
+    - If possible, include potential impact stats like how much you could save in lbs of CO2.
     `
 
     const response = await openai.chat.completions.create({
