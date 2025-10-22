@@ -66,9 +66,7 @@ exports.addLog = async (req,res) => {
 exports.ecoSuggestions = async (req, res) => {
   try {
     const ip = await getClientIp(req)
-    console.log(ip)
     const location = await changeIP(ip)
-    console.log(location)
 
     const prompt = `
     You are an assistant that suggests eco-friendly and sustainable activities, shops, or events in a given location. 
@@ -158,6 +156,91 @@ exports.getVolunteerEvents = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Internal server error'
+    })
+  }
+}
+
+exports.closeRegistration = async (req,res) => {
+  try {
+
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+}
+
+exports.dailySuggestion = async (req,res) => {
+  try {
+    const user = await db.collection('users').findOne({userId: req.user})
+    if(!user) {
+      return res.status(403).json({
+        success: false,
+        message: "Auth err"
+      })
+    }
+
+    if(user.dailySuggestion) {
+      if (Date.now() - new Date(user.dailySuggestion.timestamp).getTime() >= 24 * 60 * 60 * 1000) {
+      } else {
+        return res.status(200).json({
+          success: true,
+          message: user.dailySuggestion.message,
+        })
+      }  
+    }
+
+    const ip = await getClientIp(req)
+    const location = await changeIP(ip)
+
+    const prompt = `
+    You are an assistant that analyzes a user's eco-friendly activities and provides one concise, actionable suggestion for improvement.
+    If a valid location is provided (not "undefined"), base your suggestion on that location. 
+    If the location is undefined, provide a general, globally applicable eco-friendly suggestion.
+    
+    Context:
+    - Location: ${location} (IP: ${ip})
+    - User Activities: ${JSON.stringify(user.activities)}
+    
+    Rules:
+    - Return only one brief suggestion (1–2 sentences).
+    - Do NOT include any explanations, extra text, or formatting — just the suggestion itself.
+    - Do NOT include uncertain or unverifiable local details.
+    `
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are an eco-friendly adviser.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.7,
+    });
+
+    if (!response.choices || response.choices.length === 0) {
+      return res
+        .status(500)
+        .json({ error: "OpenAI API returned no response." });
+    }
+
+    const aiResponse = response.choices[0].message.content;
+
+    await db.collection('users').updateOne({userId: req.user}, {$set: { dailySuggestion: {message: aiResponse,timestamp: new Date()} }})
+
+    return res.status(200).json({
+      success: true,
+      message: aiResponse,
+    })
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
     })
   }
 }
@@ -275,30 +358,6 @@ exports.unregisterEvent = async (req, res) => {
     })
   }
 }
-
-
-/*
-{
-                    id: 2,
-                    title: "Tree Planting - Griffith Park",
-                    status: "upcoming",
-                    date: "2024-01-20",
-                    time: "8:00 AM - 2:00 PM",
-                    location: "Griffith Park, Los Angeles, CA",
-                    description: "Help plant native trees to restore the local ecosystem. Great for families and individuals.",
-                    organizer: "LA Parks Foundation",
-                    volunteersNeeded: 50,
-                    volunteersRegistered: 32,
-                    duration: 4,
-                    category: "Tree Planting",
-                    impact: "Plant 100+ native trees",
-                    requirements: "Work gloves, water bottle",
-                    creatorId: "org2",
-                    registeredVolunteers: [
-                        { name: "Mike Johnson", email: "mike@example.com" }
-                    ]
-                }
-                */
 
 exports.createEvent = async (req,res) => {
   try {

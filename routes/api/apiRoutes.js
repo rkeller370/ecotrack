@@ -10,5 +10,6 @@ router.post("/unregisterEvent",authenticateJWT,limiter.limiter, apiController.un
 router.post("/createEvent",authenticateJWT,limiter.limiter, apiController.createEvent)
 router.get("/ecoRecommendations",authenticateJWT,limiter.ailimiter,apiController.ecoSuggestions)
 router.get("/volunteerEvents",authenticateJWT,limiter.limiter,apiController.getVolunteerEvents)
+router.get("/dailySuggestion",authenticateJWT,limiter.limiter,apiController.dailySuggestion)
 
 module.exports = router;
