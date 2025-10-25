@@ -279,6 +279,15 @@ exports.registerEvent = async (req, res) => {
       })
     }
 
+    event.registeredVolunteers.forEach((volunteer) => {
+      if(volunteer.email == user.email) {
+        return res.status(400).json({
+          success: false,
+          message: "Already registered for this event"
+        })
+      }
+    })
+
     await db.collection('events').updateOne({id: eventId}, {$push: {
       registeredVolunteers: {name: user.name,email: user.email}
     }, $inc: {
@@ -291,6 +300,7 @@ exports.registerEvent = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      message: `Successfully registered ${user.name} for ${event.title}. (${event.volunteersRegistered++}/${event.volunteersNeeded} volunteer)`
     })
   } catch (err) {
     console.error(err);
