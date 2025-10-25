@@ -393,6 +393,8 @@ exports.createEvent = async (req,res) => {
       category: sanitizeInput(eventData.category),
       impact: sanitizeInput(eventData.impact),
       requirements: sanitizeInput(eventData.requirements),
+      lat: eventData.lat,
+      lon: eventData.lon,
       creatorId: req.user,
       registeredVolunteers: [],
     }
