@@ -300,7 +300,7 @@ exports.registerEvent = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Successfully registered ${user.name} for ${event.title}. (${event.volunteersRegistered++}/${event.volunteersNeeded} volunteer)`
+      message: `Successfully registered ${user.name} for ${event.title}. (${event.volunteersRegistered++}/${event.volunteersNeeded} volunteers required)`
     })
   } catch (err) {
     console.error(err);
@@ -413,6 +413,91 @@ exports.createEvent = async (req,res) => {
     
     return res.status(200).json({
       success: true,
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+}
+
+exports.getLeaderboard = async (req, res) => {
+  try {
+    const currentUser = await db.collection("users").findOne({userId: req.user})
+    if(!currentUser) {
+      return res.status(403).json({
+        success: false,
+        message: "Auth err"
+      })
+    }
+
+    const users = await db.collection("users").find({}).toArray()
+    const leaderboardData = []
+    
+    for(const user of users) {
+      let totalCarbonSaved = 0
+      let activityCount = 0
+      
+      if(user.activities && user.activities.length > 0) {
+        user.activities.forEach(activity => {
+          if(activity.carbonSaved > 0) {
+            totalCarbonSaved += activity.carbonSaved * 2.2
+          }
+          activityCount++
+        })
+      }
+      
+      leaderboardData.push({
+        userId: user.userId,
+        name: user.name || "Anonymous",
+        email: user.email,
+        carbonSaved: Math.round(totalCarbonSaved),
+        activities: activityCount,
+        streak: user.streak || 0
+      })
+    }
+    
+    leaderboardData.sort((a, b) => b.carbonSaved - a.carbonSaved)
+    
+    const rankedLeaderboard = leaderboardData.map((user, index) => ({
+      ...user,
+      rank: index + 1
+    }))
+
+    let userRank = 0
+    let userCarbonSaved = 0
+    let userActivities = 0
+    
+    rankedLeaderboard.forEach((userData, index) => {
+      if(userData.userId === currentUser.userId) {
+        userRank = index + 1
+        userCarbonSaved = userData.carbonSaved
+        userActivities = userData.activities
+      }
+    })
+
+    const nextRankUser = rankedLeaderboard[userRank - 2]
+    const nextRankCarbon = nextRankUser ? nextRankUser.carbonSaved : userCarbonSaved
+    const carbonToNextRank = nextRankUser ? nextRankCarbon - userCarbonSaved : 0
+    const progressPercentage = nextRankUser ? (userCarbonSaved / nextRankCarbon) * 100 : 100
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        leaderboard: rankedLeaderboard,
+        userStats: {
+          rank: userRank,
+          totalUsers: rankedLeaderboard.length,
+          carbonSaved: userCarbonSaved,
+          activities: userActivities,
+          streak: currentUser.streak || 0,
+          nextRank: userRank - 1,
+          carbonToNextRank: carbonToNextRank,
+          progressPercentage: Math.min(progressPercentage, 100)
+        }
+      }
     })
   } catch (err) {
     console.error(err)

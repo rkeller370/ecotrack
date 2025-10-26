@@ -11,5 +11,6 @@ router.post("/createEvent",authenticateJWT,limiter.limiter, apiController.create
 router.get("/ecoRecommendations",authenticateJWT,limiter.ailimiter,apiController.ecoSuggestions)
 router.get("/volunteerEvents",authenticateJWT,limiter.limiter,apiController.getVolunteerEvents)
 router.get("/dailySuggestion",authenticateJWT,limiter.limiter,apiController.dailySuggestion)
+router.get("/leaderboard",authenticateJWT,limiter.limiter,apiController.getLeaderboard)
 
 module.exports = router;
