@@ -279,14 +279,16 @@ exports.registerEvent = async (req, res) => {
       })
     }
 
-    event.registeredVolunteers.forEach((volunteer) => {
-      if(volunteer.email == user.email) {
-        return res.status(400).json({
-          success: false,
-          message: "Already registered for this event"
-        })
-      }
-    })
+    const alreadyRegistered = event.registeredVolunteers.some(
+      v => v.email === user.email
+    );
+    
+    if (alreadyRegistered) {
+      return res.status(400).json({
+        success: false,
+        message: "Already registered for this event"
+      });
+    }    
 
     await db.collection('events').updateOne({id: eventId}, {$push: {
       registeredVolunteers: {name: user.name,email: user.email}
