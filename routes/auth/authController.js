@@ -18,8 +18,6 @@ const initializeDatabase = async () => {
 
 initializeDatabase();
 
-const url = "https://creative-horse-1afc49.netlify.app";
-
 exports.register = async (req, res) => {
   if (!db) {
     db = getDb();
@@ -79,7 +77,7 @@ exports.register = async (req, res) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "None",
+    sameSite: "Strict",
     maxAge: 20 * 60 * 1000,
     partitioned: true,
   });
@@ -87,7 +85,7 @@ exports.register = async (req, res) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "None",
+    sameSite: "Strict",
     maxAge: 7 * 24 * 60 * 60 * 1000,
     partitioned: true,
   });
@@ -316,6 +314,6 @@ const handleFailedLogin = async (email, ip) => {
       }
     );
 
-    await sendLockoutEmail(email, ip, lockDuration);
+   // await sendLockoutEmail(email, ip, lockDuration);
   }
 };
