@@ -77,7 +77,7 @@ exports.register = async (req, res) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "Strict",
+    sameSite: "None",
     maxAge: 20 * 60 * 1000,
     partitioned: true,
   });
@@ -85,7 +85,7 @@ exports.register = async (req, res) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "Strict",
+    sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
     partitioned: true,
   });

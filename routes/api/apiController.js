@@ -209,6 +209,8 @@ exports.dailySuggestion = async (req,res) => {
     - Do NOT include any explanations, extra text, or formatting — just the suggestion itself.
     - Do NOT include uncertain or unverifiable local details.
     - If possible, include potential impact stats like how much you could save in lbs of CO2.
+    - Make them personable and related to the location if possible. Like for example if you recommend public transportation, offer local transportation routes near them (ONLY IF THERES A CONFIDENT IP/LOCATION)
+    - Include past actions as "reasoning" behind what you say, like because you use car frequently (and maybe give a number)
     `
 
     const response = await openai.chat.completions.create({
