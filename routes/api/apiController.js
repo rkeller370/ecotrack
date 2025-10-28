@@ -69,6 +69,7 @@ exports.ecoSuggestions = async (req, res) => {
     const location = await changeIP(ip)
 
     const prompt = `
+    IF LOCATION STATES ANYTHING RELATING TO UNDEFINED, REVERT TO NORTH SIDE CHICAGO, IL, NEAR PARK RIDGE IL BUT NOT EXCLUSIVE TO PARK RIDGE.
     You are an assistant that suggests eco-friendly and sustainable activities, shops, or events in a given location. 
     Focus on specific, actionable recommendations such as local farmers markets, sustainable shops, community recycling events, trails, surronding nature, community cleanups, etc. 
     
@@ -196,6 +197,7 @@ exports.dailySuggestion = async (req,res) => {
     const location = await changeIP(ip)
 
     const prompt = `
+    IF LOCATION STATES ANYTHING RELATING TO UNDEFINED, REVERT TO NORTH SIDE CHICAGO, IL, NEAR PARK RIDGE IL BUT NOT EXCLUSIVE TO PARK RIDGE.
     You are an assistant that analyzes a user's eco-friendly activities and provides one concise, actionable suggestion for improvement.
     If a valid location is provided (not "undefined"), base your suggestion on that location. 
     If the location is undefined, provide a general, globally applicable eco-friendly suggestion.
