@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Track Your Carbon Footprint</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #3BB273;
+            --secondary: #F5F5F5;
+            --accent: #2C8E68;
+            --text: #333333;
+            --light-text: #666666;
+            --card-bg: #FFFFFF;
+            --error: #E74C3C;
+            --success: #27AE60;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+        
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 1.8rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        /* Auth Section */
+        .auth-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px auto;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: var(--secondary);
+            border-radius: 50px;
+            overflow: hidden;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .auth-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-group input.error {
+            border-color: var(--error);
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        /* Buttons */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 24px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            background-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background-color: #CCCCCC;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: var(--accent);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 16px;
+            background: var(--secondary);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+        
+        .feature-card p {
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--accent);
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+        
+        /* Utility */
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .hero-stats {
+                gap: 30px;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .auth-section {
+                margin: 40px 16px;
+                padding: 30px 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .features h2 {
+                font-size: 2rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <span>EcoTrack</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Track Your Carbon Footprint</h1>
+            <p>Make a positive impact on the environment by tracking and reducing your carbon emissions.</p>
+            
+            <div class="hero-stats hidden">
+                <div class="stat">
+                    <div class="stat-number">10,000+</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">50,000</div>
+                    <div class="stat-label">Tons CO₂ Saved</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">User Satisfaction</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Section -->
+    <div class="container">
+        <div class="auth-section">
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="login-tab">Log In</div>
+                <div class="auth-tab" id="signup-tab">Sign Up</div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" name="email" required>
+                    <div class="error-message" id="login-email-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required>
+                    <div class="error-message" id="login-password-error"></div>
+                </div>
+                
+                <button type="submit" class="btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Log In
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" name="email" required>
+                    <div class="error-message" id="signup-email-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password" required minlength="8">
+                    <div class="error-message" id="signup-password-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirmPassword" required>
+                    <div class="error-message" id="confirm-password-error"></div>
+                </div>
+                
+                <button type="submit" class="btn" id="signup-btn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features hidden" id="features">
+        <div class="container">
+            <h2>Why Choose EcoTrack?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Track Progress</h3>
+                    <p>Monitor your carbon footprint with detailed analytics and visual charts to see your environmental impact over time.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Earn Badges</h3>
+                    <p>Unlock achievements and badges as you make eco-friendly choices and reach sustainability milestones.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community</h3>
+                    <p>Connect with like-minded individuals, share tips, and participate in community challenges to reduce emissions together.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access your carbon tracking data anywhere with our responsive design that works perfectly on all devices.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Smart Tips</h3>
+                    <p>Receive personalized recommendations and eco-friendly tips based on your lifestyle and carbon footprint patterns.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>Local Resources</h3>
+                    <p>Find nearby recycling centers, eco-events, and sustainable businesses to help you make greener choices in your area.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="hidden">
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <span>EcoTrack</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#support">Support</a>
+                </div>
+            </div>
+            <p style="margin-top: 20px; opacity: 0.8;">© 2025 EcoTrack. Making the world greener, one step at a time.</p>
+        </div>
+    </footer>
+
+    <script>
+        const loginTab = document.getElementById('login-tab');
+        const signupTab = document.getElementById('signup-tab');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+    
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            signupTab.classList.remove('active');
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+            clearErrors();
+        });
+    
+        signupTab.addEventListener('click', () => {
+            signupTab.classList.add('active');
+            loginTab.classList.remove('active');
+            signupForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+            clearErrors();
+        });
+    
+        function showError(inputId, message) {
+            const input = document.getElementById(inputId);
+            const errorDiv = document.getElementById(inputId + '-error');
+            input.classList.add('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+    
+        function clearError(inputId) {
+            const input = document.getElementById(inputId);
+            const errorDiv = document.getElementById(inputId + '-error');
+            input.classList.remove('error');
+            errorDiv.classList.remove('show');
+        }
+    
+        function clearErrors() {
+            const errorMessages = document.querySelectorAll('.error-message');
+            const errorInputs = document.querySelectorAll('.form-group input');
+            errorMessages.forEach(msg => msg.classList.remove('show'));
+            errorInputs.forEach(input => input.classList.remove('error'));
+        }
+    
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+    
+        function validatePassword(password) {
+            return password.length >= 8;
+        }
+    
+        const API_BASE_URL = 'https://ecoapi-8zkj.onrender.com';
+    
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearErrors();
+    
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            let hasErrors = false;
+    
+            if (!email) {
+                showError('login-email', 'Email is required');
+                hasErrors = true;
+            } else if (!validateEmail(email)) {
+                showError('login-email', 'Please enter a valid email');
+                hasErrors = true;
+            }
+    
+            if (!password) {
+                showError('login-password', 'Password is required');
+                hasErrors = true;
+            }
+    
+            if (!hasErrors) {
+                const loginBtn = document.getElementById('login-btn');
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                loginBtn.disabled = true;
+    
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, password }),
+                        credentials: 'include'
+                    });
+    
+                    const data = await response.json();
+    
+                    if (response.ok) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        showError('login-email', data.message || 'Login failed');
+                    }
+                } catch (error) {
+                    showError('login-email', 'Network error. Please try again.');
+                } finally {
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log In';
+                    loginBtn.disabled = false;
+                }
+            }
+        });
+    
+        document.getElementById('signup-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearErrors();
+    
+            const email = document.getElementById('signup-email').value;
+            const name = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            let hasErrors = false;
+    
+            if (!email) {
+                showError('signup-email', 'Email is required');
+                hasErrors = true;
+            } else if (!validateEmail(email)) {
+                showError('signup-email', 'Please enter a valid email');
+                hasErrors = true;
+            }
+    
+            if (!name) {
+                showError('signup-username', 'Username is required');
+                hasErrors = true;
+            }
+    
+            if (!password) {
+                showError('signup-password', 'Password is required');
+                hasErrors = true;
+            } else if (!validatePassword(password)) {
+                showError('signup-password', 'Password must be at least 8 characters');
+                hasErrors = true;
+            }
+    
+            if (!confirmPassword) {
+                showError('confirm-password', 'Please confirm your password');
+                hasErrors = true;
+            } else if (password !== confirmPassword) {
+                showError('confirm-password', 'Passwords do not match');
+                hasErrors = true;
+            }
+    
+            if (!hasErrors) {
+                const signupBtn = document.getElementById('signup-btn');
+                signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+                signupBtn.disabled = true;
+    
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': "*",
+                        },
+                        body: JSON.stringify({ email, name, password }),
+                        credentials: 'include'
+                    });
+    
+                    const data = await response.json();
+    
+                    if (response.ok) {
+                        alert('Account created successfully! Redirecting to dashboard...');
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        showError('signup-email', data.message || 'Registration failed');
+                    }
+                } catch (error) {
+                    showError('signup-email', 'Network error. Please try again.');
+                } finally {
+                    signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                    signupBtn.disabled = false;
+                }
+            }
+        });
+    
+        document.getElementById('signup-password').addEventListener('input', function() {
+            const password = this.value;
+            if (password && !validatePassword(password)) {
+                showError('signup-password', 'Password must be at least 8 characters');
+            } else {
+                clearError('signup-password');
+            }
+        });
+    
+        document.getElementById('confirm-password').addEventListener('input', function() {
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = this.value;
+            if (confirmPassword && password !== confirmPassword) {
+                showError('confirm-password', 'Passwords do not match');
+            } else {
+                clearError('confirm-password');
+            }
+        });
+    </script>
+</body>
+</html>

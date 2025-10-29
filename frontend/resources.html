@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Resources</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #3bb273;
+            --secondary: #f5f5f5;
+            --accent: #2c8e68;
+            --text: #333333;
+            --light-text: #666666;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: var(--text);
+            padding-bottom: 70px;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 0 16px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--light-text);
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        .guide-section {
+            margin-bottom: 20px;
+        }
+
+        .guide-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: var(--secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .guide-header:hover {
+            background: #e8f5e8;
+        }
+
+        .guide-content {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 0 0 12px 12px;
+            margin-top: 2px;
+        }
+
+        .guide-content p {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .learn-more {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .resource-item {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .resource-item:hover {
+            border-color: var(--primary);
+            background: rgba(59, 178, 115, 0.05);
+        }
+
+        .resource-category {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .resource-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            margin: 8px 0;
+        }
+
+        .resource-description {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            line-height: 1.4;
+        }
+
+        .community-orgs {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .org-item {
+            padding: 15px;
+            background: #f0f8f0;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .org-name {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .org-description {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            margin-bottom: 10px;
+        }
+
+        .visual-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .visual-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .visual-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+
+        .visual-label {
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+
+        .fact-box {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            margin: 10px 0;
+        }
+
+        .fact-title {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        header .fa-user-circle {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        header .fa-user-circle:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>EcoTrack</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page active" id="resources">
+            <div class="card">
+                <div class="card-title">Quick Sustainability Guides</div>
+                
+                <div class="guide-section">
+                    <div class="guide-header" onclick="toggleGuide('recycling')">
+                        <i class="fas fa-recycle"></i>
+                        <span>Recycling Made Simple</span>
+                    </div>
+                    <div class="guide-content hidden" id="recycling">
+                        <p>Sort waste properly to avoid contamination. Rinse containers before recycling. Check local guidelines for accepted materials.</p>
+                        <a href="https://www.epa.gov/recycle" class="learn-more" target="_blank">Learn More <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <div class="guide-header" onclick="toggleGuide('commuting')">
+                        <i class="fas fa-bicycle"></i>
+                        <span>Eco-Friendly Commuting</span>
+                    </div>
+                    <div class="guide-content hidden" id="commuting">
+                        <p>Walking and cycling produce zero emissions. Public transport reduces traffic congestion. Carpooling cuts fuel costs and emissions.</p>
+                        <a href="https://www.epa.gov/transportation-air-pollution-and-climate-change" class="learn-more" target="_blank">Learn More <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <div class="guide-header" onclick="toggleGuide('energy')">
+                        <i class="fas fa-bolt"></i>
+                        <span>Home Energy Efficiency</span>
+                    </div>
+                    <div class="guide-content hidden" id="energy">
+                        <p>Switch to LED bulbs for 75% energy savings. Use smart thermostats to optimize heating. Unplug devices to prevent phantom energy drain.</p>
+                        <a href="https://www.energy.gov/energysaver" class="learn-more" target="_blank">Learn More <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <div class="guide-header" onclick="toggleGuide('eating')">
+                        <i class="fas fa-leaf"></i>
+                        <span>Sustainable Eating</span>
+                    </div>
+                    <div class="guide-content hidden" id="eating">
+                        <p>Plant-based meals have lower carbon footprint. Local produce reduces transportation emissions. Reduce food waste by planning meals.</p>
+                        <a href="https://www.wwf.org.uk/betterbasket" class="learn-more" target="_blank">Learn More <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Useful External Links</div>
+                <div class="resource-grid">
+                    <div class="resource-item">
+                        <div class="resource-category"><i class="fas fa-seedling"></i> Climate Education</div>
+                        <a href="https://climatekids.nasa.gov" class="resource-link" target="_blank">NASA Climate Kids</a>
+                        <div class="resource-description">Fun, interactive learning about climate change for all ages</div>
+                    </div>
+                    
+                    <div class="resource-item">
+                        <div class="resource-category"><i class="fas fa-home"></i> Energy Saving</div>
+                        <a href="https://www.energy.gov/energysaver" class="resource-link" target="_blank">Energy.gov Energy Saver</a>
+                        <div class="resource-description">Practical home energy efficiency tips and guides</div>
+                    </div>
+                    
+                    <div class="resource-item">
+                        <div class="resource-category"><i class="fas fa-calculator"></i> Carbon Calculator</div>
+                        <a href="https://www.epa.gov/carbon-footprint-calculator" class="resource-link" target="_blank">EPA Carbon Footprint Calculator</a>
+                        <div class="resource-description">Estimate your personal carbon emissions</div>
+                    </div>
+                    
+                    <div class="resource-item">
+                        <div class="resource-category"><i class="fas fa-hands-helping"></i> Volunteering</div>
+                        <a href="https://www.volunteermatch.org" class="resource-link" target="_blank">VolunteerMatch</a>
+                        <div class="resource-description">Find local sustainability projects and events</div>
+                    </div>
+                    
+                    <div class="resource-item">
+                        <div class="resource-category"><i class="fas fa-globe"></i> Learn More</div>
+                        <a href="https://www.worldwildlife.org" class="resource-link" target="_blank">World Wildlife Fund</a>
+                        <div class="resource-description">Global conservation and sustainability initiatives</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Community & Local Impact</div>
+                <div class="community-orgs">
+                    <div class="org-item">
+                        <div class="org-name">Local Cleanup Crews</div>
+                        <div class="org-description">Join neighborhood cleanup events and park restoration projects</div>
+                    </div>
+                    
+                    <div class="org-item">
+                        <div class="org-name">Community Gardens</div>
+                        <div class="org-description">Participate in local urban farming and food sharing initiatives</div>
+                    </div>
+                    
+                    <div class="org-item">
+                        <div class="org-name">Environmental Advocacy</div>
+                        <div class="org-description">Support local policies for cleaner air and sustainable development</div>
+                    </div>
+                </div>
+                <a href="volunteer.html" class="learn-more" style="margin-top: 15px; display: inline-block;">
+                    Find eco-events near you! <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-title">AI Eco Suggestions Explained</div>
+                <p style="margin-bottom: 15px; line-height: 1.5;">
+                    EcoTrack's AI analyzes your past activities and provides sustainable habits tailored to your lifestyle and region. 
+                    Our system considers your transportation patterns, energy usage, and consumption habits to offer personalized recommendations.
+                </p>
+                <div class="fact-box">
+                    <div class="fact-title">Privacy Note</div>
+                    <p>Your data is secure and anonymous. We never share personal information and only use activity data to improve your eco-suggestions.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Educational Visuals</div>
+                <div class="visual-grid">
+                    <div class="visual-card">
+                        <i class="fas fa-car" style="color: var(--primary); font-size: 1.5rem;"></i>
+                        <div class="visual-value">0.96 lbs</div>
+                        <div class="visual-label">CO₂ per mile (car)</div>
+                    </div>
+                    
+                    <div class="visual-card">
+                        <i class="fas fa-hamburger" style="color: var(--primary); font-size: 1.5rem;"></i>
+                        <div class="visual-value">5.5 lbs</div>
+                        <div class="visual-label">CO₂ per meat meal</div>
+                    </div>
+                    
+                    <div class="visual-card">
+                        <i class="fas fa-plane" style="color: var(--primary); font-size: 1.5rem;"></i>
+                        <div class="visual-value">0.62 lbs</div>
+                        <div class="visual-label">CO₂ per mile (flight)</div>
+                    </div>
+                    
+                    <div class="visual-card">
+                        <i class="fas fa-bolt" style="color: var(--primary); font-size: 1.5rem;"></i>
+                        <div class="visual-value">0.88 lbs</div>
+                        <div class="visual-label">CO₂ per kWh (grid)</div>
+                    </div>
+                </div>
+                
+                <div class="fact-box">
+                    <div class="fact-title">Did You Know?</div>
+                    <p>If every American used cold water for laundry, we'd save 3% of total residential energy use annually.</p>
+                </div>
+                
+                <div class="fact-box">
+                    <div class="fact-title">Quick Fact</div>
+                    <p>A single tree can absorb up to 48 pounds of CO₂ per year and provide enough oxygen for 2 people.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class="fas fa-ranking-star"></i>
+            <span>Leaderboard</span>
+        </a>
+        <a href="badges.html" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>Badges</span>
+        </a>
+        <a href="volunteer.html" class="nav-item">
+            <i class="fas fa-hands-helping"></i>
+            <span>Volunteer</span>
+        </a>
+        <a href="map.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Map</span>
+          </a>
+        <a href="resources.html" class="nav-item active">
+            <i class="fas fa-book"></i>
+            <span>Resources</span>
+        </a>
+    </nav>
+
+    <script>
+        function toggleGuide(id) {
+            const content = document.getElementById(id);
+            content.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

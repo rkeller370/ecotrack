@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoTrack - Badges & Achievements</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .hidden{
+        display: none;
+      }
+
+      :root {
+        --primary: #3bb273;
+        --secondary: #f5f5f5;
+        --accent: #2c8e68;
+        --text: #333333;
+        --light-text: #666666;
+        --card-bg: #ffffff;
+        --badge-locked: #dddddd;
+        --badge-earned: #ffd700;
+        --badge-bronze: #cd7f32;
+        --badge-silver: #c0c0c0;
+        --badge-gold: #ffd700;
+      }
+
+      body {
+        background-color: var(--secondary);
+        color: var(--text);
+        padding-bottom: 70px;
+      }
+
+      .container {
+        max-width: 100%;
+        padding: 0 16px;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--primary);
+        color: white;
+        padding: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        font-weight: bold;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* Navigation */
+      nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: white;
+        display: flex;
+        justify-content: space-around;
+        padding: 12px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--light-text);
+        font-size: 0.8rem;
+        text-decoration: none;
+      }
+
+      .nav-item.active {
+        color: var(--primary);
+      }
+
+      .nav-item i {
+        font-size: 1.2rem;
+        margin-bottom: 4px;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 20px;
+        margin: 16px 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .card-title {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+        color: var(--accent);
+      }
+
+      /* Progress Bar */
+      .progress-container {
+        background: #eee;
+        border-radius: 10px;
+        height: 20px;
+        margin: 16px 0;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+      }
+
+      .progress-text {
+        text-align: center;
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: var(--light-text);
+      }
+
+      /* Badges Grid */
+      .badges-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+        margin: 20px 0;
+      }
+
+      .badge {
+        background: var(--card-bg);
+        border-radius: 50%;
+        aspect-ratio: 1/1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 10px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+      }
+
+      .badge:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .badge.locked {
+        background: var(--badge-locked);
+        opacity: 0.6;
+      }
+
+      .badge.earned {
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+        border-color: var(--badge-earned);
+        animation: glow 2s ease-in-out infinite alternate;
+      }
+
+      .badge.bronze {
+        background: linear-gradient(135deg, #cd7f32, #b8860b);
+        border-color: var(--badge-bronze);
+      }
+
+      .badge.silver {
+        background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+        border-color: var(--badge-silver);
+      }
+
+      .badge.gold {
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+        border-color: var(--badge-gold);
+      }
+
+      @keyframes glow {
+        from {
+          box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        to {
+          box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+      }
+
+      .badge i {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+
+      .badge.locked i {
+        color: #aaa;
+      }
+
+      .badge.earned i,
+      .badge.bronze i,
+      .badge.silver i,
+      .badge.gold i {
+        color: white;
+      }
+
+      .badge-name {
+        font-size: 0.7rem;
+        font-weight: bold;
+        line-height: 1.1;
+      }
+
+      .badge.locked .badge-name {
+        color: #aaa;
+      }
+
+      .badge.earned .badge-name,
+      .badge.bronze .badge-name,
+      .badge.silver .badge-name,
+      .badge.gold .badge-name {
+        color: white;
+      }
+
+      /* Badge Details Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        position: relative;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--light-text);
+      }
+
+      .badge-detail-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+      }
+
+      .badge-detail-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--accent);
+      }
+
+      .badge-detail-description {
+        color: var(--light-text);
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+
+      .badge-requirements {
+        background: var(--secondary);
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+      }
+
+      .badge-requirements h4 {
+        color: var(--accent);
+        margin-bottom: 10px;
+      }
+
+      .requirement-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .requirement-item:last-child {
+        border-bottom: none;
+      }
+
+      .requirement-check {
+        color: var(--primary);
+        font-weight: bold;
+      }
+
+      .requirement-check.unmet {
+        color: var(--light-text);
+      }
+
+      /* Stats */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 20px 0;
+      }
+
+      .stat-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        margin: 8px 0;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: var(--light-text);
+      }
+
+      /* Categories */
+      .category-section {
+        margin: 30px 0;
+      }
+
+      .category-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--accent);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .category-icon {
+        font-size: 1.5rem;
+        color: var(--primary);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <i class="fas fa-leaf"></i>
+        <span>EcoTrack</span>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Progress Overview -->
+      <div class="card">
+        <div class="card-title">Your Achievement Progress</div>
+        <div class="progress-container">
+          <div
+            class="progress-bar"
+            id="overall-progress"
+            style="width: 0%"
+          ></div>
+        </div>
+        <div class="progress-text" id="progress-text">
+          0 of 24 badges earned
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="total-badges">0</div>
+            <div class="stat-label">Badges Earned</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="current-streak">0</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="carbon-saved">0</div>
+            <div class="stat-label">lbs CO₂ Saved</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="activities-logged">0</div>
+            <div class="stat-label">Activities</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transportation Badges -->
+      <div class="category-section">
+        <div class="category-title">
+          <i class="fas fa-bus" class="category-icon"></i>
+          Transportation
+        </div>
+        <div class="badges-grid">
+          <div class="badge locked" data-badge="walking-enthusiast">
+            <i class="fas fa-walking"></i>
+            <div class="badge-name">Walking Enthusiast</div>
+          </div>
+          <div class="badge locked" data-badge="cycling-enthusiast">
+            <i class="fas fa-bicycle"></i>
+            <div class="badge-name">Cycling Enthusiast</div>
+          </div>
+          <div class="badge locked" data-badge="public-transport-regular">
+            <i class="fas fa-bus"></i>
+            <div class="badge-name">Public Transport Regular</div>
+          </div>
+          <div class="badge locked" data-badge="car-free-week">
+            <i class="fas fa-ban"></i>
+            <div class="badge-name">Car-Free Week</div>
+          </div>
+          <div class="badge locked" data-badge="carpool-regular">
+            <i class="fas fa-users"></i>
+            <div class="badge-name">Carpool Regular</div>
+          </div>
+          <div class="badge locked" data-badge="flight-free">
+            <i class="fas fa-plane-slash"></i>
+            <div class="badge-name">Flight-Free</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Energy Badges -->
+      <div class="category-section">
+        <div class="category-title">
+          <i class="fas fa-bolt" class="category-icon"></i>
+          Energy
+        </div>
+        <div class="badges-grid">
+          <div class="badge locked" data-badge="led-user">
+            <i class="fas fa-lightbulb"></i>
+            <div class="badge-name">LED User</div>
+          </div>
+          <div class="badge locked" data-badge="solar-user">
+            <i class="fas fa-solar-panel"></i>
+            <div class="badge-name">Solar User</div>
+          </div>
+          <div class="badge locked" data-badge="energy-saver">
+            <i class="fas fa-leaf"></i>
+            <div class="badge-name">Energy Saver</div>
+          </div>
+          <div class="badge locked" data-badge="unplug-habit">
+            <i class="fas fa-plug"></i>
+            <div class="badge-name">Unplug Habit</div>
+          </div>
+          <div class="badge locked" data-badge="thermostat-user">
+            <i class="fas fa-thermometer-half"></i>
+            <div class="badge-name">Thermostat User</div>
+          </div>
+          <div class="badge locked" data-badge="renewable-user">
+            <i class="fas fa-wind"></i>
+            <div class="badge-name">Renewable User</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Food Badges -->
+      <div class="category-section">
+        <div class="category-title">
+          <i class="fas fa-utensils" class="category-icon"></i>
+          Food
+        </div>
+        <div class="badges-grid">
+          <div class="badge locked" data-badge="plant-based-eater">
+            <i class="fas fa-seedling"></i>
+            <div class="badge-name">Plant-Based Eater</div>
+          </div>
+          <div class="badge locked" data-badge="local-shopper">
+            <i class="fas fa-apple-alt"></i>
+            <div class="badge-name">Local Shopper</div>
+          </div>
+          <div class="badge locked" data-badge="waste-reducer">
+            <i class="fas fa-trash"></i>
+            <div class="badge-name">Waste Reducer</div>
+          </div>
+          <div class="badge locked" data-badge="organic-shopper">
+            <i class="fas fa-leaf"></i>
+            <div class="badge-name">Organic Shopper</div>
+          </div>
+          <div class="badge locked" data-badge="meal-planner">
+            <i class="fas fa-clipboard-list"></i>
+            <div class="badge-name">Meal Planner</div>
+          </div>
+          <div class="badge locked" data-badge="composter">
+            <i class="fas fa-recycle"></i>
+            <div class="badge-name">Composter</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lifestyle Badges -->
+      <div class="category-section">
+        <div class="category-title">
+          <i class="fas fa-home" class="category-icon"></i>
+          Lifestyle
+        </div>
+        <div class="badges-grid">
+          <div class="badge locked" data-badge="minimalist">
+            <i class="fas fa-home"></i>
+            <div class="badge-name">Minimalist</div>
+          </div>
+          <div class="badge locked" data-badge="water-saver">
+            <i class="fas fa-tint"></i>
+            <div class="badge-name">Water Saver</div>
+          </div>
+          <div class="badge locked" data-badge="screen-time-reducer">
+            <i class="fas fa-mobile-alt"></i>
+            <div class="badge-name">Screen Time Reducer</div>
+          </div>
+          <div class="badge locked" data-badge="green-cleaner">
+            <i class="fas fa-spray-can"></i>
+            <div class="badge-name">Green Cleaner</div>
+          </div>
+          <div class="badge locked" data-badge="eco-educator">
+            <i class="fas fa-graduation-cap"></i>
+            <div class="badge-name">Eco Educator</div>
+          </div>
+          <div class="badge locked" data-badge="sustainability-achiever">
+            <i class="fas fa-crown"></i>
+            <div class="badge-name">Sustainability Achiever</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge Detail Modal -->
+    <div class="modal" id="badge-modal">
+      <div class="modal-content">
+        <button class="close-btn" id="close-badge-modal">&times;</button>
+        <div class="badge-detail-icon" id="badge-detail-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="badge-detail-title" id="badge-detail-title">
+          Badge Title
+        </div>
+        <div class="badge-detail-description" id="badge-detail-description">
+          Badge description goes here
+        </div>
+
+        <div class="badge-requirements">
+          <h4>Requirements</h4>
+          <div id="requirements-list">
+            <!-- Requirements will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+      <a href="dashboard.html" class="nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="leaderboard.html" class="nav-item">
+        <i class="fas fa-ranking-star"></i>
+        <span>Leaderboard</span>
+      </a>
+      <a href="badges.html" class="nav-item active">
+        <i class="fas fa-trophy"></i>
+        <span>Badges</span>
+      </a>
+      <a href="volunteer.html" class="nav-item">
+        <i class="fas fa-hands-helping"></i>
+        <span>Volunteer</span>
+      </a>
+      <a href="map.html" class="nav-item">
+        <i class="fas fa-map-marked-alt"></i>
+        <span>Map</span>
+      </a>
+      <a href="resources.html" class="nav-item">
+        <i class="fas fa-book"></i>
+        <span>Resources</span>
+      </a>
+    </nav>
+
+    <script>
+      const badgeData = {
+        "walking-enthusiast": {
+          title: "Walking Enthusiast",
+          description: "Walk 31+ miles in a week",
+          icon: "fa-walking",
+          requirements: [
+            { text: "Walk 31+ miles in one week", met: false },
+            { text: "Log walking activities 7 days", met: false },
+          ],
+        },
+        "cycling-enthusiast": {
+          title: "Cycling Enthusiast",
+          description: "Cycle 62+ miles in a week",
+          icon: "fa-bicycle",
+          requirements: [
+            { text: "Cycle 62+ miles in one week", met: false },
+            { text: "Log cycling activities 5+ days", met: false },
+          ],
+        },
+        "public-transport-regular": {
+          title: "Public Transport Regular",
+          description: "Use public transport 20+ times in a month",
+          icon: "fa-bus",
+          requirements: [
+            { text: "Use public transport 20+ times", met: false },
+            { text: "Log transport activities 15+ days", met: false },
+          ],
+        },
+        "car-free-week": {
+          title: "Car-Free Week",
+          description: "Go an entire week without using a car",
+          icon: "fa-ban",
+          requirements: [
+            { text: "No car usage for 7 consecutive days", met: false },
+            { text: "Log alternative transport daily", met: false },
+          ],
+        },
+        "carpool-regular": {
+          title: "Carpool Regular",
+          description: "Carpool 10+ times in a month",
+          icon: "fa-users",
+          requirements: [
+            { text: "Carpool 10+ times in one month", met: false },
+            { text: "Log carpooling activities", met: false },
+          ],
+        },
+        "flight-free": {
+          title: "Flight-Free",
+          description: "Avoid flights for 3+ months",
+          icon: "fa-plane-slash",
+          requirements: [
+            { text: "No flights for 3+ months", met: false },
+            { text: "Use alternative transport", met: false },
+          ],
+        },
+        "led-user": {
+          title: "LED User",
+          description: "Use LED lights for 100+ hours",
+          icon: "fa-lightbulb",
+          requirements: [
+            { text: "Use LED lights 100+ hours", met: false },
+            { text: "Log energy activities 10+ times", met: false },
+          ],
+        },
+        "solar-user": {
+          title: "Solar User",
+          description: "Generate 50+ kWh with solar panels",
+          icon: "fa-solar-panel",
+          requirements: [
+            { text: "Generate 50+ kWh solar energy", met: false },
+            { text: "Log solar panel activities", met: false },
+          ],
+        },
+        "energy-saver": {
+          title: "Energy Saver",
+          description: "Reduce energy consumption by 20%",
+          icon: "fa-leaf",
+          requirements: [
+            { text: "Reduce energy use by 20%", met: false },
+            { text: "Log energy-saving activities", met: false },
+          ],
+        },
+        "unplug-habit": {
+          title: "Unplug Habit",
+          description: "Unplug devices 50+ times",
+          icon: "fa-plug",
+          requirements: [
+            { text: "Unplug devices 50+ times", met: false },
+            { text: "Log unplugging activities", met: false },
+          ],
+        },
+        "thermostat-user": {
+          title: "Thermostat User",
+          description: "Optimize heating/cooling for 30+ days",
+          icon: "fa-thermometer-half",
+          requirements: [
+            { text: "Optimize temperature 30+ days", met: false },
+            { text: "Log thermostat adjustments", met: false },
+          ],
+        },
+        "renewable-user": {
+          title: "Renewable User",
+          description: "Use renewable energy 100+ kWh",
+          icon: "fa-wind",
+          requirements: [
+            { text: "Use renewable energy 100+ kWh", met: false },
+            { text: "Log renewable energy activities", met: false },
+          ],
+        },
+        "plant-based-eater": {
+          title: "Plant-Based Eater",
+          description: "Eat 50+ plant-based meals",
+          icon: "fa-seedling",
+          requirements: [
+            { text: "Eat 50+ plant-based meals", met: false },
+            { text: "Log food activities 30+ times", met: false },
+          ],
+        },
+        "local-shopper": {
+          title: "Local Shopper",
+          description: "Buy local produce 20+ times",
+          icon: "fa-apple-alt",
+          requirements: [
+            { text: "Buy local produce 20+ times", met: false },
+            { text: "Log local food activities", met: false },
+          ],
+        },
+        "waste-reducer": {
+          title: "Waste Reducer",
+          description: "Reduce food waste by 22+ lbs",
+          icon: "fa-trash",
+          requirements: [
+            { text: "Reduce food waste by 22+ lbs", met: false },
+            { text: "Log waste reduction activities", met: false },
+          ],
+        },
+        "organic-shopper": {
+          title: "Organic Shopper",
+          description: "Buy organic food 30+ times",
+          icon: "fa-leaf",
+          requirements: [
+            { text: "Buy organic food 30+ times", met: false },
+            { text: "Log organic food activities", met: false },
+          ],
+        },
+        "meal-planner": {
+          title: "Meal Planner",
+          description: "Meal prep 20+ times",
+          icon: "fa-clipboard-list",
+          requirements: [
+            { text: "Meal prep 20+ times", met: false },
+            { text: "Log meal planning activities", met: false },
+          ],
+        },
+        composter: {
+          title: "Composter",
+          description: "Compost 110+ lbs of organic waste",
+          icon: "fa-recycle",
+          requirements: [
+            { text: "Compost 110+ lbs organic waste", met: false },
+            { text: "Log composting activities", met: false },
+          ],
+        },
+        minimalist: {
+          title: "Minimalist",
+          description: "Declutter 100+ items",
+          icon: "fa-home",
+          requirements: [
+            { text: "Declutter 100+ items", met: false },
+            { text: "Log minimalist activities", met: false },
+          ],
+        },
+        "water-saver": {
+          title: "Water Saver",
+          description: "Save 264+ gallons of water",
+          icon: "fa-tint",
+          requirements: [
+            { text: "Save 264+ gallons water", met: false },
+            { text: "Log water conservation activities", met: false },
+          ],
+        },
+        "screen-time-reducer": {
+          title: "Screen Time Reducer",
+          description: "Reduce screen time by 20+ hours",
+          icon: "fa-mobile-alt",
+          requirements: [
+            { text: "Reduce screen time 20+ hours", met: false },
+            { text: "Log digital detox activities", met: false },
+          ],
+        },
+        "green-cleaner": {
+          title: "Green Cleaner",
+          description: "Use eco-friendly cleaning 30+ times",
+          icon: "fa-spray-can",
+          requirements: [
+            { text: "Use green cleaning 30+ times", met: false },
+            { text: "Log green cleaning activities", met: false },
+          ],
+        },
+        "eco-educator": {
+          title: "Eco Educator",
+          description: "Share eco tips 10+ times",
+          icon: "fa-graduation-cap",
+          requirements: [
+            { text: "Share eco tips 10+ times", met: false },
+            { text: "Log education activities", met: false },
+          ],
+        },
+        "sustainability-achiever": {
+          title: "Sustainability Achiever",
+          description: "Earn 20+ other badges",
+          icon: "fa-crown",
+          requirements: [
+            { text: "Earn 20+ other badges", met: false },
+            { text: "Maintain 30+ day streak", met: false },
+          ],
+        },
+      };
+
+      const BASE_URL = "https://ecoapi-8zkj.onrender.com";
+
+      async function loadUserDataFromServer() {
+        try {
+          const response = await fetch(`${BASE_URL}/api/auth/verify`, {
+            method: "GET",
+            credentials: "include",
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            const activities = userData.user.activities || [];
+            const earnedBadges = userData.user.badges || [];
+
+            updateBadgeStatus(activities, earnedBadges);
+            updateProgress(earnedBadges, activities);
+          }
+        } catch (error) {
+          console.error("Error loading user data:", error);
+        }
+      }
+
+      function updateBadgeStatus(activities, earnedBadges) {
+        Object.keys(badgeData).forEach((badgeId) => {
+          const badge = document.querySelector(`[data-badge="${badgeId}"]`);
+          if (earnedBadges.includes(badgeId)) {
+            badge.classList.remove("locked");
+            badge.classList.add("earned");
+          } else {
+            const allMet = checkBadgeRequirements(badgeId, activities);
+
+            if (allMet) {
+              badge.classList.remove("locked");
+              badge.classList.add("bronze");
+              if (!earnedBadges.includes(badgeId)) {
+                earnedBadges.push(badgeId);
+              }
+            }
+          }
+        });
+      }
+
+      function checkBadgeRequirements(badgeId, activities) {
+        switch (badgeId) {
+          case "walking-enthusiast":
+            return checkWalkingMaster(activities);
+          case "cycling-enthusiast":
+            return checkCyclingChampion(activities);
+          case "public-transport-regular":
+            return checkPublicTransport(activities);
+          case "car-free-week":
+            return checkCarFreeWeek(activities);
+          case "carpool-regular":
+            return checkCarpoolKing(activities);
+          case "flight-free":
+            return checkFlightFree(activities);
+          case "led-user":
+            return checkLedLover(activities);
+          case "solar-user":
+            return checkSolarSuperstar(activities);
+          case "energy-saver":
+            return checkEnergySaver(activities);
+          case "unplug-habit":
+            return checkUnplugMaster(activities);
+          case "thermostat-user":
+            return checkThermostatPro(activities);
+          case "renewable-user":
+            return checkRenewableRider(activities);
+          case "plant-based-eater":
+            return checkPlantPioneer(activities);
+          case "local-shopper":
+            return checkLocalLover(activities);
+          case "waste-reducer":
+            return checkWasteWarrior(activities);
+          case "organic-shopper":
+            return checkOrganicOptimist(activities);
+          case "meal-planner":
+            return checkMealPrepMaster(activities);
+          case "composter":
+            return checkCompostKing(activities);
+          case "minimalist":
+            return checkMinimalistMaster(activities);
+          case "water-saver":
+            return checkWaterWarrior(activities);
+          case "screen-time-reducer":
+            return checkDigitalDetox(activities);
+          case "green-cleaner":
+            return checkGreenCleaner(activities);
+          case "eco-educator":
+            return checkEcoEducator(activities);
+          case "sustainability-achiever":
+            return checkSustainabilitySage(activities);
+          default:
+            return false;
+        }
+      }
+
+      function checkWalkingMaster(activities) {
+        const walkingActivities = activities.filter(
+          (a) => a.activityType === "Walking"
+        );
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        const weeklyWalking = walkingActivities.filter(
+          (a) => new Date(a.timestamp) >= oneWeekAgo
+        );
+        const totalMiles = weeklyWalking.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        const uniqueDays = new Set(
+          weeklyWalking.map((a) => new Date(a.timestamp).toDateString())
+        ).size;
+
+        return totalMiles >= 31 && uniqueDays >= 7;
+      }
+
+      function checkCyclingChampion(activities) {
+        const cyclingActivities = activities.filter(
+          (a) => a.activityType === "Cycling"
+        );
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        const weeklyCycling = cyclingActivities.filter(
+          (a) => new Date(a.timestamp) >= oneWeekAgo
+        );
+        const totalMiles = weeklyCycling.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        const uniqueDays = new Set(
+          weeklyCycling.map((a) => new Date(a.timestamp).toDateString())
+        ).size;
+
+        return totalMiles >= 62 && uniqueDays >= 5;
+      }
+
+      function checkPublicTransport(activities) {
+        const transportActivities = activities.filter(
+          (a) => a.activityType === "Public Transport"
+        );
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+        const monthlyTransport = transportActivities.filter(
+          (a) => new Date(a.timestamp) >= oneMonthAgo
+        );
+        const uniqueDays = new Set(
+          monthlyTransport.map((a) => new Date(a.timestamp).toDateString())
+        ).size;
+
+        return monthlyTransport.length >= 20 && uniqueDays >= 15;
+      }
+
+      function checkCarFreeWeek(activities) {
+        const carActivities = activities.filter(
+          (a) =>
+            a.activityType === "Gas Car" || a.activityType === "Electric Car"
+        );
+        const today = new Date();
+
+        for (let i = 0; i < 7; i++) {
+          const checkDate = new Date(today);
+          checkDate.setDate(checkDate.getDate() - i);
+          const hasCar = carActivities.some(
+            (a) =>
+              new Date(a.timestamp).toDateString() === checkDate.toDateString()
+          );
+          if (hasCar) return false;
+        }
+
+        const alternativeActivities = activities.filter((a) =>
+          ["Walking", "Cycling", "Public Transport"].includes(a.activityType)
+        );
+        const lastWeekAlternative = alternativeActivities.filter((a) => {
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return new Date(a.timestamp) >= weekAgo;
+        });
+
+        return lastWeekAlternative.length >= 7;
+      }
+
+      function checkCarpoolKing(activities) {
+        const carpoolActivities = activities.filter(
+          (a) => a.activityType === "Carpooling"
+        );
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+        const monthlyCarpool = carpoolActivities.filter(
+          (a) => new Date(a.timestamp) >= oneMonthAgo
+        );
+        return monthlyCarpool.length >= 10;
+      }
+
+      function checkFlightFree(activities) {
+        const flightActivities = activities.filter((a) =>
+          a.activityType.includes("Flight")
+        );
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+        const recentFlights = flightActivities.filter(
+          (a) => new Date(a.timestamp) >= threeMonthsAgo
+        );
+        const alternativeTransport = activities.filter((a) =>
+          ["Train", "Bus", "Public Transport"].includes(a.activityType)
+        );
+
+        return recentFlights.length === 0 && alternativeTransport.length > 0;
+      }
+
+      function checkLedLover(activities) {
+        const ledActivities = activities.filter(
+          (a) => a.activityType === "LED Light Bulb"
+        );
+        const totalHours = ledActivities.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        return totalHours >= 100 && ledActivities.length >= 10;
+      }
+
+      function checkSolarSuperstar(activities) {
+        const solarActivities = activities.filter(
+          (a) => a.activityType === "Solar Panel"
+        );
+        const totalKwh = solarActivities.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        return totalKwh >= 50;
+      }
+
+      function checkEnergySaver(activities) {
+        const energyActivities = activities.filter(
+          (a) => a.category === "energy"
+        );
+        const totalSaved = energyActivities.reduce(
+          (sum, a) => sum + (a.carbonSaved || 0),
+          0
+        );
+        return totalSaved >= 20 && energyActivities.length >= 5;
+      }
+
+      function checkUnplugMaster(activities) {
+        const unplugActivities = activities.filter(
+          (a) => a.activityType === "Unplug Devices"
+        );
+        return unplugActivities.length >= 50;
+      }
+
+      function checkThermostatPro(activities) {
+        const thermostatActivities = activities.filter(
+          (a) => a.activityType === "Thermostat Adjust"
+        );
+        const uniqueDays = new Set(
+          thermostatActivities.map((a) => new Date(a.timestamp).toDateString())
+        ).size;
+        return uniqueDays >= 30;
+      }
+
+      function checkRenewableRider(activities) {
+        const renewableActivities = activities.filter(
+          (a) =>
+            a.activityType === "Wind Energy" || a.activityType === "Solar Panel"
+        );
+        const totalKwh = renewableActivities.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        return totalKwh >= 100;
+      }
+
+      function checkPlantPioneer(activities) {
+        const plantMeals = activities.filter(
+          (a) => a.activityType === "Plant-based Meal"
+        );
+        const uniqueDays = new Set(
+          plantMeals.map((a) => new Date(a.timestamp).toDateString())
+        ).size;
+        return plantMeals.length >= 50 && uniqueDays >= 30;
+      }
+
+      function checkLocalLover(activities) {
+        const localActivities = activities.filter(
+          (a) => a.activityType === "Local Produce"
+        );
+        return localActivities.length >= 20;
+      }
+
+      function checkWasteWarrior(activities) {
+        const wasteActivities = activities.filter(
+          (a) => a.activityType === "Food Waste Reduction"
+        );
+        const totalReduced = wasteActivities.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        return totalReduced >= 22;
+      }
+
+      function checkOrganicOptimist(activities) {
+        const organicActivities = activities.filter(
+          (a) => a.activityType === "Organic Food"
+        );
+        return organicActivities.length >= 30;
+      }
+
+      function checkMealPrepMaster(activities) {
+        const mealPrepActivities = activities.filter(
+          (a) => a.activityType === "Food Waste Reduction"
+        );
+        return mealPrepActivities.length >= 20;
+      }
+
+      function checkCompostKing(activities) {
+        const compostActivities = activities.filter(
+          (a) => a.activityType === "Composting"
+        );
+        const totalComposted = compostActivities.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        return totalComposted >= 110;
+      }
+
+      function checkMinimalistMaster(activities) {
+        const minimalistActivities = activities.filter(
+          (a) => a.activityType === "Minimalist Living"
+        );
+        const totalItems = minimalistActivities.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        return totalItems >= 100;
+      }
+
+      function checkWaterWarrior(activities) {
+        const waterActivities = activities.filter(
+          (a) => a.activityType === "Water Conservation"
+        );
+        const totalSaved = waterActivities.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        return totalSaved >= 264;
+      }
+
+      function checkDigitalDetox(activities) {
+        const detoxActivities = activities.filter(
+          (a) => a.activityType === "Digital Detox"
+        );
+        const totalHours = detoxActivities.reduce(
+          (sum, a) => sum + (a.amount || 0),
+          0
+        );
+        return totalHours >= 20;
+      }
+
+      function checkGreenCleaner(activities) {
+        const greenCleanActivities = activities.filter(
+          (a) => a.activityType === "Green Cleaning"
+        );
+        return greenCleanActivities.length >= 30;
+      }
+
+      function checkEcoEducator(activities) {
+        const educationActivities = activities.filter(
+          (a) => a.activityType === "Eco Education"
+        );
+        return educationActivities.length >= 10;
+      }
+
+      function checkSustainabilitySage(activities) {
+        const today = new Date();
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const recentActivities = activities.filter(
+          (a) => new Date(a.timestamp) >= thirtyDaysAgo
+        );
+        const uniqueDays = new Set(
+          recentActivities.map((a) => new Date(a.timestamp).toDateString())
+        ).size;
+
+        return uniqueDays >= 30;
+      }
+
+      function updateProgress(earnedBadges, activities) {
+        const totalBadges = Object.keys(badgeData).length;
+        const earnedCount = earnedBadges.length;
+        const progressPercent = (earnedCount / totalBadges) * 100;
+
+        document.getElementById(
+          "overall-progress"
+        ).style.width = `${progressPercent}%`;
+        document.getElementById(
+          "progress-text"
+        ).textContent = `${earnedCount} of ${totalBadges} badges earned`;
+        document.getElementById("total-badges").textContent = earnedCount;
+
+        const weeklyActivities = activities.filter((activity) => {
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          return new Date(activity.timestamp) >= oneWeekAgo;
+        });
+
+        const carbonSaved = weeklyActivities.reduce((total, activity) => {
+          return total + (activity.carbonSaved || 0);
+        }, 0);
+
+        const streak = calculateStreak(activities);
+
+        document.getElementById("current-streak").textContent = streak;
+        document.getElementById("carbon-saved").textContent =
+          (carbonSaved * 2.2).toFixed(1);
+        document.getElementById("activities-logged").textContent =
+          activities.length;
+      }
+
+      function calculateStreak(activities) {
+        const today = new Date();
+        let streak = 0;
+
+        for (let i = 0; i < 365; i++) {
+          const checkDate = new Date(today);
+          checkDate.setDate(checkDate.getDate() - i);
+          const dayActivities = activities.filter((activity) => {
+            const activityDate = new Date(activity.timestamp);
+            return activityDate.toDateString() === checkDate.toDateString();
+          });
+
+          if (dayActivities.length > 0) {
+            streak++;
+          } else {
+            break;
+          }
+        }
+
+        return streak;
+      }
+
+      function setupBadgeClickHandlers() {
+        document.querySelectorAll(".badge").forEach((badge) => {
+          badge.addEventListener("click", () => {
+            const badgeId = badge.dataset.badge;
+            const badgeInfo = badgeData[badgeId];
+
+            document.getElementById(
+              "badge-detail-icon"
+            ).innerHTML = `<i class="fas ${badgeInfo.icon}"></i>`;
+            document.getElementById("badge-detail-title").textContent =
+              badgeInfo.title;
+            document.getElementById("badge-detail-description").textContent =
+              badgeInfo.description;
+
+            const requirementsList =
+              document.getElementById("requirements-list");
+            requirementsList.innerHTML = "";
+
+            badgeInfo.requirements.forEach((req) => {
+              const reqItem = document.createElement("div");
+              reqItem.className = "requirement-item";
+              reqItem.innerHTML = `
+                    <span>${req.text}</span>
+                    <span class="requirement-check ${req.met ? "" : "unmet"}">
+                        ${req.met ? "✓" : "○"}
+                    </span>
+                `;
+              requirementsList.appendChild(reqItem);
+            });
+
+            document.getElementById("badge-modal").classList.add("active");
+          });
+        });
+      }
+
+      function setupModalHandlers() {
+        document
+          .getElementById("close-badge-modal")
+          .addEventListener("click", () => {
+            document.getElementById("badge-modal").classList.remove("active");
+          });
+
+        document
+          .getElementById("badge-modal")
+          .addEventListener("click", (e) => {
+            if (e.target === document.getElementById("badge-modal")) {
+              document.getElementById("badge-modal").classList.remove("active");
+            }
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadUserDataFromServer();
+        setupBadgeClickHandlers();
+        setupModalHandlers();
+      });
+    </script>
+  </body>
+</html>

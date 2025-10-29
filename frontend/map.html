@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Eco Map</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #3BB273;
+            --secondary: #F5F5F5;
+            --accent: #2C8E68;
+            --text: #333333;
+            --light-text: #666666;
+            --card-bg: #FFFFFF;
+            --transport: #3498DB;
+            --market: #F39C12;
+            --volunteer: #E74C3C;
+            --recycling: #27AE60;
+        }
+        
+        body {
+            background-color: var(--secondary);
+            color: var(--text);
+            padding-bottom: 70px;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 0 16px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--light-text);
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .card-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+        
+        .map-container {
+            height: 300px;
+            background: linear-gradient(135deg, #E8F5E8, #F0F8F0);
+            border-radius: 16px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 50px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        
+        .filter-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .location-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .location-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #E0E0E0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .location-item:hover {
+            background: var(--secondary);
+        }
+        
+        .location-item:last-child {
+            border-bottom: none;
+        }
+        
+        .location-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+        
+        .location-icon.volunteer {
+            background: var(--volunteer);
+        }
+        
+        .location-info {
+            flex: 1;
+        }
+        
+        .location-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: var(--accent);
+        }
+        
+        .location-address {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            margin-bottom: 4px;
+        }
+        
+        .location-distance {
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+        
+        .location-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .btn:hover {
+            background-color: var(--accent);
+            transform: translateY(-1px);
+        }
+        
+        .btn.secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn.secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .search-container {
+            position: relative;
+            margin: 16px 0;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 2px solid #E0E0E0;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-text);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--light-text);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: var(--light-text);
+        }
+
+        .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.modal-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: var(--accent);
+}
+
+.modal-message {
+    margin-bottom: 24px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.modal-btn.confirm {
+    background: var(--primary);
+    color: white;
+}
+
+.modal-btn.confirm:hover {
+    background: var(--accent);
+}
+
+.modal-btn.cancel {
+    background: var(--secondary);
+    color: var(--text);
+}
+
+.modal-btn.cancel:hover {
+    background: #e0e0e0;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>EcoTrack</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-title">Volunteer Events</div>
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Search events...">
+        </div>
+
+        <div class="filter-tabs">
+            <div class="filter-tab active" data-filter="all">All</div>
+            <div class="filter-tab" data-filter="volunteer">Volunteer</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="nearby-events">0</div>
+                <div class="stat-label">Nearby Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="volunteer-ops">0</div>
+                <div class="stat-label">Volunteer Ops</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Nearby Events</div>
+            <div class="location-list" id="locations-list">
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class="fas fa-ranking-star"></i>
+            <span>Leaderboard</span>
+          </a>
+        <a href="badges.html" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>Badges</span>
+        </a>
+        <a href="volunteer.html" class="nav-item">
+            <i class="fas fa-hands-helping"></i>
+            <span>Volunteer</span>
+        </a>
+        <a href="map.html" class="nav-item active">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Map</span>
+        </a>
+        <a href="resources.html" class="nav-item">
+            <i class="fas fa-book"></i>
+            <span>Resources</span>
+          </a>
+    </nav>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const BASE_URL = 'https://ecoapi-8zkj.onrender.com/api/v1';
+        let map;
+        let markers = [];
+        let allEvents = [];
+        let currentFilter = 'all';
+        let filteredEvents = [];
+
+        function showModal(title, message, onConfirm, onCancel) {
+    const modalHTML = `
+        <div class="modal-overlay">
+            <div class="modal">
+                <div class="modal-title">${title}</div>
+                <div class="modal-message">${message}</div>
+                <div class="modal-buttons">
+                    <button class="modal-btn cancel">Cancel</button>
+                    <button class="modal-btn confirm">Confirm</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    const modal = document.querySelector('.modal-overlay');
+    const confirmBtn = modal.querySelector('.modal-btn.confirm');
+    const cancelBtn = modal.querySelector('.modal-btn.cancel');
+    
+    confirmBtn.addEventListener('click', () => {
+        modal.remove();
+        if (onConfirm) onConfirm();
+    });
+    
+    cancelBtn.addEventListener('click', () => {
+        modal.remove();
+        if (onCancel) onCancel();
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+            if (onCancel) onCancel();
+        }
+    });
+}
+
+function showAlertModal(title, message) {
+    const modalHTML = `
+        <div class="modal-overlay">
+            <div class="modal">
+                <div class="modal-title">${title}</div>
+                <div class="modal-message">${message}</div>
+                <div class="modal-buttons">
+                    <button class="modal-btn confirm" style="flex: none; padding: 10px 30px;">OK</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    const modal = document.querySelector('.modal-overlay');
+    const okBtn = modal.querySelector('.modal-btn.confirm');
+    
+    okBtn.addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+        async function init() {
+            await loadEvents();
+            initMap();
+            renderEvents();
+            setupEventListeners();
+        }
+
+        async function loadEvents() {
+            try {
+                const response = await fetch(`${BASE_URL}/volunteerEvents`, {
+                    credentials: "include",
+                });
+                const data = await response.json();
+                allEvents = data.allEvents || [];
+                updateStats();
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+
+        function initMap() {
+            map = L.map('map').setView([41.8757, -87.6243], 12);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            addEventMarkers();
+        }
+
+        function addEventMarkers() {
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+
+            allEvents.forEach(event => {
+                if (event.lat && event.lon) {
+                    const marker = L.marker([event.lat, event.lon])
+                        .addTo(map)
+                        .bindPopup(`
+                            <div style="padding: 8px;">
+                                <h3 style="margin: 0 0 8px 0; color: var(--accent);">${event.title}</h3>
+                                <p style="margin: 0 0 4px 0;"><strong>Date:</strong> ${event.date}</p>
+                                <p style="margin: 0 0 4px 0;"><strong>Time:</strong> ${event.time}</p>
+                                <p style="margin: 0 0 4px 0;"><strong>Location:</strong> ${event.location}</p>
+                                <p style="margin: 0 0 8px 0;">${event.description}</p>
+                                <button onclick="showEventDetails('${event.id}')" style="background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">View Details</button>
+                            </div>
+                        `);
+                    markers.push(marker);
+                }
+            });
+        }
+
+        function renderEvents() {
+            const container = document.getElementById('locations-list');
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            if (currentFilter !== 'all') {
+                filteredEvents = allEvents.filter(event => event.type === currentFilter);
+            } else {
+                filteredEvents = allEvents;
+            }
+            
+            if (searchTerm) {
+                filteredEvents = filteredEvents.filter(event => 
+                    event.title.toLowerCase().includes(searchTerm) ||
+                    event.location.toLowerCase().includes(searchTerm) ||
+                    event.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredEvents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <p>No events found matching your criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredEvents.map(event => `
+                <div class="location-item" onclick="showEventDetails('${event.id}')">
+                    <div class="location-icon volunteer">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <div class="location-info">
+                        <div class="location-name">${event.title}</div>
+                        <div class="location-address">${event.location}</div>
+                        <div class="location-distance">${event.date} • ${event.time}</div>
+                    </div>
+                    <div class="location-actions">
+                        <button class="btn" onclick="event.stopPropagation(); registerForEvent('${event.id}')">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                        <button class="btn secondary" onclick="event.stopPropagation(); showOnMap('${event.id}')">
+                            <i class="fas fa-map-marker-alt"></i> View
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showEventDetails(eventId) {
+            const event = allEvents.find(e => e.id === eventId);
+            if (!event) return;
+            
+            const details = `
+${event.title}
+
+${event.description}
+
+Date: ${event.date}
+Time: ${event.time}
+Location: ${event.location}
+Organizer: ${event.organizer}
+Volunteers Needed: ${event.volunteersNeeded}
+Duration: ${event.duration}
+Category: ${event.category}
+Impact: ${event.impact}
+Requirements: ${event.requirements}
+            `;
+            
+            alert(details);
+        }
+
+        async function registerForEvent(eventId) {
+    const event = allEvents.find(e => e.id === eventId);
+    if (!event) return;
+    
+    showModal(
+        'Confirm Registration',
+        `Are you sure you want to register for "${event.title}"?`,
+        async () => {
+            try {
+                const response = await fetch(`${BASE_URL}/registerEvent`, {
+                    method: 'POST',
+                    credentials: "include",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ eventId: eventId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlertModal('Success', data.message);
+                } else {
+                    showAlertModal('Error', data.message);
+                }
+            } catch (error) {
+                console.error('Error registering for event:', error);
+                showAlertModal('Error', 'Failed to register for event. Please try again.');
+            }
+        }
+    );
+}
+        function showOnMap(eventId) {
+            const event = allEvents.find(e => e.id === eventId);
+            if (!event) return;
+            
+            if (event.lat && event.lon) {
+                map.setView([event.lat, event.lon], 15);
+                markers.forEach(marker => {
+                    if (marker.getLatLng().lat === event.lat && marker.getLatLng().lng === event.lon) {
+                        marker.openPopup();
+                    }
+                });
+            } else {
+                alert(`Event: ${event.title}\nLocation: ${event.location}`);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('nearby-events').textContent = allEvents.length;
+            document.getElementById('volunteer-ops').textContent = allEvents.length;
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentFilter = tab.dataset.filter;
+                    renderEvents();
+                });
+            });
+            
+            document.getElementById('search-input').addEventListener('input', renderEvents);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

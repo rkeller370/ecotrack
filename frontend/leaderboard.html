@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Leaderboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #3bb273;
+            --secondary: #f5f5f5;
+            --accent: #2c8e68;
+            --text: #333333;
+            --light-text: #666666;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: var(--text);
+            padding-bottom: 70px;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 0 16px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--light-text);
+            font-size: 0.8rem;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .leaderboard-header h1 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .leaderboard-header p {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .time-filter-btn {
+            padding: 10px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            background: white;
+            color: var(--light-text);
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .time-filter-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .rank-1 {
+            color: gold;
+            font-size: 1.5rem;
+        }
+
+        .rank-2 {
+            color: silver;
+            font-size: 1.4rem;
+        }
+
+        .rank-3 {
+            color: #cd7f32;
+            font-size: 1.3rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 16px;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+
+        .carbon-saved {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .badges {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .badge {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: gold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: white;
+        }
+
+        .current-user {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            border: 2px solid var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--light-text);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: var(--light-text);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--secondary);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            font-weight: 500;
+        }
+
+        .stat-subtext {
+            font-size: 0.75rem;
+            color: var(--light-text);
+        }
+
+        .progress-section {
+            background: var(--secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 8px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>EcoTrack</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page active" id="leaderboard">
+            <div class="leaderboard-header">
+                <h1>Saved Carbon Leaderboard</h1>
+            </div>
+
+            <div class="card">
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <div class="leaderboard-item current-user">
+                        <div class="rank">7</div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">You</div>
+                            <div class="user-stats">
+                                <span>42 activities</span>
+                                <span>15 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">128 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank rank-1">1</div>
+                        <div class="user-avatar" style="background: gold;">
+                            <i class="fas fa-crown" style="color: white;"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">EcoWarrior42</div>
+                            <div class="user-stats">
+                                <span>67 activities</span>
+                                <span>28 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">342 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank rank-2">2</div>
+                        <div class="user-avatar" style="background: silver;">
+                            <i class="fas fa-medal" style="color: white;"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">GreenThumb</div>
+                            <div class="user-stats">
+                                <span>58 activities</span>
+                                <span>21 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">287 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank rank-3">3</div>
+                        <div class="user-avatar" style="background: #cd7f32;">
+                            <i class="fas fa-award" style="color: white;"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">SustainableSam</div>
+                            <div class="user-stats">
+                                <span>49 activities</span>
+                                <span>35 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">234 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank">4</div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">ClimateChampion</div>
+                            <div class="user-stats">
+                                <span>52 activities</span>
+                                <span>19 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">198 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank">5</div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">EcoEnthusiast</div>
+                            <div class="user-stats">
+                                <span>45 activities</span>
+                                <span>14 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">167 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank">6</div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">GreenGuru</div>
+                            <div class="user-stats">
+                                <span>38 activities</span>
+                                <span>12 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">145 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank">8</div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">PlanetProtector</div>
+                            <div class="user-stats">
+                                <span>31 activities</span>
+                                <span>9 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">112 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank">9</div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">EcoExplorer</div>
+                            <div class="user-stats">
+                                <span>27 activities</span>
+                                <span>7 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">98 lbs</div>
+                    </div>
+
+                    <div class="leaderboard-item">
+                        <div class="rank">10</div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">SustainableSoul</div>
+                            <div class="user-stats">
+                                <span>24 activities</span>
+                                <span>5 day streak</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">87 lbs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Your Progress</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">#7</div>
+                        <div class="stat-label">Your Rank</div>
+                        <div class="stat-subtext">Top 5% of 142 users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">128 lbs</div>
+                        <div class="stat-label">Carbon Saved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">42</div>
+                        <div class="stat-label">Activities</div>
+                        <div class="stat-subtext">15 day streak</div>
+                    </div>
+                </div>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span>Next Rank: #6</span>
+                        <span>23 lbs to go</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item active">
+            <i class="fas fa-ranking-star"></i>
+            <span>Leaderboard</span>
+        </a>
+        <a href="badges.html" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>Badges</span>
+        </a>
+        <a href="volunteer.html" class="nav-item">
+            <i class="fas fa-hands-helping"></i>
+            <span>Volunteer</span>
+        </a>
+        <a href="map.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Map</span>
+        </a>
+        <a href="resources.html" class="nav-item">
+            <i class="fas fa-book"></i>
+            <span>Resources</span>
+          </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLeaderboardData();
+            
+            const timeFilterBtns = document.querySelectorAll('.time-filter-btn');
+            timeFilterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    timeFilterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const period = this.getAttribute('data-period');
+                    updateLeaderboard(period);
+                });
+            });
+
+            async function loadLeaderboardData() {
+                try {
+                    const response = await fetch('https://ecoapi-8zkj.onrender.com/api/v1/leaderboard', {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    const data = await response.json();
+                    
+                    if(data.success) {
+                        renderLeaderboard(data.data.leaderboard);
+                        renderUserStats(data.data.userStats);
+                    } else {
+                        console.error('Failed to load leaderboard data');
+                    }
+                } catch (error) {
+                    console.error('Error loading leaderboard data:', error);
+                }
+            }
+
+            function renderLeaderboard(users) {
+                const leaderboardList = document.getElementById('leaderboard-list');
+                leaderboardList.innerHTML = '';
+
+                users.forEach((user, index) => {
+                    const isCurrentUser = user.userId === localStorage.getItem("userId");
+                    const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+                    
+                    const leaderboardItem = document.createElement('div');
+                    leaderboardItem.className = `leaderboard-item ${isCurrentUser ? 'current-user' : ''}`;
+                    
+                    leaderboardItem.innerHTML = `
+                        <div class="rank ${rankClass}">${user.rank}</div>
+                        <div class="user-avatar" style="${index < 3 ? getAvatarStyle(index) : ''}">
+                            <i class="fas ${getAvatarIcon(index)}" style="${index < 3 ? "color: white;" : ""}"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">${isCurrentUser ? 'You' : user.name}</div>
+                            <div class="user-stats">
+                                <span>${user.activities} activities</span>
+                            </div>
+                        </div>
+                        <div class="carbon-saved">${user.carbonSaved} lbs</div>
+                    `;
+                    
+                    leaderboardList.appendChild(leaderboardItem);
+                });
+            }
+
+            function renderUserStats(userStats) {
+                const percentage = Math.round(userStats.progressPercentage);
+                const progressSection = document.querySelector('.progress-section');
+                
+                progressSection.innerHTML = `
+                    <div class="progress-header">
+                        <span>Next Rank: #${userStats.nextRank}</span>
+                        <span>${userStats.carbonToNextRank} lbs to go</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                `;
+
+                document.querySelector('.stats-grid').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">#${userStats.rank}</div>
+                        <div class="stat-label">Your Rank</div>
+                        <div class="stat-subtext">Top ${Math.round((userStats.rank / userStats.totalUsers) * 100)}% of ${userStats.totalUsers} users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${userStats.carbonSaved} lbs</div>
+                        <div class="stat-label">Carbon Saved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${userStats.activities}</div>
+                        <div class="stat-label">Activities</div>
+                    </div>
+                `;
+            }
+
+            function getAvatarStyle(index) {
+                const colors = ['gold', 'silver', '#cd7f32'];
+                return index < 3 ? `background: ${colors[index]};` : '';
+            }
+
+            function getAvatarIcon(index) {
+                const icons = ['fa-crown', 'fa-medal', 'fa-award'];
+                return index < 3 ? icons[index] : 'fa-user';
+            }
+
+            function updateLeaderboard(period) {
+                console.log(`Updating leaderboard for: ${period}`);
+                loadLeaderboardData();
+            }
+        });
+    </script>
+</body>
+</html>

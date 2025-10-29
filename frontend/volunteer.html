@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Volunteer Opportunities</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .hidden{
+            display: none;
+        }
+        
+        :root {
+            --primary: #3BB273;
+            --secondary: #F5F5F5;
+            --accent: #2C8E68;
+            --text: #333333;
+            --light-text: #666666;
+            --card-bg: #FFFFFF;
+            --urgent: #E74C3C;
+            --upcoming: #F39C12;
+            --completed: #27AE60;
+        }
+        
+        body {
+            background-color: var(--secondary);
+            color: var(--text);
+            padding-bottom: 70px;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 0 16px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--light-text);
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .card-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+        
+        .filter-tabs {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 50px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        
+        .filter-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .event-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .event-card.urgent {
+            border-left-color: var(--urgent);
+        }
+        
+        .event-card.upcoming {
+            border-left-color: var(--upcoming);
+        }
+        
+        .event-card.completed {
+            border-left-color: var(--completed);
+            opacity: 0.7;
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .event-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        
+        .event-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .event-status.urgent {
+            background: #FFE6E6;
+            color: var(--urgent);
+        }
+        
+        .event-status.upcoming {
+            background: #FFF3E0;
+            color: var(--upcoming);
+        }
+        
+        .event-status.completed {
+            background: #E8F5E8;
+            color: var(--completed);
+        }
+        
+        .event-details {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        
+        .event-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        .event-detail i {
+            color: var(--primary);
+        }
+        
+        .event-description {
+            color: var(--light-text);
+            line-height: 1.5;
+            margin: 12px 0;
+        }
+        
+        .event-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn:hover {
+            background-color: var(--accent);
+            transform: translateY(-1px);
+        }
+        
+        .btn.secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn.secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn:disabled {
+            background: #CCCCCC;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .search-container {
+            position: relative;
+            margin: 16px 0;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 2px solid #E0E0E0;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-text);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--light-text);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: var(--light-text);
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            z-index: 1001;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light-text);
+        }
+        
+        .modal-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        
+        .modal-text {
+            color: var(--light-text);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+        
+        .admin-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #E0E0E0;
+        }
+        
+        .volunteer-list {
+            margin-top: 16px;
+        }
+        
+        .volunteer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+        
+        .volunteer-item:last-child {
+            border-bottom: none;
+        }
+        
+        .volunteer-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .volunteer-name {
+            font-weight: bold;
+        }
+        
+        .volunteer-email {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .autocomplete-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .autocomplete-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--primary);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #E0E0E0;
+            transition: background-color 0.2s ease;
+        }
+
+        .autocomplete-item:hover {
+            background-color: var(--secondary);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item .name {
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .autocomplete-item .type {
+            font-size: 0.8rem;
+            color: var(--light-text);
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>EcoTrack</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-title">Your Volunteer Impact</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="events-attended">0</div>
+                    <div class="stat-label">Events Attended</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="hours-volunteered">0</div>
+                    <div class="stat-label">Hours Volunteered</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin: 16px 0;">
+            <div class="search-container" style="flex: 1;">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="search-input" placeholder="Search volunteer opportunities...">
+            </div>
+            <button class="btn" onclick="openCreateEventModal()" style="width: auto; padding: 12px 20px;">
+                <i class="fas fa-plus"></i> Create Event
+            </button>
+        </div>
+
+        <div class="filter-tabs">
+            <div class="filter-tab active" data-filter="all">All Events</div>
+            <div class="filter-tab" data-filter="urgent">Urgent</div>
+            <div class="filter-tab" data-filter="upcoming">Upcoming</div>
+            <div class="filter-tab" data-filter="completed">Completed</div>
+        </div>
+
+        <div id="events-container">
+        </div>
+    </div>
+
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-modal">&times;</button>
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="modal-title" id="modal-title">Event Registered!</div>
+            <div class="modal-text" id="modal-text">You've successfully registered for this event.</div>
+            <button class="btn" id="modal-ok">Great!</button>
+        </div>
+    </div>
+
+    <div class="modal" id="create-event-modal">
+        <div class="modal-content" style="max-width: 500px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <div class="modal-title">Create Volunteer Event</div>
+                <button class="close-btn" onclick="closeCreateEventModal()">&times;</button>
+            </div>
+            
+            <form id="create-event-form">
+                <div class="form-group">
+                    <label for="event-title">Event Title *</label>
+                    <input type="text" id="event-title" name="title" required placeholder="e.g., Beach Cleanup">
+                </div>
+                
+                <div class="form-group">
+                    <label for="event-description">Description *</label>
+                    <textarea id="event-description" name="description" rows="3" required placeholder="Describe the event, what volunteers will do, and what to bring..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="event-date">Date *</label>
+                        <input type="date" id="event-date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-time">Time *</label>
+                        <input type="time" id="event-time" name="time" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="event-duration">Duration (hours) *</label>
+                    <input type="number" id="event-duration" name="duration" min="1" max="12" required placeholder="3">
+                </div>
+                
+                <div class="form-group">
+                    <label for="event-location">Location *</label>
+                    <input type="text" id="event-location" name="location" required placeholder="e.g., Chicago, IL">
+                    <div id="location-autocomplete" class="autocomplete-container"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="event-category">Category *</label>
+                    <select id="event-category" name="category" required>
+                        <option value="">Select category...</option>
+                        <option value="Cleanup">Cleanup</option>
+                        <option value="Tree Planting">Tree Planting</option>
+                        <option value="Education">Education</option>
+                        <option value="Habitat Restoration">Habitat Restoration</option>
+                        <option value="Event Support">Event Support</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="event-volunteers">Volunteers Needed *</label>
+                        <input type="number" id="event-volunteers" name="volunteersNeeded" min="1" max="10000" required placeholder="25">
+                    </div>
+                    <div class="form-group">
+                        <label for="event-status">Status</label>
+                        <select id="event-status" name="status">
+                            <option value="upcoming">Upcoming</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="event-impact">Expected Impact</label>
+                    <input type="text" id="event-impact" name="impact" placeholder="e.g., Remove 440+ lbs of waste">
+                </div>
+                
+                <div class="form-group">
+                    <label for="event-requirements">Requirements</label>
+                    <input type="text" id="event-requirements" name="requirements" placeholder="e.g., Comfortable clothes, closed-toe shoes">
+                </div>
+                
+                <div class="form-group">
+                    <label for="event-organizer">Organizer Name *</label>
+                    <input type="text" id="event-organizer" name="organizer" required placeholder="Your name or organization">
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-plus"></i> Create Event
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="admin-modal">
+        <div class="modal-content" style="max-width: 500px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <div class="modal-title">Event Volunteers</div>
+                <button class="close-btn" onclick="closeAdminModal()">&times;</button>
+            </div>
+            
+            <div id="admin-event-summary">
+            </div>
+            
+            <div class="admin-section">
+                <h3>Registered Volunteers</h3>
+                <div class="volunteer-list" id="volunteer-list">
+                </div>
+                
+                <div class="admin-actions">
+                    <button class="btn" onclick="emailVolunteers()">
+                        <i class="fas fa-envelope"></i> Email Volunteers
+                    </button>
+                    <button class="btn secondary" onclick="closeAdminModal()">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class="fas fa-ranking-star"></i>
+            <span>Leaderboard</span>
+          </a>
+        <a href="badges.html" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>Badges</span>
+        </a>
+        <a href="volunteer.html" class="nav-item active">
+            <i class="fas fa-hands-helping"></i>
+            <span>Volunteer</span>
+        </a>
+        <a href="map.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Map</span>
+          </a>
+          <a href="resources.html" class="nav-item">
+            <i class="fas fa-book"></i>
+            <span>Resources</span>
+          </a>
+    </nav>
+
+    <script>
+        const API_URL = 'https://ecoapi-8zkj.onrender.com/api/v1';
+        let allEvents = [];
+        let userEvents = [];
+        let currentUserId = localStorage.getItem('userId') || "org1";
+        let currentFilter = 'all';
+        let debounceTimer;
+        let currentAutocompleteRequest = null;
+        let selectedLat;
+        let selectedLon;
+
+        async function init() {
+            await loadData();
+            updateStats();
+            renderEvents();
+            setupEventListeners();
+            setupLocationAutocomplete();
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(`${API_URL}/volunteerEvents`, {
+                    credentials: "include",
+                });
+                const data = await response.json();
+                allEvents = data.allEvents || [];
+                userEvents = data.userEvents || [];
+            } catch (error) {
+                console.log('Error loading data:', error);
+                allEvents = [];
+                userEvents = [];
+            }
+        }
+
+        function updateStats() {
+            const now = new Date();
+            const attendedEvents = userEvents.filter(event => new Date(event.date) < now).length;
+            const totalHours = userEvents.reduce((total, event) => {
+                const eventDate = new Date(event.date);
+                    if (eventDate < now) {
+                        total += event.hours || 0;
+                    }
+                    return total;
+            }, 0);
+
+            document.getElementById('events-attended').textContent = attendedEvents;
+            document.getElementById('hours-volunteered').textContent = totalHours;
+
+            //document.getElementById('waste-collected').textContent = userEvents.reduce((total, event) => total + (event.wasteCollected || 0), 0);
+            //document.getElementById('trees-planted').textContent = userEvents.reduce((total, event) => total + (event.treesPlanted || 0), 0);
+        }
+
+        function renderEvents() {
+            const container = document.getElementById('events-container');
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            let filteredEvents = allEvents;
+            
+            if (currentFilter !== 'all') {
+                filteredEvents = filteredEvents.filter(event => (new Date(event.date) < new Date() ? "completed" : event.status) === currentFilter);
+            }
+            
+            if (searchTerm) {
+                filteredEvents = filteredEvents.filter(event => 
+                    event.title.toLowerCase().includes(searchTerm) ||
+                    event.description.toLowerCase().includes(searchTerm) ||
+                    event.location.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredEvents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <p>No events found matching your criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredEvents.map(event => `
+                <div class="event-card ${event.status}" data-event-id="${event.id}">
+                    <div class="event-header">
+                        <div>
+                            <div class="event-title">${event.title}</div>
+                            <div class="event-status ${new Date(event.date) < new Date() ? "completed" : event.status}">${new Date(event.date) < new Date() ? "Completed" : event.status.charAt(0).toUpperCase() + event.status.slice(1)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <i class="fas fa-calendar"></i>
+                            <span>${new Date(event.date).toLocaleDateString()}</span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fas fa-clock"></i>
+                            <span>${event.time}</span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${event.location}</span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fas fa-users"></i>
+                            <span>${event.volunteersRegistered}/${event.volunteersNeeded} volunteers</span>
+                        </div>
+                    </div>
+                    
+                    <div class="event-description">${event.description}</div>
+                    
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <i class="fas fa-leaf"></i>
+                            <span>${event.impact}</span>
+                        </div>
+                        <div class="event-detail">
+                            <i class="fas fa-building"></i>
+                            <span>${event.organizer}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="event-actions">
+                        ${getEventActions(event)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getEventActions(event) {
+            const isRegistered = userEvents.some(userEvent => userEvent.eventId == event.id);
+            const isCreator = event.creatorId == currentUserId;
+            
+            if (new Date(event.date) < new Date()) {
+                return `
+                    <button class="btn secondary" disabled>
+                        <i class="fas fa-check"></i>
+                        Completed
+                    </button>
+                `;
+            }
+            
+            if (isCreator) {
+                return `
+                    <button class="btn" onclick="viewVolunteers('${event.id}')">
+                        <i class="fas fa-users"></i>
+                        Manage
+                    </button>
+                `;
+            }
+            
+            if (isRegistered) {
+                return `
+                    <button class="btn secondary" onclick="unregisterEvent('${event.id}')">
+                        <i class="fas fa-times"></i>
+                        Unregister
+                    </button>
+                    <button class="btn" disabled>
+                        <i class="fas fa-check"></i>
+                        Registered
+                    </button>
+                `;
+            }
+            
+            if (event.volunteersRegistered >= event.volunteersNeeded) {
+                return `
+                    <button class="btn secondary" disabled>
+                        <i class="fas fa-users"></i>
+                        Full
+                    </button>
+                `;
+            }
+            
+            return `
+                <button class="btn" onclick="registerEvent('${event.id}')">
+                    <i class="fas fa-plus"></i>
+                    Register
+                </button>
+            `;
+        }
+
+        async function registerEvent(eventId) {
+            try {
+                const response = await fetch(`${API_URL}/registerEvent`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        eventId: eventId,
+                    }),
+                    credentials: "include",
+                });
+                
+                if (response.ok) {
+                    document.getElementById('modal-title').textContent = 'Event Registered!';
+                    document.getElementById('modal-text').textContent = 'You have successfully registered for this event.';
+                    document.getElementById('confirm-modal').classList.add('active');
+                    
+                    await loadData();
+                    updateStats();
+                    renderEvents();
+                }
+            } catch (error) {
+                console.log('Error registering for event:', error);
+            }
+        }
+
+        async function unregisterEvent(eventId) {
+            try {
+                const response = await fetch(`${API_URL}/unregisterEvent`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        eventId: eventId,
+                    }),
+                    credentials: "include",
+                });
+                
+                if (response.ok) {
+                    await loadData();
+                    updateStats();
+                    renderEvents();
+                }
+            } catch (error) {
+                console.log('Error unregistering from event:', error);
+            }
+        }
+
+        function viewVolunteers(eventId) {
+            const event = allEvents.find(e => e.id === eventId);
+            if (!event) return;
+            
+            document.getElementById('admin-event-summary').innerHTML = `
+                <h4>${event.title}</h4>
+                <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+                <p><strong>Time:</strong> ${event.time}</p>
+                <p><strong>Location:</strong> ${event.location}</p>
+            `;
+            
+            const volunteerList = document.getElementById('volunteer-list');
+            if (event.registeredVolunteers && event.registeredVolunteers.length > 0) {
+                volunteerList.innerHTML = event.registeredVolunteers.map(volunteer => `
+                    <div class="volunteer-item">
+                        <div class="volunteer-info">
+                            <div class="volunteer-name">${volunteer.name}</div>
+                            <div class="volunteer-email">${volunteer.email}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                volunteerList.innerHTML = '<p>No volunteers registered yet.</p>';
+            }
+            
+            document.getElementById('admin-modal').classList.add('active');
+        }
+
+        function emailVolunteers() {
+            const event = allEvents.find(e => e.creatorId === currentUserId);
+            if (!event || !event.registeredVolunteers) return;
+            
+            const emails = event.registeredVolunteers.map(v => v.email).join(',');
+            window.open(`mailto:?bcc=${emails}`);
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.remove('active');
+        }
+
+        function openCreateEventModal() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('event-date').value = tomorrow.toISOString().split('T')[0];
+            document.getElementById('event-time').value = '09:00';
+            document.getElementById('create-event-modal').classList.add('active');
+        }
+
+        function closeCreateEventModal() {
+            document.getElementById('create-event-modal').classList.remove('active');
+            document.getElementById('create-event-form').reset();
+        }
+
+        async function handleCreateEventForm(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+
+            const timeStr = formData.get('time');
+            const durationHours = parseFloat(formData.get('duration'));
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            
+            const startDate = new Date();
+            startDate.setHours(hours, minutes, 0, 0);
+
+            const endDate = new Date(startDate);
+            endDate.setHours(endDate.getHours() + durationHours);
+
+            function formatTime12hr(date) {
+                const options = {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                };
+            return date.toLocaleTimeString(undefined, options);
+            }
+
+            function getTimeZoneAbbr(date) {
+                const tz = date.toLocaleTimeString('en-us', { timeZoneName: 'short' }).split(' ');
+                return tz[tz.length - 1];
+            }
+
+            const timeRange = `${formatTime12hr(startDate)} to ${formatTime12hr(endDate)} (${getTimeZoneAbbr(startDate)})`;
+            
+            const eventData = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                date: formData.get('date'),
+                time: timeRange,
+                duration: parseInt(formData.get('duration')),
+                location: formData.get('location'),
+                category: formData.get('category'),
+                volunteersNeeded: parseInt(formData.get('volunteersNeeded')),
+                status: formData.get('status'),
+                impact: formData.get('impact'),
+                requirements: formData.get('requirements'),
+                organizer: formData.get('organizer'),
+                lat: selectedLat,
+                lon: selectedLon,
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/createEvent`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(eventData),
+                    credentials: "include",
+                });
+                
+                if (response.ok) {
+                    document.getElementById('modal-title').textContent = 'Event Created!';
+                    document.getElementById('modal-text').textContent = `Event "${eventData.title}" created successfully!`;
+                    document.getElementById('confirm-modal').classList.add('active');
+                    
+                    await loadData();
+                    renderEvents();
+                    closeCreateEventModal();
+                }
+            } catch (error) {
+                console.log('Error creating event:', error);
+            }
+        }
+
+        function setupLocationAutocomplete() {
+            const locationInput = document.getElementById('event-location');
+            const autocompleteContainer = document.getElementById('location-autocomplete');
+            
+            locationInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const query = e.target.value.trim();
+                
+                if (query.length < 3) {
+                    hideAutocomplete();
+                    return;
+                }
+                
+                debounceTimer = setTimeout(() => {
+                    fetchLocationSuggestions(query);
+                }, 300);
+            });
+            
+            locationInput.addEventListener('focus', () => {
+                const query = locationInput.value.trim();
+                if (query.length >= 3) {
+                    fetchLocationSuggestions(query);
+                }
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!autocompleteContainer.contains(e.target) && e.target !== locationInput) {
+                    hideAutocomplete();
+                }
+            });
+            
+            locationInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    hideAutocomplete();
+                }
+            });
+        }
+
+        function fetchLocationSuggestions(query) {
+            if (currentAutocompleteRequest) {
+                currentAutocompleteRequest.abort();
+            }
+            
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
+            
+            const controller = new AbortController();
+            currentAutocompleteRequest = controller;
+            
+            fetch(url, { signal: controller.signal })
+                .then(response => response.json())
+                .then(data => {
+                    displayAutocompleteResults(data);
+                    currentAutocompleteRequest = null;
+                })
+                .catch(error => {
+                    if (error.name !== 'AbortError') {
+                        console.log('Error fetching location suggestions:', error);
+                        currentAutocompleteRequest = null;
+                    }
+                });
+        }
+
+        function displayAutocompleteResults(results) {
+            const autocompleteContainer = document.getElementById('location-autocomplete');
+            
+            if (results.length === 0) {
+                hideAutocomplete();
+                return;
+            }
+            
+            autocompleteContainer.innerHTML = `
+                <div class="autocomplete-results">
+                    ${results.map(result => `
+                        <div class="autocomplete-item" data-lat="${result.lat}" data-lon="${result.lon}">
+                            <div class="name">${result.display_name.split(',')[0]}</div>
+                            <div class="type">${result.type} • ${result.display_name}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            autocompleteContainer.querySelectorAll('.autocomplete-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const locationInput = document.getElementById('event-location');
+                    locationInput.value = item.querySelector('.type').textContent.split(' • ')[1];
+                    selectedLat = item.dataset.lat;
+                    selectedLon = item.dataset.lon;
+                    hideAutocomplete();
+                });
+            });
+        }
+
+        function hideAutocomplete() {
+            const autocompleteContainer = document.getElementById('location-autocomplete');
+            autocompleteContainer.innerHTML = '';
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentFilter = tab.dataset.filter;
+                    renderEvents();
+                });
+            });
+            
+            document.getElementById('search-input').addEventListener('input', renderEvents);
+            
+            document.getElementById('close-modal').addEventListener('click', () => {
+                document.getElementById('confirm-modal').classList.remove('active');
+            });
+            
+            document.getElementById('modal-ok').addEventListener('click', () => {
+                document.getElementById('confirm-modal').classList.remove('active');
+            });
+            
+            document.getElementById('confirm-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('confirm-modal')) {
+                    document.getElementById('confirm-modal').classList.remove('active');
+                }
+            });
+            
+            document.getElementById('create-event-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('create-event-modal')) {
+                    closeCreateEventModal();
+                }
+            });
+            
+            document.getElementById('create-event-form').addEventListener('submit', handleCreateEventForm);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
